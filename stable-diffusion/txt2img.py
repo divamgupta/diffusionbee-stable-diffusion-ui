@@ -28,6 +28,50 @@ from ldm.models.autoencoder import *
 from ldm.modules.encoders.modules import *
 import json
 
+
+import warnings
+warnings.filterwarnings("ignore")
+
+
+
+class Unbuffered(object):
+    def __init__(self, stream):
+        self.stream = stream
+
+    def write(self, data):
+        self.stream.write(data)
+        self.stream.flush()
+
+    def writelines(self, datas):
+        self.stream.writelines(datas)
+        self.stream.flush()
+
+    def __getattr__(self, attr):
+        return getattr(self.stream, attr)
+
+
+sys.stdout = Unbuffered(sys.stdout)
+
+
+
+# so that it works with utf-8 files!
+try:
+    locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+except Exception as e:
+    print("locale set failed")
+    try:
+        locale.setlocale(locale.LC_ALL, 'English_United States.1252')
+    except Exception as e:
+        print("locale set failed 2")
+
+# PYTHONUTF8=1
+os.environ["PYTHONUTF8"] = "1"
+
+
+
+
+
+
 def get_device():
     if(torch.cuda.is_available()):
         return 'cuda'
@@ -170,7 +214,7 @@ def process_opt(opt, model):
                                 img = put_watermark(img, wm_encoder)
                                 impath = os.path.join(sample_path, f"{base_count:05}.png")
                                 img.save(impath)
-                                print("b2js nwim " + str(impath))
+                                print("utds generated_image___U_P_D_A_T_E___\"%s\""%(impath) ) 
                                 base_count += 1
 
                          
@@ -213,32 +257,44 @@ def main():
 
     opt.seed = 42
     opt.precision = "autocast"
+
+    print("utds loading_msg___U_P_D_A_T_E___\"  not started yet \"" ) 
+
+    
    
     config = OmegaConf.load(f"{opt.config}")
     model = load_model_from_config(config, f"{opt.ckpt}")
 
     model = model.to(device)
 
-    print("b2js mlld") # model loaded
+    print("utds is_model_loaded___U_P_D_A_T_E___true") # model loaded
+
+    
 
     while True:
-        print("b2js enin") # enable input
+        print("utds is_textbox_avail___U_P_D_A_T_E___true") # model loaded # disable input
         inp_str = input()
 
         if inp_str.strip() == "":
             continue
 
+        if not "b2py t2im" in inp_str:
+            continue
+        inp_str = inp_str.replace("b2py t2im" , "").strip()
         try:
             d = json.loads(inp_str)
 
             new_opt = copy.deepcopy(opt)
             for key,value in d.items():
                 setattr(new_opt,key,value)
-            print("b2js diin") # disable input
-
+            print("utds is_textbox_avail___U_P_D_A_T_E___false") # model loaded # disable input
+            print("utds loading_msg___U_P_D_A_T_E___\"starting to generate\"") 
+            print("utds generated_image___U_P_D_A_T_E___\"\"") 
+            print("utds backedn_error___U_P_D_A_T_E___\"\"") 
             process_opt(new_opt, model)
         except Exception as e:
-            print("b2js eror " + str(e))
+            print("utds backedn_error___U_P_D_A_T_E___\"%s\""%(str(e))) 
+            print("py2b eror " + str(e))
 
         
 

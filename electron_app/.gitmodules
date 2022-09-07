@@ -1,0 +1,9 @@
+[submodule "third_party/vue-toast-notification"]
+	url = https://github.com/divamgupta/vue-toast-notification
+	path = third_party/vue-toast-notification
+[submodule "liner_core"]
+	path = liner_core
+	url = https://github.com/divamgupta/liner-core
+[submodule "third_party/annotate2d"]
+	path = third_party/annotate2d
+	url = https://github.com/repalash/annotate2d

@@ -151,7 +151,9 @@ class DDIMSampler(object):
                     return None , None
             else:
                 print("boooo")
-                
+
+            print("utds loading_msg___U_P_D_A_T_E___\" done %d out of %d\""%(i, total_steps )) 
+
             index = total_steps - i - 1
             ts = torch.full((b,), step, device=device, dtype=torch.long)
 
