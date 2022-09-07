@@ -4,8 +4,8 @@ from functools import partial
 import clip
 from einops import rearrange, repeat
 from transformers import CLIPTokenizer, CLIPTextModel
-import kornia
-
+# import kornia
+import os
 from ldm.modules.x_transformer import Encoder, TransformerWrapper  # TODO: can we directly rely on lucidrains code and simply add this as a reuirement? --> test
 
 
@@ -147,8 +147,21 @@ class FrozenCLIPEmbedder(AbstractEncoder):
     """Uses the CLIP transformer encoder for text (from Hugging Face)"""
     def __init__(self, version="openai/clip-vit-large-patch14", device=get_default_device_type(), max_length=77):
         super().__init__()
-        self.tokenizer = CLIPTokenizer.from_pretrained(version)
-        self.transformer = CLIPTextModel.from_pretrained(version)
+
+        tokenizer_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                ".." , '..' , '..' , 'HF_weights',
+                "clip_tokenizer"))
+
+        transformer_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                ".." , '..' , '..' , 'HF_weights',
+                "clip_transformer"))
+
+        self.tokenizer = CLIPTokenizer.from_pretrained(tokenizer_path) #dg load from HF
+        self.transformer = CLIPTextModel.from_pretrained(transformer_path) #dg load from HF
         self.device = device
         self.max_length = max_length
         self.freeze()

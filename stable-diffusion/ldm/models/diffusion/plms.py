@@ -6,6 +6,7 @@ from tqdm import tqdm
 from functools import partial
 
 from ldm.modules.diffusionmodules.util import make_ddim_sampling_parameters, make_ddim_timesteps, noise_like
+from ...utils.stdin_input import is_avail, get_input
 
 
 class PLMSSampler(object):
@@ -146,6 +147,14 @@ class PLMSSampler(object):
         old_eps = []
 
         for i, step in enumerate(iterator):
+
+            if is_avail():
+                if "__stop__" in get_input():
+                    return None , None
+            else:
+                print("boooo")
+
+
             index = total_steps - i - 1
             ts = torch.full((b,), step, device=device, dtype=torch.long)
             ts_next = torch.full((b,), time_range[min(i + 1, len(time_range) - 1)], device=device, dtype=torch.long)

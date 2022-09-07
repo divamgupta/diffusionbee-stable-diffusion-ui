@@ -7,6 +7,7 @@ from functools import partial
 
 from ldm.modules.diffusionmodules.util import make_ddim_sampling_parameters, make_ddim_timesteps, noise_like, \
     extract_into_tensor
+from ...utils.stdin_input import is_avail, get_input
 
 
 class DDIMSampler(object):
@@ -144,6 +145,13 @@ class DDIMSampler(object):
         iterator = tqdm(time_range, desc='DDIM Sampler', total=total_steps)
 
         for i, step in enumerate(iterator):
+
+            if is_avail():
+                if "__stop__" in get_input():
+                    return None , None
+            else:
+                print("boooo")
+                
             index = total_steps - i - 1
             ts = torch.full((b,), step, device=device, dtype=torch.long)
 
