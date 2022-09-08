@@ -10,7 +10,7 @@ module.exports = async function (params) {
 
     console.log('afterSign hook triggered', params);
 
-    let appId = 'com.linerai.liner'
+    let appId = 'com.linerai.stablediffusionui'
 
     let appPath = path.join(params.appOutDir, `${params.packager.appInfo.productFilename}.app`);
     if (!fs.existsSync(appPath)) {

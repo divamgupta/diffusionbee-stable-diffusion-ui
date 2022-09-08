@@ -17,7 +17,7 @@ function start_bridge() {
     }
     else{
         const path = require('path');
-        let backend_path =  path.join(path.dirname(__dirname), 'liner_core' , 'liner_backend' );
+        let backend_path =  path.join(path.dirname(__dirname), 'core' , 'txt2img' );
         python = require('child_process').spawn( backend_path  );
     }
     

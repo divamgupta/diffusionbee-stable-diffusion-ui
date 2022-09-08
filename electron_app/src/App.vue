@@ -8,10 +8,16 @@
                 <SplashScreen v-if="app_state.show_splash_screen"></SplashScreen>
             </transition>
         </div>
-        <ApplicationFrame v-else title="Text to Image"> 
+        <ApplicationFrame v-else title="DiffusionBee - Stable Diffusion GUI"> 
             <template v-slot:txt2img>
                 <ImgGenerate :app_state="app_state"></ImgGenerate>
 
+            </template>
+            <template v-slot:img2img>
+                <div class="center">
+                     Coming soon!
+                </div>
+               
             </template>
             <template v-slot:logs>
                 
@@ -213,6 +219,9 @@ export default
             is_model_loaded : false , 
             is_textbox_avail : false, 
             loading_msg : "" , 
+            loading_percentage : - 2 ,
+            loading_desc : "" , 
+
 
             show_splash_screen : true , // is showing the loading splash screen
             current_project_type : "" , // the project type whcih is opened right now 
@@ -220,6 +229,9 @@ export default
 
             generated_image : "",
             backedn_error : "",
+
+            prompt : "",
+
 
 
         };

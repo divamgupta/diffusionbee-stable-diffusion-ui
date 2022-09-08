@@ -11,8 +11,8 @@ module.exports = {
                 appId: 'com.linerai.liner',
                 afterSign: "./afterSignHook.js",
                 "extraResources": [{
-                    "from": "./liner_core/dist/liner_backend",
-                    "to": "liner_core",
+                    "from": "../stable-diffusion/dist/txt2img",
+                    "to": "core",
                     "filter": [
                         "**/*"
                     ]

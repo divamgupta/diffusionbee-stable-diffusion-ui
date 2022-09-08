@@ -33,6 +33,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
+time.sleep(0.5)
 
 class Unbuffered(object):
     def __init__(self, stream):
@@ -258,7 +259,10 @@ def main():
     opt.seed = 42
     opt.precision = "autocast"
 
-    print("utds loading_msg___U_P_D_A_T_E___\"  not started yet \"" ) 
+    #TODO downlaod model if not downlaoded
+
+    print("utds loading_msg___U_P_D_A_T_E___\" Loading model \"" ) 
+    print("utds loading_percentage___U_P_D_A_T_E___-1" ) 
 
     
    
@@ -268,11 +272,13 @@ def main():
     model = model.to(device)
 
     print("utds is_model_loaded___U_P_D_A_T_E___true") # model loaded
+    print("utds loading_msg___U_P_D_A_T_E___\"\"" ) 
 
-    
 
     while True:
         print("utds is_textbox_avail___U_P_D_A_T_E___true") # model loaded # disable input
+        print("utds loading_msg___U_P_D_A_T_E___\"\"") 
+
         inp_str = input()
 
         if inp_str.strip() == "":
@@ -284,13 +290,19 @@ def main():
         try:
             d = json.loads(inp_str)
 
+            print("utds is_textbox_avail___U_P_D_A_T_E___false") # model loaded # disable input
+            print("utds loading_msg___U_P_D_A_T_E___\"Generating Image\"") 
+            print("utds generated_image___U_P_D_A_T_E___\"\"") 
+            print("utds backedn_error___U_P_D_A_T_E___\"\"") 
+
             new_opt = copy.deepcopy(opt)
             for key,value in d.items():
                 setattr(new_opt,key,value)
             print("utds is_textbox_avail___U_P_D_A_T_E___false") # model loaded # disable input
-            print("utds loading_msg___U_P_D_A_T_E___\"starting to generate\"") 
+            print("utds loading_msg___U_P_D_A_T_E___\"Generating Image\"") 
             print("utds generated_image___U_P_D_A_T_E___\"\"") 
             print("utds backedn_error___U_P_D_A_T_E___\"\"") 
+            print("utds loading_percentage___U_P_D_A_T_E___"+str(0) ) 
             process_opt(new_opt, model)
         except Exception as e:
             print("utds backedn_error___U_P_D_A_T_E___\"%s\""%(str(e))) 

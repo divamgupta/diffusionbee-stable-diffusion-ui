@@ -22,12 +22,14 @@
         </div>
         <div class="tabs_bar">
             <div @click="selectTab('txt2img')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'txt2img'}">Text To Image</div>
+            <div @click="selectTab('img2img')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'img2img'}">Image To Image</div>
             <div @click="selectTab('logs')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'logs'}">Logs</div>
 
         </div>
         <div class="tab_content_frame">
             <div class="tab_content">
                 <slot v-if=" selected_tab === 'txt2img' " name="txt2img"></slot>
+                 <slot v-if=" selected_tab === 'img2img' " name="img2img"></slot>
                 <slot v-if=" selected_tab === 'logs' " name="logs"></slot>
              
             </div>
