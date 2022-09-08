@@ -1,3 +1,10 @@
+
+
+Most of this code is taken from : https://github.com/bfirsh/stable-diffusion/tree/apple-silicon-mps-support
+
+Some changes are done by me to make it buildable with pyinstaller
+
+
 # Apple Silicon Mac Users
 
 NOTE: I have submitted a merge request to move the changes in this repo to the [lstein fork of stable-diffusion](https://github.com/lstein/stable-diffusion/) because he has so many wonderful features in his fork! Another fork that I know that has up-to-date Mac Support and some really cool features is the [Birch-san stable-diffusion fork](https://github.com/Birch-san/stable-diffusion). If my pull request to lstein is accepted, I no longer plan on updating this fork with the latest changes!
