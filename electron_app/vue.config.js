@@ -23,8 +23,9 @@ module.exports = {
                     "hardenedRuntime": true,
                     "entitlements": "build/entitlements.mac.plist",
                     "entitlementsInherit": "build/entitlements.mac.plist",
+                    "minimumSystemVersion": "12.5.1",
                     "extendInfo": {
-                    
+                        "LSMinimumSystemVersion": "12.5.1"
                     } , 
                     "target": {
                         "target": "dmg",

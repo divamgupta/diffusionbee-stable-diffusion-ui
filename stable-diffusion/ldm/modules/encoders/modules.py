@@ -7,7 +7,7 @@ from transformers import CLIPTokenizer, CLIPTextModel
 # import kornia
 import os
 from ldm.modules.x_transformer import Encoder, TransformerWrapper  # TODO: can we directly rely on lucidrains code and simply add this as a reuirement? --> test
-
+from ldm.downloader import ProgressBarDownloader
 
 def get_default_device_type():
     if torch.cuda.is_available():
@@ -154,10 +154,15 @@ class FrozenCLIPEmbedder(AbstractEncoder):
                 ".." , '..' , '..' , 'HF_weights',
                 "clip_tokenizer"))
 
+        tr_download_path = ProgressBarDownloader(title="Downloading").download(
+            url="https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download/weights/clip_transformer.zip",
+            md5_checksum="2f6fdac77680b35b257e3e594c0ff355",
+            verify_ssl=False,
+            extract_zip=True,
+        )
+
         transformer_path = os.path.abspath(
-            os.path.join(
-                os.path.dirname(__file__),
-                ".." , '..' , '..' , 'HF_weights',
+            os.path.join(tr_download_path,
                 "clip_transformer"))
 
         self.tokenizer = CLIPTokenizer.from_pretrained(tokenizer_path) #dg load from HF

@@ -8,7 +8,15 @@
                 <SplashScreen v-if="app_state.show_splash_screen"></SplashScreen>
             </transition>
         </div>
-        <ApplicationFrame v-else title="DiffusionBee - Stable Diffusion GUI"> 
+        <ApplicationFrame v-else title="DiffusionBee - Stable Diffusion GUI"
+
+            @menu_item_click_about="show_about"
+            @menu_item_click_help="show_help"
+            @menu_item_click_close="close_window"
+
+        > 
+
+
             <template v-slot:txt2img>
                 <ImgGenerate :app_state="app_state"></ImgGenerate>
 
@@ -52,7 +60,7 @@ import SplashScreen from './components_bare/SplashScreen.vue'
 import ApplicationFrame from './components_bare/ApplicationFrame.vue'
 import ImgGenerate from './components/ImgGenerate.vue'
 
-
+native_alert;
 
 export default 
 
@@ -78,7 +86,7 @@ export default
         setTimeout( function(){
              
             that.app_state.is_start_screen = false;
-        }  , 1000)
+        }  , 4000)
      
     },
 
@@ -126,14 +134,7 @@ export default
 
         },
 
-        show_about(){
-            window.ipcRenderer.sendSync('show_about', '');
-        },
-
-        show_help(){
-            window.ipcRenderer.sendSync('open_url', "__domain__/documentation");
-        } ,
-
+        
         change_startscreen_tab(tab_name){
             let that = this;
             setTimeout( function(){
@@ -142,24 +143,12 @@ export default
             
         },
 
-        export_dataset(){
-
-            if(Object.keys(this.app_state.dataset).length == 0)
-            {
-                native_alert("Your dataset is empty. Nothing to export.")
-                return;
-            }
-
-            let output_path = window.ipcRenderer.sendSync('save_dialog', '');
-            if(output_path)
-                send_to_py("exds "  + output_path );
-        },
-
+       
         check_for_updates(){
             
             let xmlHttp = new XMLHttpRequest();
             let user_id = window.ipcRenderer.sendSync('get_instance_id' , '');
-            let updates_url = "https://frq9ygdtq6.execute-api.us-east-1.amazonaws.com/liner_check_updates?user_id="+user_id;
+            let updates_url = "https://aeyfmzu2ac.execute-api.us-east-1.amazonaws.com/check_diffusionbee_updates?user_id="+user_id;
             xmlHttp.onreadystatechange = function() { 
                 if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
                 {
@@ -201,7 +190,19 @@ export default
                 this.should_show_dialog_on_quit = false;
                 window.ipcRenderer.sendSync('dont_show_dialog_on_quit', '');
             }
+        } , 
+
+        show_about(){
+            window.ipcRenderer.sendSync('show_about', '');
+        },
+        show_help(){
+            window.ipcRenderer.sendSync('open_url', "https://github.com/divamgupta/diffusionbee-stable-diffusion-ui");
+        } ,
+
+        close_window(){
+            window.ipcRenderer.sendSync('close_window', '');
         }
+
 
 
     },

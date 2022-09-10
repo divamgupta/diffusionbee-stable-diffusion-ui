@@ -1,7 +1,7 @@
 <template>
     <div class="splash_screen">
         <Transition name="fade">
-            <img v-if=show width="60%" src="@/assets/logo_splash.svg">
+            <img v-if=show width="60%" src="@/assets/logo_splash.png">
         </Transition>
     </div>
 </template>

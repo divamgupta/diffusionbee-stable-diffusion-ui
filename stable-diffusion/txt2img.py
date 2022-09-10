@@ -27,13 +27,13 @@ import multiprocessing
 from ldm.models.autoencoder import *
 from ldm.modules.encoders.modules import *
 import json
-
+from ldm.downloader import ProgressBarDownloader
 
 import warnings
 warnings.filterwarnings("ignore")
 
 
-time.sleep(0.5)
+time.sleep(0.75)
 
 class Unbuffered(object):
     def __init__(self, stream):
@@ -226,6 +226,33 @@ def process_opt(opt, model):
 
 
 def main():
+
+    print("utds loading_msg___U_P_D_A_T_E___\" Loading model \"" ) 
+    print("utds loading_percentage___U_P_D_A_T_E___-1" )
+
+    stable_dif_path = ProgressBarDownloader(title="Downloading Model 1/2").download(
+            url="https://me.cmdr2.org/stable-diffusion-ui/sd-v1-4.ckpt",
+            md5_checksum="c01059060130b8242849d86e97212c84",
+            verify_ssl=False,
+            extract_zip=False,
+        )
+
+    print("utds loading_msg___U_P_D_A_T_E___\" Loading model \"" ) 
+    print("utds loading_percentage___U_P_D_A_T_E___-1" ) 
+
+
+    ProgressBarDownloader(title="Downloading Model 2/2").download(
+            url="https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download/weights/clip_transformer.zip",
+            md5_checksum="2f6fdac77680b35b257e3e594c0ff355",
+            verify_ssl=False,
+            extract_zip=True,
+        )
+
+
+    print("utds loading_desc___U_P_D_A_T_E___\"\"")
+
+
+
     opt = Opt()
     opt.prompt = None # "apple"
     opt.outdir = "/tmp/"
@@ -250,11 +277,7 @@ def main():
                 "stable-diffusion",
                 "v1-inference.yaml"))
 
-    opt.ckpt = os.path.abspath(
-            os.path.join(
-                os.path.dirname(__file__),
-                "models",
-                "stable_diffusion_model.ckpt"))
+    opt.ckpt = os.path.abspath(stable_dif_path)
 
     opt.seed = 42
     opt.precision = "autocast"

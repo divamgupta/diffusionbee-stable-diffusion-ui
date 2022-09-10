@@ -27,7 +27,9 @@ function start_bridge() {
     python.stdout.on('data', function(data) {
         console.log("Python response: ", data.toString('utf8'));
 
-        win.webContents.send('to_renderer', 'adlg ' + data.toString('utf8'));
+
+        if(! data.toString().includes("___U_P_D_A_T_E___"))
+            win.webContents.send('to_renderer', 'adlg ' + data.toString('utf8'));
         
 
         if (win) {

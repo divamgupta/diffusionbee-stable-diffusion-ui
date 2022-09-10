@@ -1,10 +1,10 @@
 {
-  "name": "StableDiffusionGUI",
+  "name": "DiffusionBee",
   "version": "0.1.0",
   "build_number": "0001",
-  "website": "https://divam.io",
-  "description": "StableDiffusionGUI",
-  "is_dev": true,
+  "website": "https://github.com/divamgupta/diffusionbee-stable-diffusion-ui",
+  "description": "Diffusion Bee - GUI for stable diffusion.",
+  "is_dev": false,
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -47,7 +47,7 @@
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
     "electron": "^13.0.0",
-    "electron-builder": "^23.0.2",
+    "electron-builder": "^23.3.3",
     "electron-devtools-installer": "^3.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",

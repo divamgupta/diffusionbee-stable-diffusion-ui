@@ -81,8 +81,10 @@
             <div v-if="app_state.generated_image" style="margin-top:80px" >
                 <center>
                     <img v-if="app_state.generated_image" :src="'file://' + app_state.generated_image">
+                    <br>
+                    <div @click="save_image" class="l_button">Save Image</div>
                 </center>
-                
+                <br><br><br>
             </div>
             
 
@@ -117,7 +119,7 @@
         </div>
     
     <div class="bottom_float">
-        <p>Stable diffusion requires a lot of RAM. Close other applications for best speed.</p>
+        <p>Stable diffusion requires a lot of RAM. 16GB recommended. Close other applications for best speed.</p>
     </div>
 
     </div>
@@ -142,8 +144,8 @@ export default {
     },
     data() {
         return {
-            img_w : 256, 
-            img_h : 256 , 
+            img_w : 512, 
+            img_h : 512 , 
             dif_steps : 25,
             guidence_scale : 7.5 , 
             is_adv_options : false , 
@@ -163,6 +165,19 @@ export default {
 
             }
            send_to_py("t2im " + JSON.stringify(params)) 
+        } , 
+
+        save_image(){
+            if(!this.app_state.generated_image)
+                return;
+            let out_path = window.ipcRenderer.sendSync('save_dialog', '');
+            if(!out_path)
+                return
+
+            let org_path = this.app_state.generated_image.replaceAll("file://" , "")
+
+            window.ipcRenderer.sendSync('save_file', org_path+"||" +out_path);
+
         }
     },
 }

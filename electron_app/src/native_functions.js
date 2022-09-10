@@ -14,13 +14,24 @@ function bind_window_native_functions(w) {
 let is_windows = process.platform.startsWith('win');
 
 
+
+console.log(require('os').freemem()/(1000000000) + " Is the free memory")
+console.log(require('os').totalmem()/(1000000000) + " Is the total memory")
+
+
 ipcMain.on('save_dialog', (event, arg) => {
 
-     let save_path = dialog.showSaveDialogSync()
+     let save_path = dialog.showSaveDialogSync({
+            filters: [{
+              name: 'Image',
+              extensions: ['png']
+            }]
+          })
 
      event.returnValue = save_path;
 } )
 
+console.log(require('os').release() + " ohoho")
 
 
 
@@ -103,6 +114,15 @@ ipcMain.on('open_url', (event, url) => {
     let website_domain = require('../package.json').website ; 
     url = url.replace("__domain__" , website_domain );
     require('electron').shell.openExternal(url);
+    event.returnValue = '';
+})
+
+
+
+ipcMain.on('save_file', (event, arg) => {
+    let p1 = arg.split("||")[0];
+    let p2 = arg.split("||")[1];
+    require('fs').copyFileSync(p1, p2);
     event.returnValue = '';
 })
 
@@ -257,6 +277,22 @@ ipcMain.on('native_confirm', (event, arg) => {
     }
 
 })
+
+
+
+ipcMain.on('close_window', (event, arg) => {
+
+    if (win) {
+        
+        win.close()
+        event.returnValue = true ;
+    }
+    else{
+        event.returnValue = false ;
+    }
+
+})
+
 
 
 
