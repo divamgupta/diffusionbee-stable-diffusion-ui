@@ -31,6 +31,8 @@ https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download
 2) Enter the text prompt.
 <img width="1162" alt="Screen Shot 2022-09-11 at 12 33 52 PM" src="https://user-images.githubusercontent.com/1890549/189538839-45ac91b1-cd66-4543-9ece-956220d0d769.png">
 
+3) Wait a few seconds to get the generated image
+![image](https://user-images.githubusercontent.com/1890549/189539684-222482fb-63f7-4799-bfc1-005b84508e35.png)
 
 
 
