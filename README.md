@@ -32,9 +32,15 @@ https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download
 <img width="1162" alt="Screen Shot 2022-09-11 at 12 33 52 PM" src="https://user-images.githubusercontent.com/1890549/189538839-45ac91b1-cd66-4543-9ece-956220d0d769.png">
 
 3) Wait a few seconds to get the generated image
+
 ![image](https://user-images.githubusercontent.com/1890549/189539684-222482fb-63f7-4799-bfc1-005b84508e35.png)
 
 
+## Requirements 
+* M1 / M2 Mac
+* 16 GB RAM preferred. It will run a bit slow with 8GB ram.
 
 
-Credits : https://github.com/bfirsh/stable-diffusion/tree/apple-silicon-mps-support
+
+References
+1) https://github.com/bfirsh/stable-diffusion/tree/apple-silicon-mps-support
