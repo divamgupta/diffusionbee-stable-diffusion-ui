@@ -39,6 +39,7 @@ https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download
 ## Requirements 
 * M1 / M2 Mac
 * 16 GB RAM preferred. It will run a bit slow with 8GB ram.
+* MacOS 12.5.1 or later
 
 
 
