@@ -46,7 +46,8 @@ For prompt ideas visit https://arthub.ai
 * 16 GB RAM preferred. It will run a bit slow with 8GB ram.
 * MacOS 12.5.1 or later
 
-
+License : Stable Diffusion is released under the CreativeML OpenRAIL M license : https://github.com/CompVis/stable-diffusion/blob/main/LICENSE
+Diffusion Bee is just a GUI wrapper on top of Stable Diffusion, so all the term of Stable Diffusion are applied on the outputs. 
 
 References
 1) https://github.com/bfirsh/stable-diffusion/tree/apple-silicon-mps-support
