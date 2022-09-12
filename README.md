@@ -5,6 +5,7 @@
 ### Diffusion Bee is the easiest way to run Stable Diffusion locally on your M1 Mac. Comes with a one-click installer. No dependencies or technical knowledge needed.
 
 * Runs locally on your computer no data is sent to the cloud ( other than request to download the weights and checking for software updates ).
+*  *If you like Diffusion Bee, consider checking https://Liner.ai , a one-click tool to train machine learning models*
 
 <br>
 
