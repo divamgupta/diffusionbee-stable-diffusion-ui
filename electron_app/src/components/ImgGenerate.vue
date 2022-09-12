@@ -60,9 +60,9 @@
 
                             <div class="ad_form_box" >
 
-                                <b-form-group label="Guidence Scale:" >
+                                <b-form-group label="Guidance Scale:" >
                                     <b-form-select
-                                      v-model="guidence_scale"
+                                      v-model="guidance_scale"
                                       :options="[1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 7.5 , 8.0]"
                                       required
                                     ></b-form-select>
@@ -147,7 +147,7 @@ export default {
             img_w : 512, 
             img_h : 512 , 
             dif_steps : 25,
-            guidence_scale : 7.5 , 
+            guidance_scale : 7.5 , 
             is_adv_options : false , 
             seed : 42  , 
 
@@ -160,7 +160,7 @@ export default {
                 W : Number(this.img_w) , 
                 H : Number(this.img_h) , 
                 seed : Number(this.seed),
-                scale : this.guidence_scale , 
+                scale : this.guidance_scale , 
                 ddim_steps : this.dif_steps, 
 
             }
