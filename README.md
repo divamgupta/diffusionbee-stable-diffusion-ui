@@ -19,6 +19,9 @@ https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download
 
 For prompt ideas visit https://arthub.ai
 
+Join discord server : https://discord.gg/t6rC5RaJQn
+
+
 ## Features
 * Full data privacy - nothing is sent to the cloud
 * Clean and easy to use UI
