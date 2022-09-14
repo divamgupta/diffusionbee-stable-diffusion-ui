@@ -60,7 +60,7 @@
 
                             <div class="ad_form_box" >
 
-                                <b-form-group label="Guidence Scale:" >
+                                <b-form-group label="Guidance Scale:" >
                                     <b-form-select
                                       v-model="guidence_scale"
                                       :options="[1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 7.5 , 8.0]"
