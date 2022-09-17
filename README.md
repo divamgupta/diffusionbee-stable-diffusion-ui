@@ -1,5 +1,5 @@
 # DiffusionBee – Stable Diffusion GUI App for M1 Mac
-[![Twitter](https://img.shields.io/twitter/url.svg?label=Follow%20%40divamgupta&style=social&url=https%3A%2F%2Ftwitter.com%2Fdivamgupta)](https://twitter.com/divamgupta)
+[![Twitter](https://img.shields.io/twitter/url.svg?label=Follow%20%40divamgupta&style=social&url=https%3A%2F%2Ftwitter.com%2Fdivamgupta)](https://twitter.com/divamgupta) Visit [DiffusionBee.com](https://diffusionbee.com/)
 
 <img width="1162" alt="Screen Shot 2022-09-11 at 12 33 52 PM" src="https://user-images.githubusercontent.com/1890549/189538839-45ac91b1-cd66-4543-9ece-956220d0d769.png">
 
@@ -11,11 +11,7 @@
 * Diffusion Bee is the easiest way to run Stable Diffusion locally on your M1 Mac. Comes with a one-click installer. No dependencies or technical knowledge needed.
 * Runs locally on your computer no data is sent to the cloud (other than request to download the weights and checking for software updates).
 
-If you like Diffusion Bee, consider checking [Liner.ai](https://liner.ai), a one-click tool to train machine learning models.
-
 [![Download](https://user-images.githubusercontent.com/1890549/189538422-52d50488-c1fa-4924-bec6-186c9e0f307b.png)](https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases)
-
-Visit [DiffusionBee.com](https://diffusionbee.com/)
 
 ## Features
 * Full data privacy - nothing is sent to the cloud
@@ -43,3 +39,5 @@ Join [our discord server](https://discord.gg/t6rC5RaJQn)!
 
 ## References
 1) https://github.com/bfirsh/stable-diffusion/tree/apple-silicon-mps-support
+
+If you like Diffusion Bee, consider checking [Liner.ai](https://liner.ai), a one-click tool to train machine learning models.
