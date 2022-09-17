@@ -1,4 +1,4 @@
-# Diffusion Bee - Stable Diffusion GUI App for M1 Mac
+# DiffusionBee – Stable Diffusion GUI App for M1 Mac
 [![Twitter](https://img.shields.io/twitter/url.svg?label=Follow%20%40divamgupta&style=social&url=https%3A%2F%2Ftwitter.com%2Fdivamgupta)](https://twitter.com/divamgupta)
 
 <img width="1162" alt="Screen Shot 2022-09-11 at 12 33 52 PM" src="https://user-images.githubusercontent.com/1890549/189538839-45ac91b1-cd66-4543-9ece-956220d0d769.png">
@@ -27,8 +27,8 @@ Visit [DiffusionBee.com](https://diffusionbee.com/)
 * Runs locally on your computer
 
 ## Requirements 
-* M1 / M2 Mac
-* 16 GB RAM preferred. It will run a bit slow with 8GB ram.
+* M1/M2 Mac
+* 16 GB RAM preferred. It will run a bit slow with 8 GB ram.
 * MacOS 12.5.1 or later
 
 ## License
@@ -39,7 +39,7 @@ Diffusion Bee is just a GUI wrapper on top of Stable Diffusion, so all the term 
 
 See [documentation](docs/).
 
-Join our discord server: https://discord.gg/t6rC5RaJQn
+Join [our discord server](https://discord.gg/t6rC5RaJQn)!
 
 ## References
 1) https://github.com/bfirsh/stable-diffusion/tree/apple-silicon-mps-support
