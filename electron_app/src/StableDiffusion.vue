@@ -80,7 +80,7 @@ export default {
         } ,
 
         interupt(){
-            send_to_py("t2im __STOP__") 
+            send_to_py("t2im __stop__") 
         },
 
         text_to_img(prompt_params, callbacks){

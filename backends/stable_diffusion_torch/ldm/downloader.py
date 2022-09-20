@@ -83,7 +83,9 @@ class ProgressBarDownloader(object):
         # if(not verify_ssl) and md5_checksum is None:
         #     raise ValueError(
         #         "If you set verify_ssl=False, then you should have a md5 checksum")
-
+        print("sdbk mlpr %d"%int(-1) )
+        print("sdbk mltl Checking Model")
+        
         if (not dont_use_cache) and self.is_already_downloaded(
                 out_fname=out_fname, md5_checksum=md5_checksum):
             if extract_zip:
@@ -95,9 +97,9 @@ class ProgressBarDownloader(object):
                 return out_abs_path
 
         with open(out_abs_path, "wb") as f:
+            print("sdbk mltl " + self.title)
             response = requests.get(url, stream=True, verify=verify_ssl)
             total_length = response.headers.get('content-length')
-            print("utds loading_msg___U_P_D_A_T_E___\"%s\""%(self.title) )
 
 
             if total_length is None:  # no content length header
@@ -113,20 +115,19 @@ class ProgressBarDownloader(object):
 
                     if time.time() - last_time > 0.1:
                         last_time = time.time()
-                        print("utds loading_percentage___U_P_D_A_T_E___"+str(int(done_percentage)) )
-                        print("utds loading_desc___U_P_D_A_T_E___\"%s\""%("%.2fMB out of %.2fMB"%(dl/1000000 , total_length/1000000)) )
-                
-        print("utds loading_msg___U_P_D_A_T_E___\"Checking Model\"" )
-        print("utds loading_desc___U_P_D_A_T_E___\"\"")
-                    
+                        print("sdbk mlpr %d"%int(done_percentage) ) # model loading percentage
+                        print("sdbk mlms \"%s\""%("%.2fMB out of %.2fMB"%(dl/1000000 , total_length/1000000) ))
+
+        print("sdbk mlpr %d"%int(-1) )
+        print("sdbk mltl Checking Model")
+        print("sdbk mlms")
 
         if md5_checksum is not None:
             assert(get_md5_file(out_abs_path) ==
                    md5_checksum), "The checksum for downloaded file failed."
 
         if extract_zip:
-            print("utds loading_percentage___U_P_D_A_T_E___-1" ) 
-            print("utds loading_msg___U_P_D_A_T_E___\"\"Extracting" )
+            print("sdbk mltl Extracting Model")
 
             assert out_abs_path.lower().endswith(".zip")
             with zipfile.ZipFile(out_abs_path, 'r') as zip_ref:
@@ -136,7 +137,5 @@ class ProgressBarDownloader(object):
             out_abs_path = out_abs_path.replace(".zip", "")
             dest = shutil.move(extract_path, out_abs_path)
 
-        print("utds loading_msg___U_P_D_A_T_E___\"\"" )
-        print("utds loading_desc___U_P_D_A_T_E___\"\"")
 
         return out_abs_path

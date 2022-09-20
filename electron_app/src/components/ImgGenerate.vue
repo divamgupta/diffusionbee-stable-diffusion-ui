@@ -122,7 +122,8 @@
                     
                 </div>
                 <div v-else  class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
-                    <div class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stop</div>
+                    <div v-if="is_stopping" class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stopping ...</div>
+                    <div v-else class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stop</div>
 
                 </div>
             </div>
@@ -207,7 +208,8 @@ export default {
             generated_images : [],
             backend_error : "",
             done_percentage : -1,
-            modifiers : require("../modifiers.json")
+            is_stopping : false,
+            modifiers : require("../modifiers.json"),
         };
         
     },
@@ -254,6 +256,8 @@ export default {
                 },
             }
 
+            this.is_stopping = false;
+
 
            if(this.stable_diffusion)
                 this.stable_diffusion.text_to_img(params, callbacks);
@@ -264,6 +268,7 @@ export default {
         },
 
         stop_generation(){
+            this.is_stopping = true;
             this.stable_diffusion.interupt();
         },
 

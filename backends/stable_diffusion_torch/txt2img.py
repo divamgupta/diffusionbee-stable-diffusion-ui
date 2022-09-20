@@ -140,95 +140,96 @@ def process_opt(opt, model):
 
     seed_everything(opt.seed)
 
-    if opt.plms:
-        sampler = PLMSSampler(model)
-    else:
-        sampler = DDIMSampler(model)
+    for _ in range(opt.num_imgs):
 
-    os.makedirs(opt.outdir, exist_ok=True)
-    outpath = opt.outdir
+        if opt.plms:
+            sampler = PLMSSampler(model)
+        else:
+            sampler = DDIMSampler(model)
 
-    wm = "stable_diffusion_gui"
-    wm_encoder = WatermarkEncoder()
-    wm_encoder.set_watermark('bytes', wm.encode('utf-8'))
+        os.makedirs(opt.outdir, exist_ok=True)
+        outpath = opt.outdir
 
-    batch_size = opt.n_samples
-    n_rows = opt.n_rows if opt.n_rows > 0 else batch_size
-        
-    prompt = opt.prompt
-    assert prompt is not None
-    data = [batch_size * [prompt]]
+        wm = "stable_diffusion_gui"
+        wm_encoder = WatermarkEncoder()
+        wm_encoder.set_watermark('bytes', wm.encode('utf-8'))
 
-    sample_path = os.path.join(outpath, "samples")
-    os.makedirs(sample_path, exist_ok=True)
-    base_count = len(os.listdir(sample_path))
-    grid_count = len(os.listdir(outpath)) - 1
+        batch_size = opt.n_samples
+        n_rows = opt.n_rows if opt.n_rows > 0 else batch_size
+            
+        prompt = opt.prompt
+        assert prompt is not None
+        data = [batch_size * [prompt]]
 
-    start_code = None
-    if opt.fixed_code:
-        start_code = torch.randn(
-            [opt.n_samples, opt.C, opt.H // opt.f, opt.W // opt.f], device="cpu"
-        ).to(torch.device(device))
+        sample_path = os.path.join(outpath, "samples")
+        os.makedirs(sample_path, exist_ok=True)
+        base_count = len(os.listdir(sample_path))
+        grid_count = len(os.listdir(outpath)) - 1
 
-    precision_scope = autocast if opt.precision=="autocast" else nullcontext
-    if device.type == 'mps':
-        precision_scope = nullcontext # have to use f32 on mps
-    with torch.no_grad():
-        with precision_scope(device.type):
-            with model.ema_scope():
-                tic = time.time()
-                for n in trange(opt.n_iter, desc="Sampling"):
-                    for prompts in tqdm(data, desc="data"):
+        start_code = None
+        if opt.fixed_code:
+            start_code = torch.randn(
+                [opt.n_samples, opt.C, opt.H // opt.f, opt.W // opt.f], device="cpu"
+            ).to(torch.device(device))
 
-                        uc = None
-                        if opt.scale != 1.0:
-                            uc = model.get_learned_conditioning(batch_size * [""])
-                        if isinstance(prompts, tuple):
-                            prompts = list(prompts)
-                        c = model.get_learned_conditioning(prompts)
-                        shape = [opt.C, opt.H // opt.f, opt.W // opt.f]
-                        samples_ddim, qqq = sampler.sample(S=opt.ddim_steps,
-                                                         conditioning=c,
-                                                         batch_size=opt.n_samples,
-                                                         shape=shape,
-                                                         verbose=False,
-                                                         unconditional_guidance_scale=opt.scale,
-                                                         unconditional_conditioning=uc,
-                                                         eta=opt.ddim_eta,
-                                                         x_T=start_code)
+        precision_scope = autocast if opt.precision=="autocast" else nullcontext
+        if device.type == 'mps':
+            precision_scope = nullcontext # have to use f32 on mps
+        with torch.no_grad():
+            with precision_scope(device.type):
+                with model.ema_scope():
+                    tic = time.time()
+                    for n in trange(opt.n_iter, desc="Sampling"):
+                        for prompts in tqdm(data, desc="data"):
 
-                        if qqq is None and samples_ddim is None: #bad code to detect stop within the module
-                            return 
+                            uc = None
+                            if opt.scale != 1.0:
+                                uc = model.get_learned_conditioning(batch_size * [""])
+                            if isinstance(prompts, tuple):
+                                prompts = list(prompts)
+                            c = model.get_learned_conditioning(prompts)
+                            shape = [opt.C, opt.H // opt.f, opt.W // opt.f]
+                            samples_ddim, qqq = sampler.sample(S=opt.ddim_steps,
+                                                            conditioning=c,
+                                                            batch_size=opt.n_samples,
+                                                            shape=shape,
+                                                            verbose=False,
+                                                            unconditional_guidance_scale=opt.scale,
+                                                            unconditional_conditioning=uc,
+                                                            eta=opt.ddim_eta,
+                                                            x_T=start_code)
 
-                        x_samples_ddim = model.decode_first_stage(samples_ddim)
-                        x_samples_ddim = torch.clamp((x_samples_ddim + 1.0) / 2.0, min=0.0, max=1.0)
-                        x_samples_ddim = x_samples_ddim.cpu().permute(0, 2, 3, 1).numpy()
+                            if qqq is None and samples_ddim is None: #bad code to detect stop within the module
+                                return 
 
-                        x_checked_image = x_samples_ddim
+                            x_samples_ddim = model.decode_first_stage(samples_ddim)
+                            x_samples_ddim = torch.clamp((x_samples_ddim + 1.0) / 2.0, min=0.0, max=1.0)
+                            x_samples_ddim = x_samples_ddim.cpu().permute(0, 2, 3, 1).numpy()
 
-                        x_checked_image_torch = torch.from_numpy(x_checked_image).permute(0, 3, 1, 2)
+                            x_checked_image = x_samples_ddim
 
-                        if not opt.skip_save:
-                            for x_sample in x_checked_image_torch:
-                                x_sample = 255. * rearrange(x_sample.cpu().numpy(), 'c h w -> h w c')
-                                img = Image.fromarray(x_sample.astype(np.uint8))
-                                img = put_watermark(img, wm_encoder)
-                                impath = os.path.join(sample_path, f"{base_count:05}.png")
-                                img.save(impath)
-                                print("utds generated_image___U_P_D_A_T_E___\"%s\""%(impath) ) 
-                                base_count += 1
+                            x_checked_image_torch = torch.from_numpy(x_checked_image).permute(0, 3, 1, 2)
 
-                         
-                toc = time.time()
+                            if not opt.skip_save:
+                                for x_sample in x_checked_image_torch:
+                                    x_sample = 255. * rearrange(x_sample.cpu().numpy(), 'c h w -> h w c')
+                                    img = Image.fromarray(x_sample.astype(np.uint8))
+                                    img = put_watermark(img, wm_encoder)
+                                    impath = os.path.join(sample_path, str(str(time.time())) + f"_{base_count:05}.png")
+                                    img.save(impath)
+                                    print("sdbk nwim %s"%(impath) ) # new image generated
+                                    base_count += 1
 
-    print(f"Your samples are ready and waiting for you here: \n{outpath} \n"
-          f" \nEnjoy.")
+                            
+                    toc = time.time()
+
+        print(f"Your samples are ready and waiting for you here: \n{outpath} \n"
+            f" \nEnjoy.")
 
 
 def main():
 
-    print("utds loading_msg___U_P_D_A_T_E___\" Loading model \"" ) 
-    print("utds loading_percentage___U_P_D_A_T_E___-1" )
+    print("sdbk mltl Loading Model")
 
     stable_dif_path = ProgressBarDownloader(title="Downloading Model 1/2").download(
             url="https://me.cmdr2.org/stable-diffusion-ui/sd-v1-4.ckpt",
@@ -237,10 +238,6 @@ def main():
             extract_zip=False,
         )
 
-    print("utds loading_msg___U_P_D_A_T_E___\" Loading model \"" ) 
-    print("utds loading_percentage___U_P_D_A_T_E___-1" ) 
-
-
     ProgressBarDownloader(title="Downloading Model 2/2").download(
             url="https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download/weights/clip_transformer.zip",
             md5_checksum="2f6fdac77680b35b257e3e594c0ff355",
@@ -248,9 +245,7 @@ def main():
             extract_zip=True,
         )
 
-
-    print("utds loading_desc___U_P_D_A_T_E___\"\"")
-
+    print("sdbk mltl Loading Model")
 
 
     opt = Opt()
@@ -269,6 +264,7 @@ def main():
     opt.n_samples = 1
     opt.n_rows = 1
     opt.scale = 7.5
+    opt.num_imgs = 1
 
     opt.config = os.path.abspath(
             os.path.join(
@@ -283,10 +279,6 @@ def main():
     opt.precision = "autocast"
 
     #TODO downlaod model if not downlaoded
-
-    print("utds loading_msg___U_P_D_A_T_E___\" Loading model \"" ) 
-    print("utds loading_percentage___U_P_D_A_T_E___-1" ) 
-
     
    
     config = OmegaConf.load(f"{opt.config}")
@@ -294,13 +286,11 @@ def main():
 
     model = model.to(device)
 
-    print("utds is_model_loaded___U_P_D_A_T_E___true") # model loaded
-    print("utds loading_msg___U_P_D_A_T_E___\"\"" ) 
+    print("sdbk mdld") # model loaded
 
 
     while True:
-        print("utds is_textbox_avail___U_P_D_A_T_E___true") # model loaded # disable input
-        print("utds loading_msg___U_P_D_A_T_E___\"\"") 
+        print("sdbk inrd") # input ready
 
         inp_str = input()
 
@@ -313,22 +303,16 @@ def main():
         try:
             d = json.loads(inp_str)
 
-            print("utds is_textbox_avail___U_P_D_A_T_E___false") # model loaded # disable input
-            print("utds loading_msg___U_P_D_A_T_E___\"Generating Image\"") 
-            print("utds generated_image___U_P_D_A_T_E___\"\"") 
-            print("utds backedn_error___U_P_D_A_T_E___\"\"") 
+
 
             new_opt = copy.deepcopy(opt)
             for key,value in d.items():
                 setattr(new_opt,key,value)
-            print("utds is_textbox_avail___U_P_D_A_T_E___false") # model loaded # disable input
-            print("utds loading_msg___U_P_D_A_T_E___\"Generating Image\"") 
-            print("utds generated_image___U_P_D_A_T_E___\"\"") 
-            print("utds backedn_error___U_P_D_A_T_E___\"\"") 
-            print("utds loading_percentage___U_P_D_A_T_E___"+str(0) ) 
+            
+            print("sdbk inwk") # working on the input
             process_opt(new_opt, model)
         except Exception as e:
-            print("utds backedn_error___U_P_D_A_T_E___\"%s\""%(str(e))) 
+            print("sbdk errr %s"%(str(e)))
             print("py2b eror " + str(e))
 
         
