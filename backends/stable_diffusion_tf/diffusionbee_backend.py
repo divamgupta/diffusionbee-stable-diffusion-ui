@@ -36,7 +36,7 @@ def process_opt(d, generator):
             num_steps=d['ddim_steps'],
             unconditional_guidance_scale=d['scale'],
             temperature=1,
-            batch_size=1,
+            batch_size=1
         )
         if img is None:
             return

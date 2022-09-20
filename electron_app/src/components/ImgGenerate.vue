@@ -171,7 +171,7 @@
         </div>
     
     <div class="bottom_float">
-        <p>Stable diffusion requires a lot of RAM. 16GB recommended. Close other applications for best speed.</p>
+        <p>Please close other applications for best speed.</p>
     </div>
 
     </div>
