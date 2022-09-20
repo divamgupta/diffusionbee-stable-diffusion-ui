@@ -12,8 +12,8 @@ function start_bridge() {
     console.log("starting briddddd")
     const fs = require('fs')
 
-    if (fs.existsSync( '../stable-diffusion/txt2img.py' )) {
-        python = require('child_process').spawn('python3', ['../stable-diffusion/txt2img.py' ]);
+    if (fs.existsSync( '../stable-diffusion/fake_backend.py' )) {
+        python = require('child_process').spawn('python3', ['../stable-diffusion/fake_backend.py' ]);
     }
     else{
         const path = require('path');
@@ -28,8 +28,11 @@ function start_bridge() {
         console.log("Python response: ", data.toString('utf8'));
 
 
-        if(! data.toString().includes("___U_P_D_A_T_E___"))
-            win.webContents.send('to_renderer', 'adlg ' + data.toString('utf8'));
+        if(! data.toString().includes("sdbk ")){
+            if(win)
+                win.webContents.send('to_renderer', 'adlg ' + data.toString('utf8'));
+        }
+           
         
 
         if (win) {
@@ -55,7 +58,8 @@ function start_bridge() {
 
     python.stderr.on('data', (data) => {
         console.error(`stderr: ${data}`);
-         win.webContents.send('to_renderer', 'adlg ' + data.toString('utf8') );
+        if(win)
+             win.webContents.send('to_renderer', 'adlg ' + data.toString('utf8') );
     });
 
     python.on('close', (code) => {

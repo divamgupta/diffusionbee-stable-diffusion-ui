@@ -2,6 +2,7 @@ import time
 import sys
 import json
 import copy
+import random
 
 class Unbuffered(object):
     def __init__(self, stream):
@@ -24,31 +25,40 @@ sys.stdout = Unbuffered(sys.stdout)
 time.sleep(1)
 
 
-print("utds loading_msg___U_P_D_A_T_E___\" Loading model \"" ) 
-print("utds loading_percentage___U_P_D_A_T_E___-1" ) 
-
-time.sleep(4)
-
-print("utds is_model_loaded___U_P_D_A_T_E___true") # model loaded
-print("utds loading_msg___U_P_D_A_T_E___\"\"" ) 
+print("sdbk mltl downloading model")
+for i in range(100):
+    time.sleep(0.06)
+    print("sdbk mlpr %d"%i ) # model loading percentage
+    print("sdbk mlms done %s of 100.0"%i)
 
 
-def process_opt():
-	for i in range(100):
-		print("utds loading_percentage___U_P_D_A_T_E___"+str(i) ) 
-		time.sleep(0.1)
-	impath = "/Users/divamgupta/Downloads/aaaa.png"
-	print("utds generated_image___U_P_D_A_T_E___\"%s\""%(impath) )
+print("sdbk mdld") # model loaded
 
 
+def process_opt(opts):
+    if random.randint(0,10) > 7:
+        print("sdbk errr just a random error lol")
+        return
+
+    for _ in range(opts['num_imgs']):
+        for i in range(0,100,5):
+            print("sdbk dnpr "+str(i) ) # done percentage
+            time.sleep(0.1)
+        impath = "/Users/divamgupta/Downloads/output_fork.png?%d"%random.randint(0,10000)
+
+        
+
+        print("sdbk nwim %s"%(impath) ) # new image generated
+    
 while True:
-        print("utds is_textbox_avail___U_P_D_A_T_E___true") # model loaded # disable input
-        print("utds loading_msg___U_P_D_A_T_E___\"\"") 
+        print("sdbk inrd") # input ready
 
         inp_str = input()
 
         if inp_str.strip() == "":
             continue
+        else:
+            print("sbdk errr The string is blank")
 
         if not "b2py t2im" in inp_str:
             continue
@@ -56,11 +66,7 @@ while True:
         try:
             d = json.loads(inp_str)
            
-            print("utds is_textbox_avail___U_P_D_A_T_E___false") # model loaded # disable input
-            print("utds loading_msg___U_P_D_A_T_E___\"Generating Image\"") 
-            print("utds generated_image___U_P_D_A_T_E___\"\"") 
-            print("utds backedn_error___U_P_D_A_T_E___\"\"") 
-            process_opt( )
+            print("sdbk inwk") # working on the input
+            process_opt(d)
         except Exception as e:
-            print("utds backedn_error___U_P_D_A_T_E___\"%s\""%(str(e))) 
-            print("py2b eror " + str(e))
+            print("sbdk errr %s"%(str(e))) 

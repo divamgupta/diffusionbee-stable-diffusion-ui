@@ -36,4 +36,6 @@ function resolve_asset_illustration(name) {
         return "file://" + name;
 }
 
+
+
 export { compute_n_cols ,resolve_asset_illustration , simple_hash }
