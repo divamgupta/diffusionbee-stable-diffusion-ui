@@ -1,41 +1,30 @@
 #!/bin/bash
-wget -O models/first_stage_models/kl-f4/model.zip https://ommer-lab.com/files/latent-diffusion/kl-f4.zip
-wget -O models/first_stage_models/kl-f8/model.zip https://ommer-lab.com/files/latent-diffusion/kl-f8.zip
-wget -O models/first_stage_models/kl-f16/model.zip https://ommer-lab.com/files/latent-diffusion/kl-f16.zip
-wget -O models/first_stage_models/kl-f32/model.zip https://ommer-lab.com/files/latent-diffusion/kl-f32.zip
-wget -O models/first_stage_models/vq-f4/model.zip https://ommer-lab.com/files/latent-diffusion/vq-f4.zip
-wget -O models/first_stage_models/vq-f4-noattn/model.zip https://ommer-lab.com/files/latent-diffusion/vq-f4-noattn.zip
-wget -O models/first_stage_models/vq-f8/model.zip https://ommer-lab.com/files/latent-diffusion/vq-f8.zip
-wget -O models/first_stage_models/vq-f8-n256/model.zip https://ommer-lab.com/files/latent-diffusion/vq-f8-n256.zip
-wget -O models/first_stage_models/vq-f16/model.zip https://ommer-lab.com/files/latent-diffusion/vq-f16.zip
 
+# Exit on any error
+set -e
 
+mkdir -p models/first_stage_models
+cd models/first_stage_models/
 
-cd models/first_stage_models/kl-f4
-unzip -o model.zip
+datasets=(
+  "kl-f4"
+  "kl-f8"
+  "kl-f16"
+  "kl-f32"
+  "vq-f4"
+  "vq-f4-noattn"
+  "vq-f8"
+  "vq-f8-n256"
+  "vq-f16"
+)
 
-cd ../kl-f8
-unzip -o model.zip
-
-cd ../kl-f16
-unzip -o model.zip
-
-cd ../kl-f32
-unzip -o model.zip
-
-cd ../vq-f4
-unzip -o model.zip
-
-cd ../vq-f4-noattn
-unzip -o model.zip
-
-cd ../vq-f8
-unzip -o model.zip
-
-cd ../vq-f8-n256
-unzip -o model.zip
-
-cd ../vq-f16
-unzip -o model.zip
-
-cd ../..
+for dataset in "${datasets[@]}"
+do
+  mkdir -p "${dataset}"
+  cd "${dataset}"
+  if [ ! -f model.zip ] ; then
+    wget "https://ommer-lab.com/files/latent-diffusion/${dataset}" -O model.zip
+    unzip -o model.zip
+  fi
+  cd ..
+done

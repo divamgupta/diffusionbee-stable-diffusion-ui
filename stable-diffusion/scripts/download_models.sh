@@ -1,49 +1,51 @@
 #!/bin/bash
-wget -O models/ldm/celeba256/celeba-256.zip https://ommer-lab.com/files/latent-diffusion/celeba.zip
-wget -O models/ldm/ffhq256/ffhq-256.zip https://ommer-lab.com/files/latent-diffusion/ffhq.zip
-wget -O models/ldm/lsun_churches256/lsun_churches-256.zip https://ommer-lab.com/files/latent-diffusion/lsun_churches.zip
-wget -O models/ldm/lsun_beds256/lsun_beds-256.zip https://ommer-lab.com/files/latent-diffusion/lsun_bedrooms.zip
-wget -O models/ldm/text2img256/model.zip https://ommer-lab.com/files/latent-diffusion/text2img.zip
-wget -O models/ldm/cin256/model.zip https://ommer-lab.com/files/latent-diffusion/cin.zip
-wget -O models/ldm/semantic_synthesis512/model.zip https://ommer-lab.com/files/latent-diffusion/semantic_synthesis.zip
-wget -O models/ldm/semantic_synthesis256/model.zip https://ommer-lab.com/files/latent-diffusion/semantic_synthesis256.zip
-wget -O models/ldm/bsr_sr/model.zip https://ommer-lab.com/files/latent-diffusion/sr_bsr.zip
-wget -O models/ldm/layout2img-openimages256/model.zip https://ommer-lab.com/files/latent-diffusion/layout2img_model.zip
-wget -O models/ldm/inpainting_big/model.zip https://ommer-lab.com/files/latent-diffusion/inpainting_big.zip
 
+# Exit on any error
+set -e
+datasets=(
+  "celeba"
+  "ffhq"
+  "lsun_churches"
+  "lsun_bedrooms"
+)
 
+mkdir -p ./models/ldm/
+cd ./models/ldm
 
-cd models/ldm/celeba256
-unzip -o celeba-256.zip
+# Download datasets & unzip them
+for dataset in "${datasets[@]}" ; do
+  if [ ! -f "${dataset}/${dataset}-256.zip" ] ; then
+    mkdir -p "${dataset}"
+    wget "https://ommer-lab.com/files/latent-diffusion/${dataset}.zip" -O "${dataset}/${dataset}-256.zip"
+    cd "${dataset}"
+    unzip "${dataset}-256.zip"
+    cd ..
+  fi
+done
 
-cd ../ffhq256
-unzip -o ffhq-256.zip
+# Hosted model name vs target directory for downloading
+models=(
+  "text2img::text2img256"
+  "cin::cin256"
+  "semantic_synthesis::semantic_synthesis512"
+  "semantic_synthesis256::semantic_synthesis256"
+  "sr_bsr::bsr_sr"
+  "layout2img_model::layout2img-openimages256"
+  "inpainting_big::inpainting_big"
+)
 
-cd ../lsun_churches256
-unzip -o lsun_churches-256.zip
+# Download models & unzip them
+for index in "${models[@]}" ; do
+  KEY="${index%%::*}"
+  VALUE="${index##*::}"
 
-cd ../lsun_beds256
-unzip -o lsun_beds-256.zip
+  echo "${KEY} -> ${VALUE}"
+  if [ ! -f "${VALUE}/model.zip" ] ; then
+    mkdir -p "${VALUE}"
+    wget "https://ommer-lab.com/files/latent-diffusion/${KEY}.zip" -O "${VALUE}/model.zip"
+    cd ${VALUE}
+    unzip model.zip
+    cd ..
+  fi
+done
 
-cd ../text2img256
-unzip -o model.zip
-
-cd ../cin256
-unzip -o model.zip
-
-cd ../semantic_synthesis512
-unzip -o model.zip
-
-cd ../semantic_synthesis256
-unzip -o model.zip
-
-cd ../bsr_sr
-unzip -o model.zip
-
-cd ../layout2img-openimages256
-unzip -o model.zip
-
-cd ../inpainting_big
-unzip -o model.zip
-
-cd ../..
