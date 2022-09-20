@@ -34,6 +34,7 @@
                                 <b-form-group inline  label="" style="margin-bottom: 6px;" >
                                     <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Num Images: </label>
                                     <b-form-select
+                                    style="border-color:rgba(0,0,0,0.1)"
                                     v-model="num_imgs"
                                     :options="[1,2,3,4,5,6,7,8,9,10,11,12,13,14]"
                                     required
@@ -44,6 +45,7 @@
                                 <b-form-group inline label=""  style="margin-bottom: 6px;">
                                     <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Image Height: </label>
                                     <b-form-select
+                                    style="border-color:rgba(0,0,0,0.1)"
                                     v-model="img_h"
                                     :options="[128*2 , 128*3 , 128*4 , 128*5 , 128*6, ]"
                                     required
@@ -53,6 +55,7 @@
                                 <b-form-group inline label=""  style="margin-bottom: 6px;">
                                     <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Image Width: </label>
                                     <b-form-select
+                                    style="border-color:rgba(0,0,0,0.1)"
                                     v-model="img_w"
                                     :options="[128*2 , 128*3 , 128*4 , 128*5 , 128*6, ]"
                                     required
@@ -62,6 +65,7 @@
                                 <b-form-group inline label=""  style="margin-bottom: 6px;">
                                 <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Steps: </label>
                                 <b-form-select
+                                    style="border-color:rgba(0,0,0,0.1)"
                                     v-model="dif_steps"
                                     :options="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49 , 50]"
                                     required
@@ -71,6 +75,7 @@
                                 <b-form-group inline  label="" style="margin-bottom: 6px;" >
                                 <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Guidance Scale: </label>
                                 <b-form-select
+                                    style="border-color:rgba(0,0,0,0.1)"
                                     v-model="guidence_scale"
                                     :options="[1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 7.5 , 8.0]"
                                     required
@@ -83,6 +88,37 @@
                         </b-dropdown>
                     </div>
 
+
+                    <div style="float:right; margin-top: -5px; " >
+                        <b-dropdown id="dropdown-form" variant="link" ref="dropdown" toggle-class="text-decoration-none" no-caret >
+                        
+                            <template #button-content>
+                                <div class="l_button"  style="margin-right: -20px;" >Styles</div>
+                            </template>
+
+                            <b-dropdown-form style="width: 540px ; ">
+
+                                <div style="max-height: calc(100vh - 300px); overflow-y: scroll;">
+                                    <div v-for="modifier in modifiers" :key="modifier[0]">
+                                        <p>{{modifier[0]}}</p>
+                                        <div v-for="tag in modifier[1]" @click="add_style(tag)" :key="tag" class="l_button button_small button_colored" style="float:left; margin-bottom: 7px;">{{tag}}</div>
+
+                                        <div style="clear: both; display: table; margin-bottom: 3px;"> </div>
+                                        <hr>
+                                    </div>
+
+                                    <p>Source : cmdr2</p>
+                                </div>
+
+                                
+  
+                            </b-dropdown-form>
+                        </b-dropdown>
+                    </div>
+
+                    <div class="l_button button_medium" style="float:right ;margin-right: -10px; margin-top: -1px;" @click="open_arthub">Prompt Ideas</div>
+
+
                     
                 </div>
                 <div v-else  class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
@@ -94,7 +130,7 @@
 
             <div v-if="generated_images.length == 1" >
                 <center>
-                    <img  class="gal_img" v-if="generated_images[0]" :src="'file://' + generated_images[0]" style=" height: calc(100vh - 360px ); margin-top: 60px;">
+                    <img  class="gal_img" v-if="generated_images[0]" :src="'file://' + generated_images[0]" style=" height: calc(100vh - 380px ); margin-top: 60px;">
                     <br>
                     <div @click="save_image(generated_images[0])" class="l_button">Save Image</div>
                 </center>
@@ -171,7 +207,9 @@ export default {
             generated_images : [],
             backend_error : "",
             done_percentage : -1,
+            modifiers : require("../modifiers.json")
         };
+        
     },
     methods: {
         generete_from_prompt(){
@@ -221,8 +259,16 @@ export default {
                 this.stable_diffusion.text_to_img(params, callbacks);
         } , 
 
+        open_arthub(){
+            window.ipcRenderer.sendSync('open_url', "https://arthub.ai");
+        },
+
         stop_generation(){
             this.stable_diffusion.interupt();
+        },
+
+        add_style(tag){
+            this.prompt += ", " + tag;
         },
 
         save_image(generated_image){

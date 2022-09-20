@@ -12,12 +12,14 @@ function start_bridge() {
     console.log("starting briddddd")
     const fs = require('fs')
 
-    if (fs.existsSync( '../stable-diffusion/fake_backend.py' )) {
-        python = require('child_process').spawn('python3', ['../stable-diffusion/fake_backend.py' ]);
+    let script_path = process.env.PY_SCRIPT || "./src/fake_backend.py"; 
+
+    if (fs.existsSync(script_path)) {
+        python = require('child_process').spawn('python3', [script_path]);
     }
     else{
         const path = require('path');
-        let backend_path =  path.join(path.dirname(__dirname), 'core' , 'txt2img' );
+        let backend_path =  path.join(path.dirname(__dirname), 'core' , 'diffusionbee_backend' );
         python = require('child_process').spawn( backend_path  );
     }
     
