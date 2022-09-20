@@ -10,6 +10,7 @@ from .diffusion_model import UNetModel
 from .clip_encoder import CLIPTextTransformer
 from .clip_tokenizer import SimpleTokenizer
 from .constants import _UNCONDITIONAL_TOKENS, _ALPHAS_CUMPROD
+from .stdin_input import is_avail, get_input
 
 MAX_TEXT_LEN = 77
 
@@ -64,9 +65,18 @@ class Text2Image:
         )
 
         # Diffusion stage
+        ii = 0
         progbar = tqdm(list(enumerate(timesteps))[::-1])
         for index, timestep in progbar:
+
+            if is_avail():
+                if "__stop__" in get_input():
+                    return None
+
             progbar.set_description(f"{index:3d} {timestep:3d}")
+            percentage = 100*ii/len(timesteps)
+            ii += 1
+            print("sdbk dnpr "+str(percentage) ) # done percentage 
             e_t = self.get_model_output(
                 latent,
                 timestep,
@@ -106,10 +116,10 @@ class Text2Image:
         timesteps = np.array([t])
         t_emb = self.timestep_embedding(timesteps)
         t_emb = np.repeat(t_emb, batch_size, axis=0)
-        unconditional_latent = self.diffusion_model.predict_on_batch(
+        unconditional_latent = self.diffusion_model(
             [latent, t_emb, unconditional_context]
         )
-        latent = self.diffusion_model.predict_on_batch([latent, t_emb, context])
+        latent = self.diffusion_model([latent, t_emb, context])
         return unconditional_latent + unconditional_guidance_scale * (
             latent - unconditional_latent
         )
