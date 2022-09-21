@@ -4,7 +4,7 @@
   "build_number": "0001",
   "website": "https://diffusionbee.com",
   "description": "Diffusion Bee - GUI for stable diffusion.",
-  "is_dev": true,
+  "is_dev": false,
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
