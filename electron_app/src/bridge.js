@@ -31,7 +31,7 @@ function start_bridge() {
 
 
         if(! data.toString().includes("sdbk ")){
-            if(win)
+            if(win && !is_app_closing )
                 win.webContents.send('to_renderer', 'adlg ' + data.toString('utf8'));
         }
            
@@ -46,7 +46,8 @@ function start_bridge() {
             if( splitted.length > 1 ){
                 for (var i = 0; i < splitted.length -1 ; i++) {
                     if (splitted[i].length > 0)
-                        win.webContents.send('to_renderer', 'py2b ' + splitted[i]);
+                        if(win && !is_app_closing )
+                            win.webContents.send('to_renderer', 'py2b ' + splitted[i]);
                 }
             }
 
@@ -60,7 +61,7 @@ function start_bridge() {
 
     python.stderr.on('data', (data) => {
         console.error(`stderr: ${data}`);
-        if(win)
+        if(win && !is_app_closing )
              win.webContents.send('to_renderer', 'adlg ' + data.toString('utf8') );
     });
 
@@ -71,14 +72,19 @@ function start_bridge() {
         // }
 
         if(is_app_closing){
-            if (win)
+            if (win){
                  app.exit(1);
+            }
             return;
         }
 
         dialog.showMessageBox({ message: "Backend quit unexpectedly" });
         if (win)
+        {
+            is_app_closing = true;
             app.exit(1);
+        }
+            
 
     });
 
