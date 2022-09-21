@@ -7,7 +7,6 @@ import ftfy
 import regex as re
 
 import tensorflow as tf
-from tensorflow import keras
 
 
 @lru_cache()
@@ -18,7 +17,14 @@ def default_bpe():
     if os.path.exists(p):
         return p
     else:
-        return keras.utils.get_file(
+        p2 = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),  ".." , ".." ,"bpe_simple_vocab_16e6.txt.gz"
+        )
+        p2 = os.path.abspath(p2)
+        if os.path.exists(p2):
+            return p2
+        assert False
+        return tf.keras.utils.get_file(
             "bpe_simple_vocab_16e6.txt.gz",
             "https://github.com/openai/CLIP/blob/main/clip/bpe_simple_vocab_16e6.txt.gz?raw=true",
         )

@@ -1,25 +1,24 @@
 import tensorflow as tf
-from tensorflow import keras
 import tensorflow_addons as tfa
 
 from .layers import PaddedConv2D, apply_seq, td_dot, GEGLU
 
 
-class ResBlock(keras.layers.Layer):
+class ResBlock(tf.keras.layers.Layer):
     def __init__(self, channels, out_channels):
         super().__init__()
         self.in_layers = [
             tfa.layers.GroupNormalization(epsilon=1e-5),
-            keras.activations.swish,
+            tf.keras.activations.swish,
             PaddedConv2D(out_channels, 3, padding=1),
         ]
         self.emb_layers = [
-            keras.activations.swish,
-            keras.layers.Dense(out_channels),
+            tf.keras.activations.swish,
+            tf.keras.layers.Dense(out_channels),
         ]
         self.out_layers = [
             tfa.layers.GroupNormalization(epsilon=1e-5),
-            keras.activations.swish,
+            tf.keras.activations.swish,
             PaddedConv2D(out_channels, 3, padding=1),
         ]
         self.skip_connection = (
@@ -36,16 +35,16 @@ class ResBlock(keras.layers.Layer):
         return ret
 
 
-class CrossAttention(keras.layers.Layer):
+class CrossAttention(tf.keras.layers.Layer):
     def __init__(self, n_heads, d_head):
         super().__init__()
-        self.to_q = keras.layers.Dense(n_heads * d_head, use_bias=False)
-        self.to_k = keras.layers.Dense(n_heads * d_head, use_bias=False)
-        self.to_v = keras.layers.Dense(n_heads * d_head, use_bias=False)
+        self.to_q = tf.keras.layers.Dense(n_heads * d_head, use_bias=False)
+        self.to_k = tf.keras.layers.Dense(n_heads * d_head, use_bias=False)
+        self.to_v = tf.keras.layers.Dense(n_heads * d_head, use_bias=False)
         self.scale = d_head**-0.5
         self.num_heads = n_heads
         self.head_size = d_head
-        self.to_out = [keras.layers.Dense(n_heads * d_head)]
+        self.to_out = [tf.keras.layers.Dense(n_heads * d_head)]
 
     def call(self, inputs):
         assert type(inputs) is list
@@ -59,32 +58,32 @@ class CrossAttention(keras.layers.Layer):
         k = tf.reshape(k, (-1, context.shape[1], self.num_heads, self.head_size))
         v = tf.reshape(v, (-1, context.shape[1], self.num_heads, self.head_size))
 
-        q = keras.layers.Permute((2, 1, 3))(q)  # (bs, num_heads, time, head_size)
-        k = keras.layers.Permute((2, 3, 1))(k)  # (bs, num_heads, head_size, time)
-        v = keras.layers.Permute((2, 1, 3))(v)  # (bs, num_heads, time, head_size)
+        q = tf.keras.layers.Permute((2, 1, 3))(q)  # (bs, num_heads, time, head_size)
+        k = tf.keras.layers.Permute((2, 3, 1))(k)  # (bs, num_heads, head_size, time)
+        v = tf.keras.layers.Permute((2, 1, 3))(v)  # (bs, num_heads, time, head_size)
 
         score = td_dot(q, k) * self.scale
-        weights = keras.activations.softmax(score)  # (bs, num_heads, time, time)
+        weights = tf.keras.activations.softmax(score)  # (bs, num_heads, time, time)
         attention = td_dot(weights, v)
-        attention = keras.layers.Permute((2, 1, 3))(
+        attention = tf.keras.layers.Permute((2, 1, 3))(
             attention
         )  # (bs, time, num_heads, head_size)
         h_ = tf.reshape(attention, (-1, x.shape[1], self.num_heads * self.head_size))
         return apply_seq(h_, self.to_out)
 
 
-class BasicTransformerBlock(keras.layers.Layer):
+class BasicTransformerBlock(tf.keras.layers.Layer):
     def __init__(self, dim, n_heads, d_head):
         super().__init__()
-        self.norm1 = keras.layers.LayerNormalization(epsilon=1e-5)
+        self.norm1 = tf.keras.layers.LayerNormalization(epsilon=1e-5)
         self.attn1 = CrossAttention(n_heads, d_head)
 
-        self.norm2 = keras.layers.LayerNormalization(epsilon=1e-5)
+        self.norm2 = tf.keras.layers.LayerNormalization(epsilon=1e-5)
         self.attn2 = CrossAttention(n_heads, d_head)
 
-        self.norm3 = keras.layers.LayerNormalization(epsilon=1e-5)
+        self.norm3 = tf.keras.layers.LayerNormalization(epsilon=1e-5)
         self.geglu = GEGLU(dim * 4)
-        self.dense = keras.layers.Dense(dim)
+        self.dense = tf.keras.layers.Dense(dim)
 
     def call(self, inputs):
         x, context = inputs
@@ -93,7 +92,7 @@ class BasicTransformerBlock(keras.layers.Layer):
         return self.dense(self.geglu(self.norm3(x))) + x
 
 
-class SpatialTransformer(keras.layers.Layer):
+class SpatialTransformer(tf.keras.layers.Layer):
     def __init__(self, channels, n_heads, d_head):
         super().__init__()
         self.norm = tfa.layers.GroupNormalization(epsilon=1e-5)
@@ -115,7 +114,7 @@ class SpatialTransformer(keras.layers.Layer):
         return self.proj_out(x) + x_in
 
 
-class Downsample(keras.layers.Layer):
+class Downsample(tf.keras.layers.Layer):
     def __init__(self, channels):
         super().__init__()
         self.op = PaddedConv2D(channels, 3, stride=2, padding=1)
@@ -124,10 +123,10 @@ class Downsample(keras.layers.Layer):
         return self.op(x)
 
 
-class Upsample(keras.layers.Layer):
+class Upsample(tf.keras.layers.Layer):
     def __init__(self, channels):
         super().__init__()
-        self.ups = keras.layers.UpSampling2D(size=(2, 2))
+        self.ups = tf.keras.layers.UpSampling2D(size=(2, 2))
         self.conv = PaddedConv2D(channels, 3, padding=1)
 
     def call(self, x):
@@ -135,13 +134,13 @@ class Upsample(keras.layers.Layer):
         return self.conv(x)
 
 
-class UNetModel(keras.models.Model):
+class UNetModel(tf.keras.models.Model):
     def __init__(self):
         super().__init__()
         self.time_embed = [
-            keras.layers.Dense(1280),
-            keras.activations.swish,
-            keras.layers.Dense(1280),
+            tf.keras.layers.Dense(1280),
+            tf.keras.activations.swish,
+            tf.keras.layers.Dense(1280),
         ]
         self.input_blocks = [
             [PaddedConv2D(320, kernel_size=3, padding=1)],
@@ -186,7 +185,7 @@ class UNetModel(keras.models.Model):
         ]
         self.out = [
             tfa.layers.GroupNormalization(epsilon=1e-5),
-            keras.activations.swish,
+            tf.keras.activations.swish,
             PaddedConv2D(4, kernel_size=3, padding=1),
         ]
 

@@ -3,7 +3,6 @@ from tqdm import tqdm
 import math
 
 import tensorflow as tf
-from tensorflow import keras
 
 from .autoencoder_kl import Decoder
 from .diffusion_model import UNetModel
@@ -149,35 +148,36 @@ def get_models(img_height, img_width, download_weights=True):
     n_w = img_width // 8
 
     # Create text encoder
-    input_word_ids = keras.layers.Input(shape=(MAX_TEXT_LEN,), dtype="int32")
-    input_pos_ids = keras.layers.Input(shape=(MAX_TEXT_LEN,), dtype="int32")
+    input_word_ids = tf.keras.layers.Input(shape=(MAX_TEXT_LEN,), dtype="int32")
+    input_pos_ids = tf.keras.layers.Input(shape=(MAX_TEXT_LEN,), dtype="int32")
     embeds = CLIPTextTransformer()([input_word_ids, input_pos_ids])
-    text_encoder = keras.models.Model([input_word_ids, input_pos_ids], embeds)
+    text_encoder = tf.keras.models.Model([input_word_ids, input_pos_ids], embeds)
 
     # Creation diffusion UNet
-    context = keras.layers.Input((MAX_TEXT_LEN, 768))
-    t_emb = keras.layers.Input((320,))
-    latent = keras.layers.Input((n_h, n_w, 4))
+    context = tf.keras.layers.Input((MAX_TEXT_LEN, 768))
+    t_emb = tf.keras.layers.Input((320,))
+    latent = tf.keras.layers.Input((n_h, n_w, 4))
     unet = UNetModel()
-    diffusion_model = keras.models.Model(
+    diffusion_model = tf.keras.models.Model(
         [latent, t_emb, context], unet([latent, t_emb, context])
     )
 
     # Create decoder
-    latent = keras.layers.Input((n_h, n_w, 4))
+    latent = tf.keras.layers.Input((n_h, n_w, 4))
     decoder = Decoder()
-    decoder = keras.models.Model(latent, decoder(latent))
+    decoder = tf.keras.models.Model(latent, decoder(latent))
     
     if download_weights:
-        text_encoder_weights_fpath = keras.utils.get_file(
+        assert False
+        text_encoder_weights_fpath = tf.keras.utils.get_file(
             origin="https://huggingface.co/fchollet/stable-diffusion/resolve/main/text_encoder.h5",
             file_hash="d7805118aeb156fc1d39e38a9a082b05501e2af8c8fbdc1753c9cb85212d6619",
         )
-        diffusion_model_weights_fpath = keras.utils.get_file(
+        diffusion_model_weights_fpath = tf.keras.utils.get_file(
             origin="https://huggingface.co/fchollet/stable-diffusion/resolve/main/diffusion_model.h5",
             file_hash="a5b2eea58365b18b40caee689a2e5d00f4c31dbcb4e1d58a9cf1071f55bbbd3a",
         )
-        decoder_weights_fpath = keras.utils.get_file(
+        decoder_weights_fpath = tf.keras.utils.get_file(
             origin="https://huggingface.co/fchollet/stable-diffusion/resolve/main/decoder.h5",
             file_hash="6d3c5ba91d5cc2b134da881aaa157b2d2adc648e5625560e3ed199561d0e39d5",
         )

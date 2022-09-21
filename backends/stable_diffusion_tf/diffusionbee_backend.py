@@ -1,4 +1,3 @@
-from tensorflow import keras
 from stable_diffusion_tf.stable_diffusion import Text2Image
 import argparse
 from PIL import Image
