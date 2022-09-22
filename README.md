@@ -13,7 +13,7 @@
 
 https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download/0.2.0/DiffusionBee-0.2.0-arm64.dmg
 
-
+Note : There is some issue with MacOS Ventura. It will be resolved soon. 
 
 <br>
 
