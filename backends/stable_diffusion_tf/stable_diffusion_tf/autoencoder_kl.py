@@ -1,5 +1,5 @@
 import tensorflow as tf
-import tensorflow_addons as tfa
+from .group_norm import GroupNormalization
 
 from .layers import apply_seq, PaddedConv2D
 
@@ -7,7 +7,7 @@ from .layers import apply_seq, PaddedConv2D
 class AttentionBlock(tf.keras.layers.Layer):
     def __init__(self, channels):
         super().__init__()
-        self.norm = tfa.layers.GroupNormalization(epsilon=1e-5)
+        self.norm = GroupNormalization(epsilon=1e-5)
         self.q = PaddedConv2D(channels, 1)
         self.k = PaddedConv2D(channels, 1)
         self.v = PaddedConv2D(channels, 1)
@@ -39,9 +39,9 @@ class AttentionBlock(tf.keras.layers.Layer):
 class ResnetBlock(tf.keras.layers.Layer):
     def __init__(self, in_channels, out_channels):
         super().__init__()
-        self.norm1 = tfa.layers.GroupNormalization(epsilon=1e-5)
+        self.norm1 = GroupNormalization(epsilon=1e-5)
         self.conv1 = PaddedConv2D(out_channels, 3, padding=1)
-        self.norm2 = tfa.layers.GroupNormalization(epsilon=1e-5)
+        self.norm2 = GroupNormalization(epsilon=1e-5)
         self.conv2 = PaddedConv2D(out_channels, 3, padding=1)
         self.nin_shortcut = (
             PaddedConv2D(out_channels, 1)
@@ -83,7 +83,7 @@ class Decoder(tf.keras.Sequential):
                 ResnetBlock(256, 128),
                 ResnetBlock(128, 128),
                 ResnetBlock(128, 128),
-                tfa.layers.GroupNormalization(epsilon=1e-5),
+                GroupNormalization(epsilon=1e-5),
                 tf.keras.layers.Activation("swish"),
                 PaddedConv2D(3, 3, padding=1),
             ]
