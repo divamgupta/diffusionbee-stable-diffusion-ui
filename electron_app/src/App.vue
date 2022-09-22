@@ -11,7 +11,7 @@
                 <SplashScreen v-if="app_state.show_splash_screen"></SplashScreen>
             </transition>
         </div>
-        <ApplicationFrame v-else title="DiffusionBee - Stable Diffusion GUI"
+        <ApplicationFrame v-else title="DiffusionBee - Stable Diffusion App"
 
             @menu_item_click_about="show_about"
             @menu_item_click_help="show_help"

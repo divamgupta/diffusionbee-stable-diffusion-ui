@@ -1,10 +1,10 @@
 {
   "name": "DiffusionBee",
-  "version": "0.2.0",
-  "build_number": "0001",
+  "version": "0.2.1",
+  "build_number": "0003",
   "website": "https://diffusionbee.com",
-  "description": "Diffusion Bee - GUI for stable diffusion.",
-  "is_dev": false,
+  "description": "Diffusion Bee - Stable Diffusion App.",
+  "is_dev": true,
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

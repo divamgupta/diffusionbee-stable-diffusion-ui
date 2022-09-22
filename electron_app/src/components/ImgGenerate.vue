@@ -82,6 +82,13 @@
                                 ></b-form-select>
                                 </b-form-group>
 
+                                <b-form-group inline  label="" style="margin-bottom: 6px;" >
+                                <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Seed: </label>
+                    
+                                <b-form-input size="sm" class="mr-sm-2"  v-model="seed" style="border-color:rgba(0,0,0,0.1) ; max-width: 40px; float: right; margin-right: 30px;" ></b-form-input>
+
+                                </b-form-group>
+
 
 
                             </b-dropdown-form>
@@ -124,7 +131,6 @@
                 <div v-else  class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
                     <div v-if="is_stopping" class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stopping ...</div>
                     <div v-else class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stop</div>
-
                 </div>
             </div>
 
@@ -202,7 +208,7 @@ export default {
             dif_steps : 25,
             guidence_scale : 7.5 , 
             is_adv_options : false , 
-            seed : 42  , 
+            seed : 0  , 
             prompt : "",
             num_imgs : 1,
             generated_images : [],

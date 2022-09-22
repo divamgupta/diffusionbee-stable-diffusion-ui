@@ -1,7 +1,7 @@
 import numpy as np
 from tqdm import tqdm
 import math
-
+import time
 import tensorflow as tf
 
 from .autoencoder_kl import Decoder
@@ -31,13 +31,25 @@ class Text2Image:
 
     def generate(
         self,
-        prompt,
+        prompt, 
         batch_size=1,
         num_steps=25,
         unconditional_guidance_scale=7.5,
         temperature=1,
         seed=None,
+        img_id=0,
     ):
+        try:
+            seed = int(seed)
+            if seed < 1:
+                seed = int(time.time()*100)%1002487 
+        except:
+            pass
+
+        if seed is None:
+            seed = int(time.time()*100)%1002487
+        
+        seed = seed + 1234*img_id
         # Tokenize prompt (i.e. starting context)
         inputs = self.tokenizer.encode(prompt)
         assert len(inputs) < 77, "Prompt is too long (should be < 77 tokens)"
@@ -86,7 +98,7 @@ class Text2Image:
             )
             a_t, a_prev = alphas[index], alphas_prev[index]
             latent, pred_x0 = self.get_x_prev_and_pred_x0(
-                latent, e_t, index, a_t, a_prev, temperature, seed
+                latent, e_t, index, a_t, a_prev, temperature, seed + index
             )
 
         # Decoding stage
@@ -130,7 +142,11 @@ class Text2Image:
 
         # Direction pointing to x_t
         dir_xt = math.sqrt(1.0 - a_prev - sigma_t**2) * e_t
-        noise = sigma_t * tf.random.normal(x.shape, seed=seed) * temperature
+
+        ll_np = np.random.RandomState(seed).normal(size=x.shape).astype('float32')
+        ll = tf.convert_to_tensor(ll_np)
+
+        noise = sigma_t * ll * temperature
         x_prev = math.sqrt(a_prev) * pred_x0 + dir_xt
         return x_prev, pred_x0
 
@@ -139,7 +155,9 @@ class Text2Image:
         n_w = self.img_width // 8
         alphas = [_ALPHAS_CUMPROD[t] for t in timesteps]
         alphas_prev = [1.0] + alphas[:-1]
-        latent = tf.random.normal((batch_size, n_h, n_w, 4), seed=seed)
+        latent_np = np.random.RandomState(seed).normal(size=(batch_size, n_h, n_w, 4)).astype('float32')
+        latent = tf.convert_to_tensor(latent_np)
+        # latent = tf.random.normal((batch_size, n_h, n_w, 4), seed=seed)
         return latent, alphas, alphas_prev
 
 

@@ -6,7 +6,7 @@ import random
 import multiprocessing
 from downloader import ProgressBarDownloader
 import sys
-
+import copy
 
 class Unbuffered(object):
     def __init__(self, stream):
@@ -29,13 +29,20 @@ sys.stdout = Unbuffered(sys.stdout)
 
 
 def process_opt(d, generator):
-    for _ in range(d['num_imgs']):
+    
+    for i in range(d['num_imgs']):
+        if 'seed' in d:
+            seed = d['seed']
+        else:
+            seed = None
         img = generator.generate(
             d['prompt'],
             num_steps=d['ddim_steps'],
             unconditional_guidance_scale=d['scale'],
             temperature=1,
-            batch_size=1
+            batch_size=1,
+            seed=seed,
+            img_id=i,
         )
         if img is None:
             return
@@ -80,6 +87,8 @@ def main():
     generator.diffusion_model.load_weights(p1)  
     generator.decoder.load_weights(p3) 
 
+    default_d = { "W" : 512 , "H" : 512, "num_imgs":1 , "ddim_steps" : 25 , "scale" : 7.5 }
+
 
     print("sdbk mdld")
 
@@ -95,7 +104,9 @@ def main():
             continue
         inp_str = inp_str.replace("b2py t2im" , "").strip()
         try:
-            d = json.loads(inp_str)
+            d_ = json.loads(inp_str)
+            d = copy.deepcopy(default_d)
+            d.update(d_)
             print("sdbk inwk") # working on the input
 
             if cur_size != (d['W'] , d['H']):
