@@ -63,7 +63,7 @@ def main():
             )
 
 
-    p3 = ProgressBarDownloader(title="Downloading Model 2/3").download(
+    p3 = ProgressBarDownloader(title="Downloading Model 3/3").download(
                 url="https://huggingface.co/fchollet/stable-diffusion/resolve/main/decoder.h5",
                 md5_checksum="8c86dc2fadfb0da9712a7a06cfa7bf11",
                 verify_ssl=False,
