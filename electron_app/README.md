@@ -1,4 +1,4 @@
-# Diffusion Bea Electron App
+# Diffusion Bee Electron App
 
 ## Project setup
 ```
