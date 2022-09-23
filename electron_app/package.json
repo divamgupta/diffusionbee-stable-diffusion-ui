@@ -4,7 +4,7 @@
   "build_number": "0003",
   "website": "https://diffusionbee.com",
   "description": "Diffusion Bee - Stable Diffusion App.",
-  "is_dev": true,
+  "is_dev": false,
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
