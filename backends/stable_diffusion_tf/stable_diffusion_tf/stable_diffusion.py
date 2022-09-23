@@ -127,10 +127,10 @@ class Text2Image:
         timesteps = np.array([t])
         t_emb = self.timestep_embedding(timesteps)
         t_emb = np.repeat(t_emb, batch_size, axis=0)
-        unconditional_latent = self.diffusion_model(
+        unconditional_latent = self.diffusion_model.predict_on_batch(
             [latent, t_emb, unconditional_context]
         )
-        latent = self.diffusion_model([latent, t_emb, context])
+        latent = self.diffusion_model.predict_on_batch([latent, t_emb, context])
         return unconditional_latent + unconditional_guidance_scale * (
             latent - unconditional_latent
         )
