@@ -1,8 +1,3 @@
-import platform
-if int(platform.mac_ver()[0].split('.')[0]) >= 13:
-    print("WARNING : Metal with MacOS Ventura is not supported by this application. So image generation will be slower.")
-
-
 from stable_diffusion_tf.stable_diffusion import Text2Image
 import argparse
 from PIL import Image
