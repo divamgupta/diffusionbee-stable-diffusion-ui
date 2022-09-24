@@ -80,6 +80,8 @@ class CrossAttention(tf.keras.layers.Layer):
             nspl = 2
         if num_heads * ntime * ntime >= 16*4096*4096 - 1000:
             nspl = 3
+        if num_heads * ntime * ntime >= 32*4096*4096 - 1000:
+            nspl = 4
 
         qs = td_split(q , nspl )
         ks = td_split(k , nspl )
