@@ -72,6 +72,16 @@
                                 ></b-form-select>
                                 </b-form-group>
 
+                                <b-form-group inline label=""  style="margin-bottom: 6px;">
+                                <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Batch size: </label>
+                                <b-form-select
+                                    style="border-color:rgba(0,0,0,0.1)"
+                                    v-model="batch_size"
+                                    :options="[1, 2, 3, 4, 5, 6, 7, 8]"
+                                    required
+                                ></b-form-select>
+                                </b-form-group>
+
                                 <b-form-group inline  label="" style="margin-bottom: 6px;" >
                                 <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Guidance Scale: </label>
                                 <b-form-select
@@ -81,6 +91,9 @@
                                     required
                                 ></b-form-select>
                                 </b-form-group>
+
+                                
+
 
                                 <b-form-group inline  label="" style="margin-bottom: 6px;" >
                                 <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Seed: </label>
@@ -211,6 +224,7 @@ export default {
             seed : ""  , 
             prompt : "",
             num_imgs : 1,
+            batch_size : 1 , 
             generated_images : [],
             backend_error : "",
             done_percentage : -1,
@@ -229,6 +243,7 @@ export default {
                 scale : this.guidence_scale , 
                 ddim_steps : this.dif_steps, 
                 num_imgs : this.num_imgs , 
+                batch_size : this.batch_size , 
 
             }
             let that = this;

@@ -7,6 +7,7 @@ import multiprocessing
 from downloader import ProgressBarDownloader
 import sys
 import copy
+import math
 
 class Unbuffered(object):
     def __init__(self, stream):
@@ -29,8 +30,12 @@ sys.stdout = Unbuffered(sys.stdout)
 
 
 def process_opt(d, generator):
+
+    batch_size = int(d['batch_size'])
+    n_imgs = math.ceil(d['num_imgs'] / batch_size)
+
     
-    for i in range(d['num_imgs']):
+    for i in range(n_imgs):
         if 'seed' in d:
             seed = d['seed']
         else:
@@ -41,15 +46,17 @@ def process_opt(d, generator):
             num_steps=d['ddim_steps'],
             unconditional_guidance_scale=d['scale'],
             temperature=1,
-            batch_size=1,
+            batch_size=batch_size,
             seed=seed,
             img_id=i,
         )
         if img is None:
             return
-        fpath = "/tmp/%d.png"%(random.randint(0 ,100000000))
-        Image.fromarray(img[0]).save(fpath)
-        print("sdbk nwim %s"%(fpath) )
+        
+        for i in range(len(img)):
+            fpath = "/tmp/%d.png"%(random.randint(0 ,100000000))
+            Image.fromarray(img[i]).save(fpath)
+            print("sdbk nwim %s"%(fpath) )
 
 
 def main():
@@ -88,7 +95,7 @@ def main():
     generator.diffusion_model.load_weights(p1)  
     generator.decoder.load_weights(p3) 
 
-    default_d = { "W" : 512 , "H" : 512, "num_imgs":1 , "ddim_steps" : 25 , "scale" : 7.5 }
+    default_d = { "W" : 512 , "H" : 512, "num_imgs":1 , "ddim_steps" : 25 , "scale" : 7.5, "batch_size":1 }
 
 
     print("sdbk mdld")
