@@ -67,7 +67,7 @@
                                 <b-form-select
                                     style="border-color:rgba(0,0,0,0.1)"
                                     v-model="dif_steps"
-                                    :options="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49 , 50]"
+                                    :options="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49 , 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75]"
                                     required
                                 ></b-form-select>
                                 </b-form-group>
@@ -137,7 +137,7 @@
 
             <div v-if="generated_images.length == 1" >
                 <center>
-                    <img  class="gal_img" v-if="generated_images[0]" :src="'file://' + generated_images[0]" style=" height: calc(100vh - 380px ); margin-top: 60px;">
+                    <img @click="open_image_popup( generated_images[0])"  class="gal_img" v-if="generated_images[0]" :src="'file://' + generated_images[0]" style=" height: calc(100vh - 380px ); margin-top: 60px;">
                     <br>
                     <div @click="save_image(generated_images[0])" class="l_button">Save Image</div>
                 </center>
@@ -149,7 +149,7 @@
 
                     <b-col  v-for="img in generated_images" :key="img" style="margin-top:80px"  md="6" lg="4" xl="3"  >
                         <center>
-                            <img  class="gal_img" v-if="img" :src="'file://' + img" style="max-width:85%">
+                            <img @click="open_image_popup( img )"  class="gal_img" v-if="img" :src="'file://' + img" style="max-width:85%">
                             <br>
                             <div @click="save_image(img)" class="l_button">Save Image</div>
                         </center>
@@ -189,7 +189,7 @@
 
 import LoaderModal from '../components_bare/LoaderModal.vue'
 import Vue from 'vue'
-
+import {open_popup} from "../utils"
 
 export default {
     name: 'ImgGenerate',
@@ -208,7 +208,7 @@ export default {
             dif_steps : 25,
             guidence_scale : 7.5 , 
             is_adv_options : false , 
-            seed : 0  , 
+            seed : ""  , 
             prompt : "",
             num_imgs : 1,
             generated_images : [],
@@ -268,6 +268,10 @@ export default {
            if(this.stable_diffusion)
                 this.stable_diffusion.text_to_img(params, callbacks);
         } , 
+
+        open_image_popup(img){
+            open_popup("file://"+img , undefined);
+        },
 
         open_arthub(){
             window.ipcRenderer.sendSync('open_url', "https://arthub.ai");

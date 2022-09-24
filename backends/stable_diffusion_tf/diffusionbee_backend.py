@@ -37,6 +37,7 @@ def process_opt(d, generator):
             seed = None
         img = generator.generate(
             d['prompt'],
+            img_height=d["H"], img_width=d["W"],
             num_steps=d['ddim_steps'],
             unconditional_guidance_scale=d['scale'],
             temperature=1,
@@ -109,18 +110,18 @@ def main():
             d.update(d_)
             print("sdbk inwk") # working on the input
 
-            if cur_size != (d['W'] , d['H']):
-                print("sdbk mltl Loading Model")
-                generator = Text2Image(img_height= d['H'], img_width=d['W'], jit_compile=False, download_weights=False)
-                generator.text_encoder .load_weights(p2)
-                generator.diffusion_model.load_weights(p1)  
-                generator.decoder.load_weights(p3)
-                print("sdbk mdld")
-                cur_size = (d['W'] , d['H'])
+            # if cur_size != (d['W'] , d['H']):
+            #     print("sdbk mltl Loading Model")
+            #     generator = Text2Image(img_height= d['H'], img_width=d['W'], jit_compile=False, download_weights=False)
+            #     generator.text_encoder .load_weights(p2)
+            #     generator.diffusion_model.load_weights(p1)  
+            #     generator.decoder.load_weights(p3)
+            #     print("sdbk mdld")
+            #     cur_size = (d['W'] , d['H'])
                 
             process_opt(d, generator)
         except Exception as e:
-            print("sbdk errr %s"%(str(e)))
+            print("sdbk errr %s"%(str(e)))
             print("py2b eror " + str(e))
 
 

@@ -11,7 +11,7 @@
                 
                 <div v-for="img in history_box.imgs" :key="img" style="height:230px; float:left; margin-right: 10px; margin-bottom: 30px;">
                     
-                    <img  class="gal_img" v-if="img" :src="'file://' + img" style="height:100%">
+                    <img  @click="open_image_popup( img )"  class="gal_img" v-if="img" :src="'file://' + img" style="height:100%">
                     <br>
                     <div @click="save_image(img)" class="l_button">Save Image</div>
                     <br>
@@ -33,6 +33,7 @@
     </div>
 </template>
 <script>
+import {open_popup} from "../utils"
 
 import Vue from 'vue'
 
@@ -64,7 +65,10 @@ export default {
                 return
             let org_path = generated_image.replaceAll("file://" , "")
             window.ipcRenderer.sendSync('save_file', org_path+"||" +out_path);
-        }
+        }, 
+        open_image_popup(img){
+            open_popup("file://"+img , undefined);
+        },
 
     },
 }
