@@ -19,9 +19,20 @@ console.log(require('os').freemem()/(1000000000) + " Is the free memory")
 console.log(require('os').totalmem()/(1000000000) + " Is the total memory")
 
 
-ipcMain.on('save_dialog', (event, arg) => {
+ipcMain.on('save_dialog', (event, ...args) => {
 
+    const seed = args[1] ? args[1] : "0"
+    const prompt = args[0] ? args[0] : "Untitled"
+    let filename = ''
+    if (seed === '0') {
+        filename = prompt
+    } else {
+        filename = seed + '-' + prompt
+    }
+    let trimmedFilename = filename.substring(0, 254) // filename size limit
      let save_path = dialog.showSaveDialogSync({
+            title: 'Save Image',
+            defaultPath: trimmedFilename,
             filters: [{
               name: 'Image',
               extensions: ['png']

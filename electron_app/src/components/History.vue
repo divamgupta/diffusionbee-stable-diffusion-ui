@@ -5,15 +5,13 @@
             <div v-for="history_box in Object.values(app_state.history)" :key="history_box.key" style="clear: both;">
             
                 <div @click="delete_hist(history_box.key)" style="float:right; margin-top: 10px;"  class="l_button">Delete</div>
-                <p style="background-color: rgba(0, 0, 0, 0.05); padding :12px; border-radius: 5px; max-width: calc(100vw - 200px );">{{history_box.promt}}</p>
-            
+                <p class="history_box_info">{{history_box.seed}}<br/>{{history_box.prompt}}</p>
                 
-                
-                <div v-for="img in history_box.imgs" :key="img" style="height:230px; float:left; margin-right: 10px; margin-bottom: 30px;">
+                <div v-for="img in history_box.imgs" :key="img" class="history_box">
                     
                     <img  class="gal_img" v-if="img" :src="'file://' + img" style="height:100%">
                     <br>
-                    <div @click="save_image(img)" class="l_button">Save Image</div>
+                    <div @click="save_image(img, history_box.prompt, history_box.seed)" class="l_button">Save Image</div>
                     <br>
                 
                 </div>
@@ -55,11 +53,11 @@ export default {
             Vue.delete( this.app_state.history , k );
         }, 
 
-        save_image(generated_image){
+        save_image(generated_image, prompt, seed){
             if(!generated_image)
                 return;
             generated_image = generated_image.split("?")[0];
-            let out_path = window.ipcRenderer.sendSync('save_dialog', '');
+            let out_path = window.ipcRenderer.sendSync('save_dialog', prompt, seed);
             if(!out_path)
                 return
             let org_path = generated_image.replaceAll("file://" , "")
@@ -72,4 +70,16 @@ export default {
 <style>
 </style>
 <style scoped>
+.history_box_info {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding :12px;
+    border-radius: 5px;
+    max-width: calc(100vw - 200px );
+}
+.history_box {
+    height:230px;
+    float:left;
+    margin-right: 10px;
+    margin-bottom: 30px;
+}
 </style>

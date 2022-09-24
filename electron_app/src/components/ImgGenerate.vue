@@ -16,7 +16,7 @@
 
                 <div v-if="stable_diffusion.is_input_avail" class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
                     
-                    <div class="l_button button_medium button_colored" style="float:right ; " @click="generete_from_prompt">Generate</div>
+                    <div class="l_button button_medium button_colored" style="float:right ; " @click="generate_from_prompt">Generate</div>
 
                     <!-- <div style="float:right;"  >
                         <div class="l_button" @click="is_adv_options = !is_adv_options">Advanced options</div>
@@ -139,7 +139,7 @@
                 <center>
                     <img  class="gal_img" v-if="generated_images[0]" :src="'file://' + generated_images[0]" style=" height: calc(100vh - 380px ); margin-top: 60px;">
                     <br>
-                    <div @click="save_image(generated_images[0])" class="l_button">Save Image</div>
+                    <div @click="save_image(generated_images[0], prompt, seed)" class="l_button">Save Image</div>
                 </center>
             </div>
             
@@ -151,7 +151,7 @@
                         <center>
                             <img  class="gal_img" v-if="img" :src="'file://' + img" style="max-width:85%">
                             <br>
-                            <div @click="save_image(img)" class="l_button">Save Image</div>
+                            <div @click="save_image(img, prompt, seed)" class="l_button">Save Image</div>
                         </center>
                     </b-col>
                         
@@ -220,7 +220,7 @@ export default {
         
     },
     methods: {
-        generete_from_prompt(){
+        generate_from_prompt(){
             let params = {
                 prompt : this.prompt , 
                 W : Number(this.img_w) , 
@@ -247,7 +247,7 @@ export default {
                     that.generated_images.push(img_path);
 
                     if(!(that.app_state.history[history_key]))
-                        Vue.set(that.app_state.history, history_key , {"promt":that.prompt , "key":history_key , "imgs" : []});
+                        Vue.set(that.app_state.history, history_key , {"prompt":that.prompt , "seed": that.seed, "key":history_key , "imgs" : []});
                     
                     that.app_state.history[history_key].imgs.push(img_path)
 
@@ -282,12 +282,13 @@ export default {
             this.prompt += ", " + tag;
         },
 
-        save_image(generated_image){
+        save_image(generated_image, prompt, seed){
             if(!generated_image)
                 return;
 
             generated_image = generated_image.split("?")[0];
-            let out_path = window.ipcRenderer.sendSync('save_dialog', '');
+            seed = seed ? seed : '0'
+            let out_path = window.ipcRenderer.sendSync('save_dialog', prompt, seed);
             if(!out_path)
                 return
 
