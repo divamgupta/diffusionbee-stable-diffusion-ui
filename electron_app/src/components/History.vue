@@ -5,7 +5,11 @@
             <div v-for="history_box in Object.values(app_state.history)" :key="history_box.key" style="clear: both;">
             
                 <div @click="delete_hist(history_box.key)" style="float:right; margin-top: 10px;"  class="l_button">Delete</div>
-                <p class="history_box_info">{{history_box.seed}}<br/>{{history_box.prompt}}</p>
+                <p class="history_box_info">
+                    <span style="opacity: 0.5;" v-if="history_box.seed"> Seed : {{history_box.seed}} </span>
+                    <br  v-if="history_box.seed">
+                    {{history_box.prompt}}
+                </p>
                 
                 <div v-for="img in history_box.imgs" :key="img" class="history_box">
                     
