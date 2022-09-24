@@ -18,6 +18,26 @@
 import tensorflow as tf
 
 
+def layernorm(x, eps=1e-5):
+    y = (x - tf.reduce_mean(x , axis=-1, keepdims=True))
+    yyMean = tf.reduce_mean(y*y , axis=-1, keepdims=True)
+    den = (yyMean + 1e-5)**0.5
+    return y/den
+
+def group_norm(x , W , num_groups):
+    x = tf.keras.layers.Permute((3,1,2))(x)
+    xdha = x.shape[1:]
+    x = tf.keras.layers.Reshape(( num_groups , -1 ))(x)
+    x = layernorm(x)
+    x = tf.keras.layers.Reshape(xdha)(x)
+    x = (x * tf.reshape(W[0] , (1, -1, 1, 1))) + tf.reshape(W[1] , (1, -1, 1, 1))
+    x = tf.keras.layers.Permute((2 , 3 , 1 ))(x)
+    return x
+
+
+APPLY_PATCH = True
+
+
 @tf.keras.utils.register_keras_serializable(package="Addons")
 class GroupNormalization(tf.keras.layers.Layer):
     """Group normalization layer.
@@ -104,6 +124,9 @@ class GroupNormalization(tf.keras.layers.Layer):
         super().build(input_shape)
 
     def call(self, inputs):
+
+        if APPLY_PATCH:
+            return group_norm(inputs , self.weights , self.groups)
 
         input_shape = tf.keras.backend.int_shape(inputs)
         tensor_input_shape = tf.shape(inputs)
@@ -280,233 +303,3 @@ class GroupNormalization(tf.keras.layers.Layer):
             broadcast_shape[self.axis] = self.groups
         return broadcast_shape
 
-
-@tf.keras.utils.register_keras_serializable(package="Addons")
-class InstanceNormalization(GroupNormalization):
-    """Instance normalization layer.
-    Instance Normalization is an specific case of ```GroupNormalization```since
-    it normalizes all features of one channel. The Groupsize is equal to the
-    channel size. Empirically, its accuracy is more stable than batch norm in a
-    wide range of small batch sizes, if learning rate is adjusted linearly
-    with batch sizes.
-    Arguments
-        axis: Integer, the axis that should be normalized.
-        epsilon: Small float added to variance to avoid dividing by zero.
-        center: If True, add offset of `beta` to normalized tensor.
-            If False, `beta` is ignored.
-        scale: If True, multiply by `gamma`.
-            If False, `gamma` is not used.
-        beta_initializer: Initializer for the beta weight.
-        gamma_initializer: Initializer for the gamma weight.
-        beta_regularizer: Optional regularizer for the beta weight.
-        gamma_regularizer: Optional regularizer for the gamma weight.
-        beta_constraint: Optional constraint for the beta weight.
-        gamma_constraint: Optional constraint for the gamma weight.
-    Input shape
-        Arbitrary. Use the keyword argument `input_shape`
-        (tuple of integers, does not include the samples axis)
-        when using this layer as the first layer in a model.
-    Output shape
-        Same shape as input.
-    References
-        - [Instance Normalization: The Missing Ingredient for Fast Stylization]
-        (https://arxiv.org/abs/1607.08022)
-    """
-
-    def __init__(self, **kwargs):
-       
-
-        kwargs["groups"] = -1
-        super().__init__(**kwargs)
-
-
-@tf.keras.utils.register_keras_serializable(package="Addons")
-class FilterResponseNormalization(tf.keras.layers.Layer):
-    """Filter response normalization layer.
-    Filter Response Normalization (FRN), a normalization
-    method that enables models trained with per-channel
-    normalization to achieve high accuracy. It performs better than
-    all other normalization techniques for small batches and is par
-    with Batch Normalization for bigger batch sizes.
-    Arguments
-        axis: List of axes that should be normalized. This should represent the
-              spatial dimensions.
-        epsilon: Small positive float value added to variance to avoid dividing by zero.
-        beta_initializer: Initializer for the beta weight.
-        gamma_initializer: Initializer for the gamma weight.
-        beta_regularizer: Optional regularizer for the beta weight.
-        gamma_regularizer: Optional regularizer for the gamma weight.
-        beta_constraint: Optional constraint for the beta weight.
-        gamma_constraint: Optional constraint for the gamma weight.
-        learned_epsilon: (bool) Whether to add another learnable
-        epsilon parameter or not.
-        name: Optional name for the layer
-    Input shape
-        Arbitrary. Use the keyword argument `input_shape`
-        (tuple of integers, does not include the samples axis)
-        when using this layer as the first layer in a model. This layer, as of now,
-        works on a 4-D tensor where the tensor should have the shape [N X H X W X C]
-        TODO: Add support for NCHW data format and FC layers.
-    Output shape
-        Same shape as input.
-    References
-        - [Filter Response Normalization Layer: Eliminating Batch Dependence
-        in the training of Deep Neural Networks]
-        (https://arxiv.org/abs/1911.09737)
-    """
-
-    def __init__(
-        self,
-        epsilon: float = 1e-6,
-        axis: list = [1, 2],
-        beta_initializer  = "zeros",
-        gamma_initializer = "ones",
-        beta_regularizer  = None,
-        gamma_regularizer  = None,
-        beta_constraint  = None,
-        gamma_constraint  = None,
-        learned_epsilon: bool = False,
-        learned_epsilon_constraint  = None,
-        name: str = None,
-        **kwargs,
-    ):
-        super().__init__(name=name, **kwargs)
-        self.epsilon = epsilon
-        self.beta_initializer = tf.keras.initializers.get(beta_initializer)
-        self.gamma_initializer = tf.keras.initializers.get(gamma_initializer)
-        self.beta_regularizer = tf.keras.regularizers.get(beta_regularizer)
-        self.gamma_regularizer = tf.keras.regularizers.get(gamma_regularizer)
-        self.beta_constraint = tf.keras.constraints.get(beta_constraint)
-        self.gamma_constraint = tf.keras.constraints.get(gamma_constraint)
-        self.use_eps_learned = learned_epsilon
-        self.supports_masking = True
-
-        if self.use_eps_learned:
-            self.eps_learned_initializer = tf.keras.initializers.Constant(1e-4)
-            self.eps_learned_constraint = tf.keras.constraints.get(
-                learned_epsilon_constraint
-            )
-            self.eps_learned = self.add_weight(
-                shape=(1,),
-                name="learned_epsilon",
-                dtype=self.dtype,
-                initializer=tf.keras.initializers.get(self.eps_learned_initializer),
-                regularizer=None,
-                constraint=self.eps_learned_constraint,
-            )
-        else:
-            self.eps_learned_initializer = None
-            self.eps_learned_constraint = None
-
-        self._check_axis(axis)
-
-    def build(self, input_shape):
-        if len(tf.TensorShape(input_shape)) != 4:
-            raise ValueError(
-                """Only 4-D tensors (CNNs) are supported
-        as of now."""
-            )
-        self._check_if_input_shape_is_none(input_shape)
-        self._create_input_spec(input_shape)
-        self._add_gamma_weight(input_shape)
-        self._add_beta_weight(input_shape)
-        super().build(input_shape)
-
-    def call(self, inputs):
-        epsilon = tf.math.abs(tf.cast(self.epsilon, dtype=self.dtype))
-        if self.use_eps_learned:
-            epsilon += tf.math.abs(self.eps_learned)
-        nu2 = tf.reduce_mean(tf.square(inputs), axis=self.axis, keepdims=True)
-        normalized_inputs = inputs * tf.math.rsqrt(nu2 + epsilon)
-        return self.gamma * normalized_inputs + self.beta
-
-    def get_config(self):
-        config = {
-            "axis": self.axis,
-            "epsilon": self.epsilon,
-            "learned_epsilon": self.use_eps_learned,
-            "beta_initializer": tf.keras.initializers.serialize(self.beta_initializer),
-            "gamma_initializer": tf.keras.initializers.serialize(
-                self.gamma_initializer
-            ),
-            "beta_regularizer": tf.keras.regularizers.serialize(self.beta_regularizer),
-            "gamma_regularizer": tf.keras.regularizers.serialize(
-                self.gamma_regularizer
-            ),
-            "beta_constraint": tf.keras.constraints.serialize(self.beta_constraint),
-            "gamma_constraint": tf.keras.constraints.serialize(self.gamma_constraint),
-            "learned_epsilon_constraint": tf.keras.constraints.serialize(
-                self.eps_learned_constraint
-            ),
-        }
-        base_config = super().get_config()
-        return dict(**base_config, **config)
-
-    def _create_input_spec(self, input_shape):
-        ndims = len(tf.TensorShape(input_shape))
-        for idx, x in enumerate(self.axis):
-            if x < 0:
-                self.axis[idx] = ndims + x
-
-        # Validate axes
-        for x in self.axis:
-            if x < 0 or x >= ndims:
-                raise ValueError("Invalid axis: %d" % x)
-
-        if len(self.axis) != len(set(self.axis)):
-            raise ValueError("Duplicate axis: %s" % self.axis)
-
-        axis_to_dim = {x: input_shape[x] for x in self.axis}
-        self.input_spec = tf.keras.layers.InputSpec(ndim=ndims, axes=axis_to_dim)
-
-    def _check_axis(self, axis):
-        if not isinstance(axis, list):
-            raise TypeError(
-                """Expected a list of values but got {}.""".format(type(axis))
-            )
-        else:
-            self.axis = axis
-
-        if self.axis != [1, 2]:
-            raise ValueError(
-                """FilterResponseNormalization operates on per-channel basis.
-                Axis values should be a list of spatial dimensions."""
-            )
-
-    def _check_if_input_shape_is_none(self, input_shape):
-        dim1, dim2 = input_shape[self.axis[0]], input_shape[self.axis[1]]
-        if dim1 is None or dim2 is None:
-            raise ValueError(
-                """Axis {} of input tensor should have a defined dimension but
-                the layer received an input with shape {}.""".format(
-                    self.axis, input_shape
-                )
-            )
-
-    def _add_gamma_weight(self, input_shape):
-        # Get the channel dimension
-        dim = input_shape[-1]
-        shape = [1, 1, 1, dim]
-        # Initialize gamma with shape (1, 1, 1, C)
-        self.gamma = self.add_weight(
-            shape=shape,
-            name="gamma",
-            dtype=self.dtype,
-            initializer=self.gamma_initializer,
-            regularizer=self.gamma_regularizer,
-            constraint=self.gamma_constraint,
-        )
-
-    def _add_beta_weight(self, input_shape):
-        # Get the channel dimension
-        dim = input_shape[-1]
-        shape = [1, 1, 1, dim]
-        # Initialize beta with shape (1, 1, 1, C)
-        self.beta = self.add_weight(
-            shape=shape,
-            name="beta",
-            dtype=self.dtype,
-            initializer=self.beta_initializer,
-            regularizer=self.beta_regularizer,
-            constraint=self.beta_constraint,
-        )
