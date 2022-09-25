@@ -9,6 +9,30 @@ import sys
 import copy
 import math
 
+
+
+
+
+from pathlib import Path
+import os
+
+home_path = Path.home()
+
+projects_root_path = os.path.join(home_path, ".diffusionbee")
+
+if not os.path.isdir(projects_root_path):
+    os.mkdir(projects_root_path)
+
+
+defualt_data_root = os.path.join(projects_root_path, "images")
+
+
+if not os.path.isdir(defualt_data_root):
+    os.mkdir(defualt_data_root)
+
+
+
+
 class Unbuffered(object):
     def __init__(self, stream):
         self.stream = stream
@@ -54,7 +78,9 @@ def process_opt(d, generator):
             return
         
         for i in range(len(img)):
-            fpath = "/tmp/%d.png"%(random.randint(0 ,100000000))
+            s = ''.join(filter(str.isalnum, str(d['prompt'])[:30] ))
+            fpath = os.path.join(defualt_data_root , "%s_%d.png"%(s ,  random.randint(0 ,100000000)) )
+
             Image.fromarray(img[i]).save(fpath)
             print("sdbk nwim %s"%(fpath) )
 

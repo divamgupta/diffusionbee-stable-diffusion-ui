@@ -340,6 +340,40 @@ ipcMain.on('save_b64_image', (event, arg) => {
 })
 
 
+ipcMain.on('save_data', (event, arg) => {
+    const path = require('path');
+    const fs = require('fs');
+    const homedir = require('os').homedir();
+    let save_dir = path.join(homedir , ".diffusionbee")
+
+
+    if (!fs.existsSync(save_dir)){
+        fs.mkdirSync(save_dir, { recursive: true });
+    }
+
+    let data_path = path.join(homedir , ".diffusionbee" , "data.json")
+    fs.writeFileSync( data_path, JSON.stringify(arg) );
+    event.returnValue = true ;
+
+})
+
+
+ipcMain.on('load_data', (event, arg) => {
+    const path = require('path');
+    const fs = require('fs');
+    const homedir = require('os').homedir();
+    let data_path = path.join(homedir , ".diffusionbee" , "data.json");
+
+    if (fs.existsSync(data_path)){
+        event.returnValue = JSON.parse(fs.readFileSync( data_path ));
+    }
+    else{
+        event.returnValue = {} ;
+    }       
+
+})
+
+
 
 
 console.log("native functions imported")

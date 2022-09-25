@@ -80,6 +80,7 @@ import ImgGenerate from './components/ImgGenerate.vue'
 import History from './components/History.vue'
 
 import LoaderModal from './components_bare/LoaderModal.vue'
+import Vue from "vue"
 
 native_alert;
 
@@ -116,6 +117,11 @@ export default
         }  , 4000)
 
         this.is_mounted = true;
+
+
+        let data = window.ipcRenderer.sendSync('load_data');
+        if( data.history)
+            Vue.set(this.app_state , 'history' , data.history)
      
     },
 
@@ -140,6 +146,13 @@ export default
             deep: true
         } , 
 
+        'app_state.history': {
+
+            handler: function(new_value) {
+                window.ipcRenderer.sendSync('save_data', {"history": new_value });
+            },
+            deep: true
+        } , 
         
 
     },
