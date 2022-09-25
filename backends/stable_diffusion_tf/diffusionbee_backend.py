@@ -6,6 +6,31 @@ import random
 import multiprocessing
 from downloader import ProgressBarDownloader
 import sys
+import copy
+import math
+
+
+
+
+
+from pathlib import Path
+import os
+
+home_path = Path.home()
+
+projects_root_path = os.path.join(home_path, ".diffusionbee")
+
+if not os.path.isdir(projects_root_path):
+    os.mkdir(projects_root_path)
+
+
+defualt_data_root = os.path.join(projects_root_path, "images")
+
+
+if not os.path.isdir(defualt_data_root):
+    os.mkdir(defualt_data_root)
+
+
 
 
 class Unbuffered(object):
@@ -29,19 +54,35 @@ sys.stdout = Unbuffered(sys.stdout)
 
 
 def process_opt(d, generator):
-    for _ in range(d['num_imgs']):
+
+    batch_size = int(d['batch_size'])
+    n_imgs = math.ceil(d['num_imgs'] / batch_size)
+
+    
+    for i in range(n_imgs):
+        if 'seed' in d:
+            seed = d['seed']
+        else:
+            seed = None
         img = generator.generate(
             d['prompt'],
+            img_height=d["H"], img_width=d["W"],
             num_steps=d['ddim_steps'],
             unconditional_guidance_scale=d['scale'],
             temperature=1,
-            batch_size=1
+            batch_size=batch_size,
+            seed=seed,
+            img_id=i,
         )
         if img is None:
             return
-        fpath = "/tmp/%d.png"%(random.randint(0 ,100000000))
-        Image.fromarray(img[0]).save(fpath)
-        print("sdbk nwim %s"%(fpath) )
+        
+        for i in range(len(img)):
+            s = ''.join(filter(str.isalnum, str(d['prompt'])[:30] ))
+            fpath = os.path.join(defualt_data_root , "%s_%d.png"%(s ,  random.randint(0 ,100000000)) )
+
+            Image.fromarray(img[i]).save(fpath)
+            print("sdbk nwim %s"%(fpath) )
 
 
 def main():
@@ -63,7 +104,7 @@ def main():
             )
 
 
-    p3 = ProgressBarDownloader(title="Downloading Model 2/3").download(
+    p3 = ProgressBarDownloader(title="Downloading Model 3/3").download(
                 url="https://huggingface.co/fchollet/stable-diffusion/resolve/main/decoder.h5",
                 md5_checksum="8c86dc2fadfb0da9712a7a06cfa7bf11",
                 verify_ssl=False,
@@ -80,6 +121,8 @@ def main():
     generator.diffusion_model.load_weights(p1)  
     generator.decoder.load_weights(p3) 
 
+    default_d = { "W" : 512 , "H" : 512, "num_imgs":1 , "ddim_steps" : 25 , "scale" : 7.5, "batch_size":1 }
+
 
     print("sdbk mdld")
 
@@ -95,21 +138,23 @@ def main():
             continue
         inp_str = inp_str.replace("b2py t2im" , "").strip()
         try:
-            d = json.loads(inp_str)
+            d_ = json.loads(inp_str)
+            d = copy.deepcopy(default_d)
+            d.update(d_)
             print("sdbk inwk") # working on the input
 
-            if cur_size != (d['W'] , d['H']):
-                print("sdbk mltl Loading Model")
-                generator = Text2Image(img_height= d['H'], img_width=d['W'], jit_compile=False, download_weights=False)
-                generator.text_encoder .load_weights(p2)
-                generator.diffusion_model.load_weights(p1)  
-                generator.decoder.load_weights(p3)
-                print("sdbk mdld")
-                cur_size = (d['W'] , d['H'])
+            # if cur_size != (d['W'] , d['H']):
+            #     print("sdbk mltl Loading Model")
+            #     generator = Text2Image(img_height= d['H'], img_width=d['W'], jit_compile=False, download_weights=False)
+            #     generator.text_encoder .load_weights(p2)
+            #     generator.diffusion_model.load_weights(p1)  
+            #     generator.decoder.load_weights(p3)
+            #     print("sdbk mdld")
+            #     cur_size = (d['W'] , d['H'])
                 
             process_opt(d, generator)
         except Exception as e:
-            print("sbdk errr %s"%(str(e)))
+            print("sdbk errr %s"%(str(e)))
             print("py2b eror " + str(e))
 
 

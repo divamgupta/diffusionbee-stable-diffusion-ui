@@ -38,4 +38,65 @@ function resolve_asset_illustration(name) {
 
 
 
-export { compute_n_cols ,resolve_asset_illustration , simple_hash }
+
+const escapeHtml = (unsafe) => {
+    return unsafe.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+}
+
+
+function open_popup( img_url , text ){
+            
+    let css = `
+        <style>
+        img {
+    
+                     width: 100%;
+                      height:100%;
+                      object-fit: contain;
+                      user-drag: none;
+          
+            }
+            body{
+                padding : 0;
+                margin: 0;
+                background-color: #F2F2F2;
+                -webkit-user-select: none;
+                    -webkit-app-region: drag;
+                  
+                      user-drag: none;
+                        -webkit-user-drag: none;
+                        user-select: none;
+                        -moz-user-select: none;
+                        -webkit-user-select: none;
+                        -ms-user-select: none;
+            }
+            p{
+                padding:40px;
+            }
+            audio{
+                position: fixed ; 
+                bottom: 20px;
+               left: 50%;
+                transform: translateX(-50%);
+            }
+       </style>
+    `
+    let html = '<html><head>'+css+'</head><body>' ;
+
+    if (img_url)
+        html += '<img src="'+escapeHtml(img_url)+'"> ';
+    
+    if( text )
+         html += '<p> '+ escapeHtml(text) +' </p>';
+    
+    html += '</body></html>'
+    let uri = "data:text/html," + encodeURIComponent(html);
+    window.open(uri, '_blank', 'top=100,left=100,frame=false,nodeIntegration=no');
+    
+
+}
+
+
+
+
+export { compute_n_cols ,resolve_asset_illustration , simple_hash , open_popup}

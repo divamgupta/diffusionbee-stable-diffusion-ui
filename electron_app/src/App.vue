@@ -11,11 +11,12 @@
                 <SplashScreen v-if="app_state.show_splash_screen"></SplashScreen>
             </transition>
         </div>
-        <ApplicationFrame v-else title="DiffusionBee - Stable Diffusion GUI"
+        <ApplicationFrame v-else title="DiffusionBee - Stable Diffusion App"
 
             @menu_item_click_about="show_about"
             @menu_item_click_help="show_help"
             @menu_item_click_close="close_window"
+            @menu_item_click_discord="menu_item_click_discord"
 
         > 
 
@@ -80,6 +81,7 @@ import ImgGenerate from './components/ImgGenerate.vue'
 import History from './components/History.vue'
 
 import LoaderModal from './components_bare/LoaderModal.vue'
+import Vue from "vue"
 
 native_alert;
 
@@ -116,6 +118,11 @@ export default
         }  , 4000)
 
         this.is_mounted = true;
+
+
+        let data = window.ipcRenderer.sendSync('load_data');
+        if( data.history)
+            Vue.set(this.app_state , 'history' , data.history)
      
     },
 
@@ -140,6 +147,13 @@ export default
             deep: true
         } , 
 
+        'app_state.history': {
+
+            handler: function(new_value) {
+                window.ipcRenderer.sendSync('save_data', {"history": new_value });
+            },
+            deep: true
+        } , 
         
 
     },
@@ -218,6 +232,10 @@ export default
         show_help(){
             window.ipcRenderer.sendSync('open_url', "https://diffusionbee.com");
         } ,
+
+        menu_item_click_discord(){
+            window.ipcRenderer.sendSync('open_url', "https://discord.gg/t6rC5RaJQn");
+        },
 
         close_window(){
             window.ipcRenderer.sendSync('close_window', '');

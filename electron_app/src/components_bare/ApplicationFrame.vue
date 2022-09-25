@@ -11,6 +11,8 @@
                             </div>
                         </template>
                         <b-dropdown-item @click="$emit('menu_item_click_help',{})" href="#">Help</b-dropdown-item>
+                        <b-dropdown-item @click="$emit('menu_item_click_discord',{})" href="#">Discord Group</b-dropdown-item>
+                        <b-dropdown-item @click="selectTab('logs')"   href="#">Show Logs</b-dropdown-item>
                         <b-dropdown-item @click="$emit('menu_item_click_about',{})" href="#">About</b-dropdown-item>
                         <b-dropdown-item @click="$emit('menu_item_click_close',{})" href="#">Close</b-dropdown-item>
                         <!-- #TODO set these menu items via python -->
@@ -24,8 +26,6 @@
             <div @click="selectTab('txt2img')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'txt2img'}">Text To Image</div>
             <div @click="selectTab('img2img')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'img2img'}">Image To Image</div>
             <div @click="selectTab('history')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'history'}">History</div>
-            <div @click="selectTab('logs')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'logs'}">Logs</div>
-
         </div>
         <div class="tab_content_frame">
             <div class="tab_content">
