@@ -1,8 +1,7 @@
+@import '../assets/css/theme.css';
 <template>
     <div id="app">
         <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-
-
         
         <StableDiffusion ref="stable_diffusion"> </StableDiffusion>
 
@@ -19,54 +18,35 @@
             @menu_item_click_discord="menu_item_click_discord"
 
         > 
-
-
             <template v-slot:txt2img>
-
-               
-
                 <ImgGenerate v-if="is_mounted && stable_diffusion.is_backend_loaded"  :app_state="app_state" :stable_diffusion="stable_diffusion"></ImgGenerate>
-                
                 
                 <LoaderModal v-else :loading_percentage="stable_diffusion.loading_percentage" :loading_desc="stable_diffusion.model_loading_msg"  :loading_title="stable_diffusion.model_loading_title ||'Loading model'"> </LoaderModal>
                
             </template>
+
             <template v-slot:img2img>
                 <div class="center">
-                     Coming soon!
+                     <p>Coming soon!</p>
                 </div>
-
-                
             </template>
 
             <template v-slot:history>
                 <History :app_state="app_state"></History>
             </template>
 
-            
-
             <template v-slot:logs>
-                
-                <div  class="animatable_content_box ">
-                    
-
-                    Logs : 
+                <div class="animatable_content_box ">
+                    <p>Logs : </p>
 
                     <p>
                         <span style="white-space: pre-line">{{app_state.logs}}</span>
-
-
-                        
                     </p>
 
                 </div>
 
             </template>
-
         </ApplicationFrame>
-
-
-
     </div>
 </template>
 <script>
@@ -240,16 +220,9 @@ export default
         close_window(){
             window.ipcRenderer.sendSync('close_window', '');
         }
-
-
-
     },
 
-
     data() {
-
-        
-
         let app_state = {
 
             is_start_screen: true, // if the start screen is showing or not
@@ -260,8 +233,6 @@ export default
             logs : "",
             history : {},
         };
-
-
 
         return {
             is_mounted : false,

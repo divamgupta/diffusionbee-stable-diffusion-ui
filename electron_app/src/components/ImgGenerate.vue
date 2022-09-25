@@ -1,15 +1,12 @@
+@import '../assets/css/theme.css';
 <template>
-
-
     <div  class="animatable_content_box ">
-
-
         <div v-if="stable_diffusion.is_backend_loaded">
             <div class="textbox_section" >
                 <textarea 
                     v-model="prompt" 
                     placeholder="Enter your prompt here" 
-                    style="border-radius: 12px 12px 12px 12px; border-color: rgba(0, 0, 0, 0.1);  width: calc(100%); resize: none; " 
+                    style="border-radius: 12px 12px 12px 12px; width: calc(100%); resize: none; " 
                     class="form-control"  
                     v-bind:class="{ 'disabled' : !stable_diffusion.is_input_avail}"
                     rows="3"></textarea>
@@ -34,7 +31,6 @@
                                 <b-form-group inline  label="" style="margin-bottom: 6px;" >
                                     <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Num Images: </label>
                                     <b-form-select
-                                    style="border-color:rgba(0,0,0,0.1)"
                                     v-model="num_imgs"
                                     :options="[1,2,3,4,5,6,7,8,9,10,11,12,13,14]"
                                     required
@@ -45,7 +41,6 @@
                                 <b-form-group inline label=""  style="margin-bottom: 6px;">
                                     <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Image Height: </label>
                                     <b-form-select
-                                    style="border-color:rgba(0,0,0,0.1)"
                                     v-model="img_h"
                                     :options="[128*2 , 128*3 , 128*4 , 128*5 , 128*6, ]"
                                     required
@@ -55,7 +50,6 @@
                                 <b-form-group inline label=""  style="margin-bottom: 6px;">
                                     <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Image Width: </label>
                                     <b-form-select
-                                    style="border-color:rgba(0,0,0,0.1)"
                                     v-model="img_w"
                                     :options="[128*2 , 128*3 , 128*4 , 128*5 , 128*6, ]"
                                     required
@@ -65,7 +59,6 @@
                                 <b-form-group inline label=""  style="margin-bottom: 6px;">
                                 <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Steps: </label>
                                 <b-form-select
-                                    style="border-color:rgba(0,0,0,0.1)"
                                     v-model="dif_steps"
                                     :options="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49 , 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75]"
                                     required
@@ -75,7 +68,6 @@
                                 <b-form-group inline label=""  style="margin-bottom: 6px;">
                                 <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Batch size: </label>
                                 <b-form-select
-                                    style="border-color:rgba(0,0,0,0.1)"
                                     v-model="batch_size"
                                     :options="[1, 2, 3, 4, 5, 6, 7, 8]"
                                     required
@@ -85,24 +77,18 @@
                                 <b-form-group inline  label="" style="margin-bottom: 6px;" >
                                 <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Guidance Scale: </label>
                                 <b-form-select
-                                    style="border-color:rgba(0,0,0,0.1)"
                                     v-model="guidence_scale"
                                     :options="[1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 7.5 , 8.0]"
                                     required
                                 ></b-form-select>
                                 </b-form-group>
 
-                                
-
-
                                 <b-form-group inline  label="" style="margin-bottom: 6px;" >
                                 <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Seed: </label>
                     
-                                <b-form-input onkeypress="return event.keyCode != 13;"  size="sm" class="mr-sm-2"  v-model="seed" style="border-color:rgba(0,0,0,0.1) ; max-width: 40px; float: right; margin-right: 30px;" ></b-form-input>
+                                <b-form-input onkeypress="return event.keyCode != 13;"  size="sm" class="mr-sm-2"  v-model="seed" style="max-width: 40px; float: right; margin-right: 30px;" ></b-form-input>
 
                                 </b-form-group>
-
-
 
                             </b-dropdown-form>
                         </b-dropdown>
@@ -173,10 +159,6 @@
                 </b-row>
                 <br> 
             </div>
-            
-
-
-
 
             <div v-if="backend_error" style="color:red ; margin-top:50px;">
                 <div class="center loader_box">
@@ -337,7 +319,6 @@ export default {
 
     .loader_box{
        padding: 20px;
-        background-color: rgba(255,255,255,0.9);
         /*height: calc(160px);*/
         border-radius: 12px 12px 12px 12px;
     }

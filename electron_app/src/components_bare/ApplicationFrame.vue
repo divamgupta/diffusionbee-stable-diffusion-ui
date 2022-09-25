@@ -96,6 +96,7 @@ export default {
 }
 </script>
 <style>
+@import '../assets/css/theme.css';
 :root {
     --main-font: -apple-system, BlinkMacSystemFont, sans-serif;
     --main-font-text: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -116,7 +117,6 @@ body {
 
 
 .l_button {
-
     display: inline-block;
     margin: 0px;
     padding: 3px 10px;
@@ -130,12 +130,10 @@ body {
 
     text-align: center;
     letter-spacing: -0.08px;
-    color: rgba(0, 0, 0, 0.5);
+
     margin-right: 9px;
 
     transition: background-color 150ms ease-out 10ms, color 150ms ease-out 10ms;
-
-
 }
 
 .l_button:hover {
@@ -153,15 +151,9 @@ body {
     background-color: #E0E0E0;
 }
 
-
-
-
-
 .rounded_button {
     border-radius: 23.3711px;
 }
-
-
 
 .button_colored {
     background: #3E7BFA;
@@ -204,8 +196,6 @@ body {
     ;
 }
 
-
-
 p {
     font-family: var(--main-font);
     font-style: normal;
@@ -214,7 +204,6 @@ p {
     line-height: 16px;
     align-items: center;
     letter-spacing: -0.08px;
-    color: rgba(0, 0, 0, 0.9);
 }
 
 .p_light{
@@ -232,11 +221,7 @@ h1 {
     display: flex;
     align-items: center;
     letter-spacing: -0.08px;
-
-    color: rgba(0, 0, 0, 0.9);
-
 }
-
 
 h2 {
 
@@ -246,10 +231,7 @@ h2 {
     font-size: 15px;
     line-height: 16px;
     letter-spacing: -0.08px;
-    color: rgba(0, 0, 0, 0.7);
 }
-
-
 
 h3 {
     font-family: var(--main-font);
@@ -291,7 +273,6 @@ img {
     width: 100%;
     padding: 20px;
     overflow: auto;
-    background-color: #F2F2F2;
 }
 
 
@@ -310,7 +291,6 @@ img {
     transition: all .25s linear;
 }
 
-
 /*overriding some styles of bootstrap dropdown*/
 .dropdown-item {
     font-size: 13px;
@@ -327,7 +307,6 @@ img {
     opacity: 0.5;
 }
 
-
 /*overriding the bootstraps dropdown highlighting*/
 .btn-check:focus, .btn:focus {
     box-shadow: none !important;
@@ -341,8 +320,6 @@ img {
     width: 100%;
 }
 
-
-
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
@@ -354,7 +331,6 @@ img {
     -webkit-app-region: drag;
     border-width: 0px;
     border-bottom-width: 1px;
-    border-color: #E6E6E6;
     border-style: solid;
 }
 
@@ -371,14 +347,11 @@ img {
     letter-spacing: -0.08px;
 
     color: #000000;
-
 }
 
 .app_title.fullscreen{
     padding-left: 22px;
 }
-
-
 
 @media (display-mode: fullscreen) {
     .app_title {
@@ -388,16 +361,11 @@ img {
     }
 }
 
-
-
-
-
 .tabs_bar {
     height: 40px;
     width: 100%;
     border-width: 0px;
     border-bottom-width: 1px;
-    border-color: #E6E6E6;
     border-style: solid;
 
     padding-top: 8px;
@@ -405,10 +373,7 @@ img {
     padding-right: 20px;
 }
 
-
-
 .tab_content_frame {
-    background-color: #F2F2F2;
     width: 100%;
     height: calc(100vh - 40px  - 35px - 2px);
     overflow: auto;
@@ -418,7 +383,6 @@ img {
     /*padding: 20px;*/
 
 }
-
 
 .vertical-center {
     margin: 0;
@@ -434,7 +398,4 @@ img {
     cursor: pointer;
 
 }
-
-
-
 </style>

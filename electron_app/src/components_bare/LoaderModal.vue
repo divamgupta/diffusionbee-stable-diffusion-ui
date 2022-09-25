@@ -1,3 +1,4 @@
+@import '../assets/css/theme.css';
 <template>
     <center>
         
@@ -55,7 +56,6 @@ export default {
 
     .loader_box{
        padding: 20px;
-        background-color: rgba(255,255,255,0.9);
         /*height: calc(160px);*/
         border-radius: 12px 12px 12px 12px;
     }
