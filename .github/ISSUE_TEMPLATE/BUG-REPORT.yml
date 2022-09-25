@@ -2,8 +2,8 @@ name: "🐛 Bug Report"
 description: Create a new ticket for a bug.
 title: "🐛 [BUG] - <title>"
 labels: [
-  "bug"
-]
+  "bug" 
+  ]
 body:
   - type: textarea
     id: description
@@ -44,7 +44,7 @@ body:
       render: bash
     validations:
       required: false
-    - type: dropdown
+  - type: dropdown
     id: os
     attributes:
       label: "OS"
