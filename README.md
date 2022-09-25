@@ -13,8 +13,6 @@
 
 https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download/0.3.0/DiffusionBee-0.3.0-arm64.dmg
 
-Note : There is some issue with MacOS Ventura. It will be resolved soon. 
-
 <br>
 
 For prompt ideas visit https://arthub.ai
