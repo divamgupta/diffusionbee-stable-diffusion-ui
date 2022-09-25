@@ -16,6 +16,7 @@
             @menu_item_click_about="show_about"
             @menu_item_click_help="show_help"
             @menu_item_click_close="close_window"
+            @menu_item_click_discord="menu_item_click_discord"
 
         > 
 
@@ -231,6 +232,10 @@ export default
         show_help(){
             window.ipcRenderer.sendSync('open_url', "https://diffusionbee.com");
         } ,
+
+        menu_item_click_discord(){
+            window.ipcRenderer.sendSync('open_url', "https://discord.gg/t6rC5RaJQn");
+        },
 
         close_window(){
             window.ipcRenderer.sendSync('close_window', '');

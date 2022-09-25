@@ -98,7 +98,7 @@
                                 <b-form-group inline  label="" style="margin-bottom: 6px;" >
                                 <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Seed: </label>
                     
-                                <b-form-input size="sm" class="mr-sm-2"  v-model="seed" style="border-color:rgba(0,0,0,0.1) ; max-width: 40px; float: right; margin-right: 30px;" ></b-form-input>
+                                <b-form-input onkeypress="return event.keyCode != 13;"  size="sm" class="mr-sm-2"  v-model="seed" style="border-color:rgba(0,0,0,0.1) ; max-width: 40px; float: right; margin-right: 30px;" ></b-form-input>
 
                                 </b-form-group>
 
