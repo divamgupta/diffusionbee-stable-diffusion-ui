@@ -3,6 +3,7 @@ import sys
 import json
 import copy
 import random
+import os
 
 class Unbuffered(object):
     def __init__(self, stream):
@@ -25,6 +26,8 @@ sys.stdout = Unbuffered(sys.stdout)
 time.sleep(1)
 
 
+sample_path = os.path.join(  os.path.dirname(os.path.abspath(__file__)),  "assets",  "sample.png"  )
+
 print("sdbk mltl downloading model")
 for i in range(100):
     time.sleep(0.06)
@@ -44,7 +47,7 @@ def process_opt(opts):
         for i in range(0,100,5):
             print("sdbk dnpr "+str(i) ) # done percentage
             time.sleep(0.1)
-        impath = "/Users/divamgupta/Downloads/output_fork.png?%d"%random.randint(0,10000)
+        impath = sample_path + "?%d"%random.randint(0,10000)
 
         
 

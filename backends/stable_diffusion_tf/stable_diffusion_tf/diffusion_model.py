@@ -1,5 +1,5 @@
 import tensorflow as tf
-import tensorflow_addons as tfa
+from .group_norm import GroupNormalization
 
 from .layers import PaddedConv2D, apply_seq, td_dot, GEGLU
 
@@ -8,7 +8,7 @@ class ResBlock(tf.keras.layers.Layer):
     def __init__(self, channels, out_channels):
         super().__init__()
         self.in_layers = [
-            tfa.layers.GroupNormalization(epsilon=1e-5),
+            GroupNormalization(epsilon=1e-5),
             tf.keras.activations.swish,
             PaddedConv2D(out_channels, 3, padding=1),
         ]
@@ -17,7 +17,7 @@ class ResBlock(tf.keras.layers.Layer):
             tf.keras.layers.Dense(out_channels),
         ]
         self.out_layers = [
-            tfa.layers.GroupNormalization(epsilon=1e-5),
+            GroupNormalization(epsilon=1e-5),
             tf.keras.activations.swish,
             PaddedConv2D(out_channels, 3, padding=1),
         ]
@@ -34,6 +34,16 @@ class ResBlock(tf.keras.layers.Layer):
         ret = self.skip_connection(x) + h
         return ret
 
+
+def td_split( x , n_splits=1):
+    if n_splits == 1:
+        return [x]
+    else:
+        n = x.shape[1]
+        assert n%2 == 0
+        x1 = x[: , :n//2]
+        x2 = x[: , n//2:]
+        return td_split(x1 , n_splits-1 ) + td_split(x2 , n_splits-1 )
 
 class CrossAttention(tf.keras.layers.Layer):
     def __init__(self, n_heads, d_head):
@@ -62,9 +72,28 @@ class CrossAttention(tf.keras.layers.Layer):
         k = tf.keras.layers.Permute((2, 3, 1))(k)  # (bs, num_heads, head_size, time)
         v = tf.keras.layers.Permute((2, 1, 3))(v)  # (bs, num_heads, time, head_size)
 
-        score = td_dot(q, k) * self.scale
-        weights = tf.keras.activations.softmax(score)  # (bs, num_heads, time, time)
-        attention = td_dot(weights, v)
+        nspl = 1
+        num_heads = v.shape[1]
+        ntime = v.shape[2]
+    
+        if num_heads * ntime * ntime >= 8*4096*4096 - 1000:
+            nspl = 2
+        if num_heads * ntime * ntime >= 16*4096*4096 - 1000:
+            nspl = 3
+        if num_heads * ntime * ntime >= 32*4096*4096 - 1000:
+            nspl = 4
+
+        qs = td_split(q , nspl )
+        ks = td_split(k , nspl )
+        vs = td_split(v , nspl )
+
+        scores = [td_dot(q_, k_) * self.scale for q_, k_ in zip(qs , ks) ]
+        #score = td_dot(q, k) * self.scale
+
+        # weights = tf.keras.activations.softmax(score)  # (bs, num_heads, time, time)
+        weightss = [tf.keras.activations.softmax(s_) for s_ in  scores  ]
+        attentions = [td_dot(w_, v_) for w_,v_ in zip(weightss , vs)]
+        attention = tf.concat(attentions , axis=1)
         attention = tf.keras.layers.Permute((2, 1, 3))(
             attention
         )  # (bs, time, num_heads, head_size)
@@ -95,7 +124,7 @@ class BasicTransformerBlock(tf.keras.layers.Layer):
 class SpatialTransformer(tf.keras.layers.Layer):
     def __init__(self, channels, n_heads, d_head):
         super().__init__()
-        self.norm = tfa.layers.GroupNormalization(epsilon=1e-5)
+        self.norm = GroupNormalization(epsilon=1e-5)
         assert channels == n_heads * d_head
         self.proj_in = PaddedConv2D(n_heads * d_head, 1)
         self.transformer_blocks = [BasicTransformerBlock(channels, n_heads, d_head)]
@@ -184,7 +213,7 @@ class UNetModel(tf.keras.models.Model):
             [ResBlock(640, 320), SpatialTransformer(320, 8, 40)],
         ]
         self.out = [
-            tfa.layers.GroupNormalization(epsilon=1e-5),
+            GroupNormalization(epsilon=1e-5),
             tf.keras.activations.swish,
             PaddedConv2D(4, kernel_size=3, padding=1),
         ]

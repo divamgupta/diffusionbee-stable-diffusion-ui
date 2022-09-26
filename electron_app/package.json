@@ -3,7 +3,7 @@
   "version": "0.3.0",
   "build_number": "0001",
   "website": "https://diffusionbee.com",
-  "description": "Diffusion Bee - GUI for stable diffusion.",
+  "description": "Diffusion Bee - Stable Diffusion App.",
   "is_dev": false,
   "private": true,
   "scripts": {
