@@ -43,6 +43,11 @@ function on_msg_from_py(msg) {
     if (msg.substring(0, 4) == "utds") // update the state of 
     {
         update_state(msg.substring(5));
+    }
+    if (msg.substring(0, 4) == "sdbk") // update the state of 
+    {
+        if(app_component_object)
+            app_component_object.stable_diffusion.state_msg(msg.substring(5))
     } else if (msg.substring(0, 4) == "alrt") // just alert  
     {
         native_alert(msg.substring(5));

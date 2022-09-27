@@ -12,12 +12,14 @@ function start_bridge() {
     console.log("starting briddddd")
     const fs = require('fs')
 
-    if (fs.existsSync( '../stable-diffusion/txt2img.py' )) {
-        python = require('child_process').spawn('python3', ['../stable-diffusion/txt2img.py' ]);
+    let script_path = process.env.PY_SCRIPT || "./src/fake_backend.py"; 
+
+    if (fs.existsSync(script_path)) {
+        python = require('child_process').spawn('python3', [script_path]);
     }
     else{
         const path = require('path');
-        let backend_path =  path.join(path.dirname(__dirname), 'core' , 'txt2img' );
+        let backend_path =  path.join(path.dirname(__dirname), 'core' , 'diffusionbee_backend' );
         python = require('child_process').spawn( backend_path  );
     }
     
@@ -28,8 +30,11 @@ function start_bridge() {
         console.log("Python response: ", data.toString('utf8'));
 
 
-        if(! data.toString().includes("___U_P_D_A_T_E___"))
-            win.webContents.send('to_renderer', 'adlg ' + data.toString('utf8'));
+        if(! data.toString().includes("sdbk ")){
+            if(win && !is_app_closing )
+                win.webContents.send('to_renderer', 'adlg ' + data.toString('utf8'));
+        }
+           
         
 
         if (win) {
@@ -41,7 +46,8 @@ function start_bridge() {
             if( splitted.length > 1 ){
                 for (var i = 0; i < splitted.length -1 ; i++) {
                     if (splitted[i].length > 0)
-                        win.webContents.send('to_renderer', 'py2b ' + splitted[i]);
+                        if(win && !is_app_closing )
+                            win.webContents.send('to_renderer', 'py2b ' + splitted[i]);
                 }
             }
 
@@ -55,7 +61,8 @@ function start_bridge() {
 
     python.stderr.on('data', (data) => {
         console.error(`stderr: ${data}`);
-         win.webContents.send('to_renderer', 'adlg ' + data.toString('utf8') );
+        if(win && !is_app_closing )
+             win.webContents.send('to_renderer', 'adlg ' + data.toString('utf8') );
     });
 
     python.on('close', (code) => {
@@ -65,14 +72,19 @@ function start_bridge() {
         // }
 
         if(is_app_closing){
-            if (win)
+            if (win){
                  app.exit(1);
+            }
             return;
         }
 
         dialog.showMessageBox({ message: "Backend quit unexpectedly" });
         if (win)
+        {
+            is_app_closing = true;
             app.exit(1);
+        }
+            
 
     });
 

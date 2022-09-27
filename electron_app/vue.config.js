@@ -11,7 +11,7 @@ module.exports = {
                 appId: 'com.linerai.liner',
                 afterSign: "./afterSignHook.js",
                 "extraResources": [{
-                    "from": "../stable-diffusion/dist/txt2img",
+                    "from": process.env.BACKEND_BUILD_PATH , 
                     "to": "core",
                     "filter": [
                         "**/*"
@@ -23,9 +23,7 @@ module.exports = {
                     "hardenedRuntime": true,
                     "entitlements": "build/entitlements.mac.plist",
                     "entitlementsInherit": "build/entitlements.mac.plist",
-                    "minimumSystemVersion": "12.5.1",
                     "extendInfo": {
-                        "LSMinimumSystemVersion": "12.5.1"
                     } , 
                     "target": {
                         "target": "dmg",

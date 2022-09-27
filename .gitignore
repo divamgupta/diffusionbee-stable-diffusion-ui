@@ -3,7 +3,6 @@ optimized_stable_diffusion/
 
 
 HF_weights/
-models/
 outputs/
 
 # Byte-compiled / optimized / DLL files
@@ -16,7 +15,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
