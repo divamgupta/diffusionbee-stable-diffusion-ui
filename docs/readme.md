@@ -32,7 +32,7 @@ The **History** tab show previously generated images and the prompts used. If a 
 
 * For some tips for writing prompts, see for example [lexica.art](https://lexica.art/), [arthub.ai](https://arthub.ai) or ["prompt engineering" section on this page](https://www.assemblyai.com/blog/how-to-run-stable-diffusion-locally-to-generate-images/).
 * As stated in the DiffusionBee window, the application requires quite a bit of CPU power and will run faster if other applications are turned off.
-* All created images are stored at `/tmp` in your file system. The directory is wiped every time you reboot your computer.
+* All created images are stored at `~/.diffusionbee/images/` in your file system. The directory is wiped every time you reboot your computer.
 * The model file is stored at `~/.diffusionbee/downloads`. If you already have the model available and don't want to re-download it, move, copy or symlink it to that directory.
 * The tab _Image to Image_ is currently not used.
 * The _Show logs_ menu option shows logs that are mostly useful for developers or for tracking errors. You exit the log by clicking **Text to image**.
