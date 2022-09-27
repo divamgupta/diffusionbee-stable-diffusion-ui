@@ -173,8 +173,12 @@
                 </b-row>
                 <br> 
             </div>
+            
 
-            <div v-if="backend_error" style="color: red; margin-top: 50px;">
+
+
+
+            <div v-if="backend_error" style="color:red ; margin-top:50px;">
                 <div class="center loader_box">
                      {{backend_error}}
                 </div>
@@ -184,10 +188,10 @@
         <div v-if="!stable_diffusion.is_input_avail">
             <LoaderModal :loading_percentage="done_percentage" loading_title="Generating"></LoaderModal>
         </div>
-
-        <div class="bottom_float">
-            <p>Please close other applications for best speed.</p>
-        </div>
+    
+    <div class="bottom_float">
+        <p>Please close other applications for best speed.</p>
+    </div>
 
     </div>
 
@@ -348,7 +352,7 @@ export default {
         background-color: rgba(0, 0, 0, 0.1); 
         padding:10px ; 
         margin-right: 10px;
-        border-radius: 3px 3px 3px 3px;
+         border-radius: 3px 3px 3px 3px;
     }
 
     .gal_img{
@@ -360,4 +364,5 @@ export default {
         box-shadow: 0px 0px 1.76351px rgba(40, 41, 61, 0.04), 0px 3.52703px 7.05405px rgba(96, 97, 112, 0.16);
 
     }
+
 </style>
