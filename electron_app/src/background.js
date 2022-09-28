@@ -3,6 +3,7 @@
 import { app, protocol, BrowserWindow, nativeTheme, ipcMain , Menu} from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+import contextMenu from 'electron-context-menu'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 const electronLocalshortcut = require('electron-localshortcut')
@@ -40,8 +41,9 @@ function save_window_size() {
 	settings.set('windowPosState', windowState);
 }
 
-
-
+contextMenu({
+	showSaveImageAs: true
+});
 
 async function createWindow() {
 	// Create the browser window.
