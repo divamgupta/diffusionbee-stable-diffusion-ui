@@ -56,10 +56,19 @@ function open_popup( img_url , text ){
                       user-drag: none;
           
             }
+            @media (prefers-color-scheme: light) {
+                body {
+                    background-color: #f2f2f2;
+                }
+            }
+            @media (prefers-color-scheme: dark) {
+                body {
+                    background-color: #303030;
+                }
+            }
             body{
                 padding : 0;
                 margin: 0;
-                background-color: #F2F2F2;
                 -webkit-user-select: none;
                     -webkit-app-region: drag;
                   
