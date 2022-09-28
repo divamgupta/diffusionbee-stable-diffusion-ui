@@ -81,7 +81,6 @@ async function createWindow() {
 
 
 	win.on('close', function(e) {
-
 		if(win.show_dialog_on_quit){
 
 			let message = 'Are you sure you want to quit?';
@@ -103,7 +102,7 @@ async function createWindow() {
 
 
 
-	nativeTheme.themeSource = 'light';
+	nativeTheme.themeSource = 'system';
 
 	if (process.env.WEBPACK_DEV_SERVER_URL) {
 		// Load the url of the dev server if in development mode

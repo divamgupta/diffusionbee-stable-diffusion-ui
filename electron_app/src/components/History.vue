@@ -1,3 +1,4 @@
+@import '../assets/css/theme.css';
 <template>
     <div  class="animatable_content_box ">
     
@@ -27,8 +28,8 @@
         </div>
         <div v-else>
             <div class="center">
-                    No images generated yet.
-                </div>
+                    <p>No images generated yet.</p>
+            </div>
         </div>
         
         
