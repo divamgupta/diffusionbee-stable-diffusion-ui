@@ -1,9 +1,9 @@
 import { ipcMain, dialog } from 'electron'
 import { app , screen } from 'electron'
 import settings from 'electron-settings';
+import { open_popup } from './utils'
 
 var win;
-
 
 function bind_window_native_functions(w) {
     console.log("browser object binded")
@@ -262,9 +262,6 @@ ipcMain.on('show_about', (event, arg) => {
 
 })
 
-
-
-
 ipcMain.on('native_confirm', (event, arg) => {
 
     if (win) {
@@ -373,8 +370,14 @@ ipcMain.on('load_data', (event, arg) => {
 
 })
 
-
-
+ipcMain.on('open_popup', (event, { img, title }) => {
+    if (process.platform === 'darwin') {
+        win.previewFile(img, title)
+    } else {
+        open_popup("file://" + img, undefined);
+    }
+    event.returnValue = true
+})
 
 console.log("native functions imported")
 
