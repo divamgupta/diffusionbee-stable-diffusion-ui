@@ -10,29 +10,28 @@
 [![Download](https://user-images.githubusercontent.com/1890549/189538422-52d50488-c1fa-4924-bec6-186c9e0f307b.png)](https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases)
 
 ## Features
-* Full data privacy - nothing is sent to the cloud
-* Clean and easy to use UI
 * One click installer
-* No dependencies needed
+* No dependencies
+* Clean and easy to use UI
 * Multiple image sizes
-* Optimized for M1/M2 Chips
 * Runs locally on your computer
+* Full data privacy – nothing is sent to the cloud
+* Optimized for M1/M2 Chips
 
 ## Requirements 
-* MacOS 12.5.1 or later
+* MacOS 12.3 or later
 * 16 GB RAM recommended
 
 ## Usage
 
 See [documentation](docs/DOCUMENTATION.md).
 
-Join [our discord server](https://discord.gg/t6rC5RaJQn)!
+Join [our discord server](https://discord.gg/t6rC5RaJQn) for tips, inspiration, support and general discussion.
 
 ## License
 Stable Diffusion is released under [the CreativeML OpenRAIL M license](https://github.com/CompVis/stable-diffusion/blob/main/LICENSE).
-Diffusion Bee is just a GUI wrapper on top of Stable Diffusion, so all the term of Stable Diffusion are applied on the outputs.
+DiffusionBee is just a GUI wrapper on top of Stable Diffusion, so all the term of Stable Diffusion are applied on the outputs.
 
-## References
-1) https://github.com/bfirsh/stable-diffusion/tree/apple-silicon-mps-support
-
-If you like Diffusion Bee, consider checking [Liner.ai](https://liner.ai), a one-click tool to train machine learning models.
+## References and links
+* [More work on Stable Diffusion on Mac](https://github.com/bfirsh/stable-diffusion/tree/apple-silicon-mps-support)
+* If you like DiffusionBee, consider checking [Liner.ai](https://liner.ai), a one-click tool to train machine learning models.
