@@ -10,6 +10,8 @@ On first launch, DiffusionBee will download and install additional data for gene
 
 To create an image using DiffusionBee, simply enter a prompt and press "generate". Depending on settings and available computing power it may take a few seconds to a few minutes to generate an image. Image generation may be aborted by pressing the stop button. Use the "save image" link to save the image to a location of your choice.
 
+Clicking on an image opens a separate window displaying the image in full size.
+
 ### Options and extras
 
 The **Prompt ideas** button opens a web page where you can browse a gallery for finding useful prompts.
