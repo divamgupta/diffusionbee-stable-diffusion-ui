@@ -4,6 +4,7 @@
 ## Why use DiffusionBee?
 
 * DiffusionBee is the easiest way to run Stable Diffusion locally on your Mac. Comes with a one-click installer. No dependencies or technical knowledge needed.
+* DiffusionBee is significantly faster than most other ways of running Stable Diffusion locally.
 * Runs locally on your computer no data is sent to the cloud (other than request to download the weights and checking for software updates).
 
 [![Download](https://user-images.githubusercontent.com/1890549/189538422-52d50488-c1fa-4924-bec6-186c9e0f307b.png)](https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases)
