@@ -4,8 +4,7 @@ This documentation is written for version 0.3.0. Parts of it may be unapplicable
 
 ### Installation
 
-* Download the application and add to your applications directory, then eject the installation drive.
-* Start the DiffusionBee application. The first time DiffusionBee will download additional data, which takes some extra time. Following application starts will be quicker.
+On first launch, DiffusionBee will download and install additional data for generation.
 
 ## Generating images
 
@@ -26,15 +25,17 @@ The **Advanced options** buttons gives the following options:
 * Guidance scale: This kind of corresponds to how closely Stable Diffusion should stick to the prompt. Higher value means more strict interpretation.
 * Seed: A number between 0 and 2^32 - 1 that is used as starting point for the image generation. If the same seed is used with the same prompt, the same image will be generated. If left empty, a random seed will be used.
 
-The **History** tab show previously generated images and the prompts used. If a seed was provided, it too will be available. (If the seed setting was left empty, the random seed will _not_ be visible in the logs for version 0.3.0.)
+The **History** tab show previously generated images and the prompts used. If a seed was provided, it too will be available. (If the seed setting was left empty, the random seed will _not_ be visible.)
 
 ## Extra tips
 
-* For some tips for writing prompts, see for example [lexica.art](https://lexica.art/), [arthub.ai](https://arthub.ai) or ["prompt engineering" section on this page](https://www.assemblyai.com/blog/how-to-run-stable-diffusion-locally-to-generate-images/).
-* As stated in the DiffusionBee window, the application requires quite a bit of CPU power and will run faster if other applications are turned off.
-* All created images are stored at `~/.diffusionbee/images/` in your file system. The directory is wiped every time you reboot your computer.
-* The model file is stored at `~/.diffusionbee/downloads`. If you already have the model available and don't want to re-download it, move, copy or symlink it to that directory.
-* The tab _Image to Image_ is currently not used.
+* For prompt ideas and help, check out:
+  - [lexica.art](https://lexica.art/)
+  - [arthub.ai](https://arthub.ai/)
+  - `Prompt Engineering` section at [AssemblyAI](https://www.assemblyai.com/blog/how-to-run-stable-diffusion-locally-to-generate-images/)
+* Image generation requires a substantial amount of system memory. Close other applications for a faster generation.
+* All created images are stored at `~/.diffusionbee/images/` in your file system. There is no interface in DiffusionBee for deleting images, but they can be deleted manually from this hidden directory.
+* The model is stored at `~/.diffusionbee/downloads`. If you already have the model available and don't want to re-download it, move, copy or symlink it to that directory.
 * The _Show logs_ menu option shows logs that are mostly useful for developers or for tracking errors. You exit the log by clicking **Text to image**.
 
 ## Join the discussion
