@@ -33,5 +33,5 @@ Stable Diffusion is released under [the CreativeML OpenRAIL M license](https://g
 DiffusionBee is just a GUI wrapper on top of Stable Diffusion, so all the term of Stable Diffusion are applied on the outputs.
 
 ## References and links
-* [More work on Stable Diffusion on Mac](https://github.com/bfirsh/stable-diffusion/tree/apple-silicon-mps-support)
+* [Other work on Stable Diffusion on Mac](https://github.com/bfirsh/stable-diffusion/tree/apple-silicon-mps-support)
 * If you like DiffusionBee, consider checking [Liner.ai](https://liner.ai), a one-click tool to train machine learning models.
