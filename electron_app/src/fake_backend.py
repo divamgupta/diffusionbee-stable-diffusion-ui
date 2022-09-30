@@ -34,6 +34,8 @@ for i in range(100):
     print("sdbk mlpr %d"%i ) # model loading percentage
     print("sdbk mlms done %s of 100.0"%i)
 
+print("sdbk mlpr %d"%(-1) )
+time.sleep(2)
 
 print("sdbk mdld") # model loaded
 

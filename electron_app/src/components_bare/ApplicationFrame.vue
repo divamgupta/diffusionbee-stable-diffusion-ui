@@ -25,6 +25,9 @@
         <div class="tabs_bar">
             <div @click="selectTab('txt2img')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'txt2img'}">Text To Image</div>
             <div @click="selectTab('img2img')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'img2img'}">Image To Image</div>
+            <div @click="selectTab('outpainting')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'outpainting'}">Outpainting</div>
+
+            
             <div @click="selectTab('history')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'history'}">History</div>
         </div>
         <div class="tab_content_frame">
@@ -41,6 +44,9 @@
                      <slot v-if=" selected_tab === 'img2img' " name="img2img"></slot>
                 </KeepAlive>
                 <slot v-if=" selected_tab === 'logs' " name="logs"></slot>
+
+                <slot v-if=" selected_tab === 'outpainting' " name="outpainting"></slot>
+                
              
             </div>
 

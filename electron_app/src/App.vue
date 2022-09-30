@@ -31,6 +31,12 @@
                
             </template>
 
+            <template v-slot:outpainting>
+                <Outpainting></Outpainting>
+            </template>
+
+            
+
             <template v-slot:history>
                 <History :app_state="app_state"></History>
             </template>
@@ -59,6 +65,7 @@ import SplashScreen from './components_bare/SplashScreen.vue'
 import ApplicationFrame from './components_bare/ApplicationFrame.vue'
 import ImgGenerate from './components/ImgGenerate.vue'
 import Img2Img from './components/Img2Img.vue'
+import Outpainting from './components/Outpainting.vue'
 
 import History from './components/History.vue'
 
@@ -78,7 +85,8 @@ export default
         StableDiffusion,
         LoaderModal,
         History,
-        Img2Img
+        Img2Img,
+        Outpainting
     },
 
     mounted() {
