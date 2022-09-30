@@ -23,7 +23,7 @@
                         <b-dropdown id="dropdown-form" variant="link" ref="dropdown" toggle-class="text-decoration-none" no-caret >
                         
                             <template #button-content>
-                                <div class="l_button"  style="" >Advanced options</div>
+                                <div class="l_button"  style="" >Options</div>
                             </template>
 
                             <b-dropdown-form style="min-width: 240px ; ">
@@ -127,7 +127,7 @@
 
                     
                 </div>
-                <div v-else  class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
+                <div v-else-if="stable_diffusion.generated_by=='txt2img'"  class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
                     <div v-if="is_stopping" class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stopping ...</div>
                     <div v-else class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stop</div>
                 </div>
@@ -162,12 +162,12 @@
 
             <div v-if="backend_error" style="color:red ; margin-top:50px;">
                 <div class="center loader_box">
-                     {{backend_error}}
+                     <p>Error: {{backend_error}} </p>
                 </div>
             </div>
         </div>
 
-        <div v-if="!stable_diffusion.is_input_avail">
+        <div v-if="!stable_diffusion.is_input_avail && stable_diffusion.generated_by=='txt2img'">
             <LoaderModal :loading_percentage="done_percentage" loading_title="Generating"></LoaderModal>
         </div>
     
@@ -217,11 +217,18 @@ export default {
     },
     methods: {
         generate_from_prompt(){
+            let seed = 0;
+            if(this.seed)
+                seed = Number(this.seed);
+            else
+                seed = Math.floor(Math.random() * 100000);
+
+
             let params = {
                 prompt : this.prompt , 
                 W : Number(this.img_w) , 
                 H : Number(this.img_h) , 
-                seed : Number(this.seed),
+                seed :seed,
                 scale : this.guidence_scale , 
                 ddim_steps : this.dif_steps, 
                 num_imgs : this.num_imgs , 
@@ -244,7 +251,7 @@ export default {
                     that.generated_images.push(img_path);
 
                     if(!(that.app_state.history[history_key]))
-                        Vue.set(that.app_state.history, history_key , {"prompt":that.prompt , "seed": that.seed, "key":history_key , "imgs" : []});
+                        Vue.set(that.app_state.history, history_key , {"prompt":that.prompt , "seed": seed, "img_w":that.img_w , "img_h":that.img_w ,  "key":history_key , "imgs" : []});
                     
                     that.app_state.history[history_key].imgs.push(img_path)
 
@@ -263,7 +270,7 @@ export default {
 
 
            if(this.stable_diffusion)
-                this.stable_diffusion.text_to_img(params, callbacks);
+                this.stable_diffusion.text_to_img(params, callbacks, 'txt2img');
         } , 
 
         open_image_popup(img){
@@ -338,12 +345,19 @@ export default {
 
     .gal_img{
         border-radius: 12px 12px 12px 12px;
-        background-color: white;
+        /* background-color: white; */
         border-style: solid;
         border-width: 1px;
         border-color: rgba(0, 0, 0, 0.1);
+        cursor: pointer;
         box-shadow: 0px 0px 1.76351px rgba(40, 41, 61, 0.04), 0px 3.52703px 7.05405px rgba(96, 97, 112, 0.16);
 
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .gal_img{
+            border-color: rgba(255, 255, 255, 0.3);
+        }
     }
 
 </style>

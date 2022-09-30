@@ -38,6 +38,16 @@ export default {
 }
 </script>
 <style>
+
+
+.loader_box{
+    padding: 20px;
+    /*height: calc(160px);*/
+    border-radius: 12px 12px 12px 12px;
+}
+
+
+
 </style>
 <style scoped>
     .center {
@@ -54,10 +64,7 @@ export default {
         opacity: 0.5;
     }
 
-    .loader_box{
-       padding: 20px;
-        /*height: calc(160px);*/
-        border-radius: 12px 12px 12px 12px;
-    }
+   
+
 
 </style>

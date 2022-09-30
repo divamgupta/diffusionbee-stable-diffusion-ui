@@ -33,12 +33,13 @@
                      <slot v-if=" selected_tab === 'txt2img' " name="txt2img"></slot>
                 </KeepAlive>
 
-                <!-- <KeepAlive> -->
+                <KeepAlive>
                      <slot v-if=" selected_tab === 'history' " name="history"></slot>
-                <!-- </KeepAlive> -->
+                </KeepAlive>
 
-
-                <slot v-if=" selected_tab === 'img2img' " name="img2img"></slot>
+                <KeepAlive>
+                     <slot v-if=" selected_tab === 'img2img' " name="img2img"></slot>
+                </KeepAlive>
                 <slot v-if=" selected_tab === 'logs' " name="logs"></slot>
              
             </div>
@@ -136,10 +137,7 @@ body {
     transition: background-color 150ms ease-out 10ms, color 150ms ease-out 10ms;
 }
 
-.l_button:hover {
-    background-color: #F4F5F5;
-    background-color: rgba(0, 0, 0, 0.06);
-}
+
 
 
 .button_white {

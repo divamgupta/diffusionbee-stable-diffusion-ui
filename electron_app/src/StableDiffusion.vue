@@ -83,9 +83,10 @@ export default {
             send_to_py("t2im __stop__") 
         },
 
-        text_to_img(prompt_params, callbacks){
+        text_to_img(prompt_params, callbacks, generated_by){
             if(!this.is_input_avail)
                 return;
+            this.generated_by = generated_by;
             this.attached_cbs = callbacks;
             send_to_py("t2im " + JSON.stringify(prompt_params)) 
         }
