@@ -1,4 +1,4 @@
-# DiffusionBee - Stable Diffusion GUI App for M1 Mac
+# DiffusionBee – Stable Diffusion GUI App for Mac
 [![Twitter](https://img.shields.io/twitter/url.svg?label=Follow%20%40divamgupta&style=social&url=https%3A%2F%2Ftwitter.com%2Fdivamgupta)](https://twitter.com/divamgupta) Visit [DiffusionBee.com](https://diffusionbee.com/)
 
 ## Why use DiffusionBee?
@@ -24,7 +24,7 @@
 
 ## Usage
 
-See [documentation](docs/).
+See [documentation](docs/DOCUMENTATION.md).
 
 Join [our discord server](https://discord.gg/t6rC5RaJQn)!
 
