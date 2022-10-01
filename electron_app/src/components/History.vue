@@ -11,8 +11,8 @@
                     <br  v-if="history_box.inp_img" >
                     <br  v-if="history_box.inp_img" >
               
-                    <span style="opacity: 0.5;" v-if="history_box.seed"> Seed : {{history_box.seed}} </span>
-                    <br  v-if="history_box.seed">
+                    <span style="opacity: 0.5;" v-if="get_box_params_str(history_box)"> {{get_box_params_str(history_box)}} </span>
+                    <br   v-if="get_box_params_str(history_box)">
                     
                     {{history_box.prompt}}
 
@@ -65,6 +65,18 @@ export default {
         delete_hist(k){
             Vue.delete( this.app_state.history , k );
         }, 
+
+        get_box_params_str(box){
+            let r = "";
+            let vals = {"seed" : "Seed" , "guidence_scale" : "Scale" , "dif_steps":"Steps"  , "inp_img_strength" : "Image Strength" , "img_w":"Img Width" , "img_h": "Img Height"}
+            for(let k in vals)
+                if( box[k])
+                    r += " " + vals[k] +  " : " + box[k] + " |";
+            if(r.charAt(r.length - 1) == "|")
+                r = r.slice(0, -1);
+            return r;
+
+        },
 
         save_image(generated_image, prompt, seed){
             if(!generated_image)

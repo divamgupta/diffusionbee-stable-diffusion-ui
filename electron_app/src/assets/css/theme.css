@@ -250,10 +250,14 @@
 
     .loader_box {
         color: rgba(255, 255, 255, 0.9);
-        background-color: var(--background-secondary-dark);
+        background-color:  #303030;
     }
 
     .logo_splash_screen {
         content: url("..//logo_splash_dark.png")
+    }
+
+    .moonloader{
+        filter: invert(100%);
     }
 }

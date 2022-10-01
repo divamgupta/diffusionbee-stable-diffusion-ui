@@ -211,7 +211,10 @@ export default {
                     that.generated_images.push(img_path);
 
                     if(!(that.app_state.history[history_key]))
-                        Vue.set(that.app_state.history, history_key , {"prompt":that.prompt , "seed": seed, "key":history_key , "imgs" : [] , "inp_img": that.inp_img });
+                        Vue.set(that.app_state.history, history_key , {
+                            "prompt":that.prompt , "seed": seed, "key":history_key , "imgs" : [] , "inp_img": that.inp_img ,
+                            "img_w":that.img_w , "img_h":that.img_w , "dif_steps" : that.dif_steps , "inp_img_strength" : that.inp_img_strength,
+                        });
                     
                     that.app_state.history[history_key].imgs.push(img_path)
 

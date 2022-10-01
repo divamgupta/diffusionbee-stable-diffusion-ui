@@ -6,7 +6,7 @@
             
             <h2 style=" margin-bottom:-5px   "  class="head ">{{loading_title}}</h2>
                 <span v-if="loading_percentage <  0 "  style="zoom:0.35;   margin-left: 25px;   ">
-                    <MoonLoader color="#000000" size="50px"></MoonLoader>
+                    <MoonLoader class="moonloader" color="#000000" size="50px"></MoonLoader>
             </span>
             
             <div style="margin-bottom:30px"></div>
