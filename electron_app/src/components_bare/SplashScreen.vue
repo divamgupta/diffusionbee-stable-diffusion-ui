@@ -1,7 +1,8 @@
+@import '../assets/css/theme.css';
 <template>
     <div class="splash_screen">
         <Transition name="fade">
-            <img v-if=show width="60%" src="@/assets/logo_splash.png">
+            <img class="logo_splash_screen" v-if=show width="60%">
         </Transition>
     </div>
 </template>
