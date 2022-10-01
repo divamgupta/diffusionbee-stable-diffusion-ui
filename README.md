@@ -11,7 +11,7 @@
 
 [![Download](https://user-images.githubusercontent.com/1890549/189538422-52d50488-c1fa-4924-bec6-186c9e0f307b.png)](https://diffusionbee.com/)
 
-https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download/0.3.0/DiffusionBee-0.3.0-arm64.dmg
+https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download/1.0.0/DiffusionBee-1.0.0-arm64.dmg
 
 <br>
 
