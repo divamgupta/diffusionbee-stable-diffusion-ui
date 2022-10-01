@@ -256,7 +256,6 @@ export default {
                             "guidence_scale" : that.guidence_scale , "dif_steps" : that.dif_steps 
                         });
 
-                    alert(JSON.stringify( that.app_state.history[history_key]))
                     
                     that.app_state.history[history_key].imgs.push(img_path)
 
