@@ -8,7 +8,7 @@ from downloader import ProgressBarDownloader
 import sys
 import copy
 import math
-
+import time
 
 
 
@@ -91,34 +91,43 @@ def main():
 
     print("sdbk mltl Loading Model")
 
-    p1 = ProgressBarDownloader(title="Downloading Model 1/4").download(
-                url="https://huggingface.co/fchollet/stable-diffusion/resolve/main/diffusion_model.h5",
-                md5_checksum="72db3d55b60691e1f8a6a68cd9f47ad0",
-                verify_ssl=False,
-                extract_zip=False,
-            )
+    for _ in range(5):
+        try:
+            p1 = ProgressBarDownloader(title="Downloading Model 1/4").download(
+                        url="https://huggingface.co/fchollet/stable-diffusion/resolve/main/diffusion_model.h5",
+                        md5_checksum="72db3d55b60691e1f8a6a68cd9f47ad0",
+                        verify_ssl=False,
+                        extract_zip=False,
+                    )
 
-    p2 = ProgressBarDownloader(title="Downloading Model 2/4").download(
-                url="https://huggingface.co/fchollet/stable-diffusion/resolve/main/text_encoder.h5",
-                md5_checksum="9ea30bed7728473b4270a76aabf1836b",
-                verify_ssl=False,
-                extract_zip=False,
-            )
+            p2 = ProgressBarDownloader(title="Downloading Model 2/4").download(
+                        url="https://huggingface.co/fchollet/stable-diffusion/resolve/main/text_encoder.h5",
+                        md5_checksum="9ea30bed7728473b4270a76aabf1836b",
+                        verify_ssl=False,
+                        extract_zip=False,
+                    )
 
 
-    p3 = ProgressBarDownloader(title="Downloading Model 3/4").download(
-                url="https://huggingface.co/fchollet/stable-diffusion/resolve/main/decoder.h5",
-                md5_checksum="8c86dc2fadfb0da9712a7a06cfa7bf11",
-                verify_ssl=False,
-                extract_zip=False,
-            )
+            p3 = ProgressBarDownloader(title="Downloading Model 3/4").download(
+                        url="https://huggingface.co/fchollet/stable-diffusion/resolve/main/decoder.h5",
+                        md5_checksum="8c86dc2fadfb0da9712a7a06cfa7bf11",
+                        verify_ssl=False,
+                        extract_zip=False,
+                    )
+            
+            p4 = ProgressBarDownloader(title="Downloading Model 4/4").download(
+                        url="https://huggingface.co/divamgupta/stable-diffusion-tensorflow/resolve/main/encoder_newW.h5",
+                        md5_checksum="bef951ed69aa5a7a3acae0ab0308b630",
+                        verify_ssl=False,
+                        extract_zip=False,
+                    )
+            break
+        except Exception as e:
+            pass
+
+        time.sleep(4)
+
     
-    p4 = ProgressBarDownloader(title="Downloading Model 4/4").download(
-                url="https://huggingface.co/divamgupta/stable-diffusion-tensorflow/resolve/main/encoder_newW.h5",
-                md5_checksum="bef951ed69aa5a7a3acae0ab0308b630",
-                verify_ssl=False,
-                extract_zip=False,
-            )
 
             
 

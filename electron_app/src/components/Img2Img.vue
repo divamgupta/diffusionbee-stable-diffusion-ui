@@ -43,6 +43,24 @@
                                     required
                                     ></b-form-select>
                                 </b-form-group>
+
+                                <b-form-group inline label=""  style="margin-bottom: 6px;">
+                                    <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Image Height: </label>
+                                    <b-form-select
+                                    v-model="img_h"
+                                    :options="[128*2 , 128*3 , 128*4 , 128*5 , 128*6, ]"
+                                    required
+                                    ></b-form-select>
+                                </b-form-group>
+
+                                <b-form-group inline label=""  style="margin-bottom: 6px;">
+                                    <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Image Width: </label>
+                                    <b-form-select
+                                    v-model="img_w"
+                                    :options="[128*2 , 128*3 , 128*4 , 128*5 , 128*6, ]"
+                                    required
+                                    ></b-form-select>
+                                </b-form-group>
                                 
                                 <b-form-group inline  label="" style="margin-bottom: 6px;" >
                                     <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Num Images: </label>
@@ -147,7 +165,9 @@ export default {
             backend_error : "",
             done_percentage : -1,
             is_stopping : false,
-            inp_img_strength : 0.5 , 
+            inp_img_strength : 0.3 , 
+            img_h : 512 , 
+            img_w : 512 , 
         };
     },
     methods: {
@@ -162,13 +182,15 @@ export default {
 
             let params = {
                 prompt : this.prompt , 
+                W : Number(this.img_w) , 
+                H : Number(this.img_h) , 
                 seed :seed,
                 scale : this.guidence_scale , 
                 ddim_steps : this.dif_steps, 
                 num_imgs : this.num_imgs , 
                 batch_size : this.batch_size , 
-                inp_img_strength : this.inp_img_strength,
-
+                img_strength : this.inp_img_strength,
+                input_image : this.inp_img,
             }
             let that = this;
 
