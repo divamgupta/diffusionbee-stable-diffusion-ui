@@ -25,7 +25,7 @@ The **Advanced options** buttons gives the following options:
 * Steps: This corresponds to how many steps are used to improve the image quality. Setting to a low number gives faster image generation, and may be useful while exploring different prompts.
 * Batch size: This tells DiffusionBee to generate multiple images at a time. New batches of images will be created until "num images" have been created.
 * Guidance scale: This kind of corresponds to how closely Stable Diffusion should stick to the prompt. Higher value means more strict interpretation.
-* Seed: A number between 0 and 2^32 – 1 that is used as starting point for the image generation. If the same seed is used with the same prompt and the same settings (save *steps*), the same image will be generated. If left empty, a random seed will be used (but not logged).
+* Seed: A number between 0 and 4,294,967,295 that is used as starting point for the image generation. If the same seed is used with the same prompt and the same settings (save *steps*), the same image will be generated. If left empty, a random seed will be used but not logged.
 
 The **History** tab show previously generated images and the prompts used. If a seed was provided, it too will be available. (If the seed setting was left empty, the random seed will _not_ be visible.)
 
@@ -37,6 +37,7 @@ The **History** tab show previously generated images and the prompts used. If a 
   - `Prompt Engineering` section at [AssemblyAI](https://www.assemblyai.com/blog/how-to-run-stable-diffusion-locally-to-generate-images/)
 * Image generation requires a substantial amount of system memory. Close other applications for a faster generation.
 * You can save time while tuning your prompts by lowering the *steps* setting, then turning it back up once you found a good prompt.
+* When tuning prompts, make sure that you enter a seed to make it possible to recreate images. If you generate more than one image per seed (via either the Num Images or Batch setting) there will not be a way to tie any of the images generated after the first one to the same seed. For example, if I have Num Images set to 3 and Seed set to 1000, the first of my three generated images will correspond to the seed of 1000, but I won't know the seed for the other two images.
 * All created images are stored at `~/.diffusionbee/images/` in your file system. There is no interface in DiffusionBee for deleting images, but they can be deleted manually from this hidden directory.
 * The model is stored at `~/.diffusionbee/downloads`. If you already have the model available and don't want to re-download it, move, copy or symlink it to that directory.
 * The _Show logs_ menu option shows logs that are mostly useful for developers or for tracking errors. You exit the log by clicking **Text to image**.
