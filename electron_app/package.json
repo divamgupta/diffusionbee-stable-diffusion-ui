@@ -1,7 +1,7 @@
 {
   "name": "DiffusionBee",
-  "version": "0.3.0",
-  "build_number": "0005",
+  "version": "1.0.0",
+  "build_number": "0006",
   "website": "https://diffusionbee.com",
   "description": "Diffusion Bee - Stable Diffusion App.",
   "is_dev": false,
