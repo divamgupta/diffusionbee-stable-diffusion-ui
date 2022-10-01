@@ -5,6 +5,7 @@
     --background-secondary-dark: #222222;
     --background: #ffffff;
     --background-secondary: #f2f2f2;
+    --border: #cbdafc;
     --border-dark: #383838;
     --menu-background: #eaebef;
 }
@@ -24,6 +25,19 @@
 
     p {
         color: rgba(0, 0, 0, 0.9);
+    }
+
+    select {
+        outline-color: transparent;
+    }
+
+    select:focus {
+        outline-color: var(--border);
+    }
+
+    .b-dropdown-form, .b-dropdown-form:focus {
+        outline: none !important;
+        outline-color: transparent;
     }
 
     .splash_screen {
@@ -50,7 +64,7 @@
         border-color: rgba(0, 0, 0, 0.1);
     }
 
-    .image_area{
+    .image_area {
         border: 1px solid;
         border-color: rgba(0, 0, 0, 0.0);
         background-color: rgba(0, 0, 0, 0.05);
@@ -87,7 +101,6 @@
         color: rgba(0, 0, 0, 0.9);
     }
 
-
     .title_bar {
         background-color: var(--background);
         border-color: #E6E6E6;
@@ -98,17 +111,19 @@
         border-color: #E6E6E6;
     }
 
-    .text_bg{
+    .text_bg {
         background-color: rgba(0, 0, 0, 0.05);
-   }
+    }
 
-   .loader_box{
+    .loader_box {
         color: rgba(255, 255, 255, 0.9);
-        background-color:  white;
-    } 
+        background-color: white;
+    }
+
+    .logo_splash_screen {
+        content: url("..//logo_splash.png")
+    }
 }
-
-
 
 @media (prefers-color-scheme: dark) {
     body {
@@ -140,7 +155,7 @@
     }
 
     .l_button:hover {
-        background-color: rgba(255 , 255 , 255 , 0.08);
+        background-color: rgba(255, 255, 255, 0.08);
     }
 
     .tab_content_frame {
@@ -155,17 +170,17 @@
         border-color: rgba(255, 255, 255, 0.1);
     }
 
-    .image_area{
-        
-         background-color: var(--background-dark);
-         border: 1px solid;
-         border-color: #606060;
+    .image_area {
+        background-color: var(--background-dark);
+        border: 1px solid;
+        border-color: #606060;
     }
 
     select {
         border-color: rgba(255, 255, 255, 0.1);
         background-color: var(--background-input-dark);
         color: var(--text-dark);
+        outline-color: transparent;
     }
 
     form {
@@ -176,6 +191,11 @@
         background-color: var(--background-dark);
         color: var(--text-dark);
         border-color: #606060;
+    }
+
+    .b-dropdown-form, .b-dropdown-form:focus {
+        outline: none !important;
+        outline-color: transparent;
     }
 
     .form-control:focus {
@@ -207,7 +227,6 @@
         background-color: var(--background-dark);
     }
 
-  
     .app_title span {
         color: rgba(255, 255, 255, 0.9);
     }
@@ -225,13 +244,16 @@
         background-color: var(--background-dark);
     }
 
-    .text_bg{
-       background-color: rgba(255 , 255 , 255 , 0.1);
-   }
+    .text_bg {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
 
-   .loader_box{
+    .loader_box {
         color: rgba(255, 255, 255, 0.9);
-        background-color:  #303030;
-    } 
+        background-color: var(--background-secondary-dark);
+    }
 
+    .logo_splash_screen {
+        content: url("..//logo_splash_dark.png")
+    }
 }
