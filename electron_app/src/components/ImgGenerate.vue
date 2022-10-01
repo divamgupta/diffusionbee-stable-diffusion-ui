@@ -309,7 +309,6 @@ export default {
 }
 </script>
 <style>
-
    .center {
       margin: 0;
       position: absolute;
