@@ -20,16 +20,26 @@
         > 
             <template v-slot:txt2img>
                 <ImgGenerate v-if="is_mounted && stable_diffusion.is_backend_loaded"  :app_state="app_state" :stable_diffusion="stable_diffusion"></ImgGenerate>
+                <div  v-else  class="animatable_content_box ">
+                    <LoaderModal :loading_percentage="stable_diffusion.loading_percentage" :loading_desc="stable_diffusion.model_loading_msg"  :loading_title="stable_diffusion.model_loading_title ||'Loading model'"> </LoaderModal>
+                </div>
                 
-                <LoaderModal v-else :loading_percentage="stable_diffusion.loading_percentage" :loading_desc="stable_diffusion.model_loading_msg"  :loading_title="stable_diffusion.model_loading_title ||'Loading model'"> </LoaderModal>
-               
             </template>
 
             <template v-slot:img2img>
-                <div class="center">
-                     <p>Coming soon!</p>
+
+                <Img2Img v-if="is_mounted && stable_diffusion.is_backend_loaded"  :app_state="app_state" :stable_diffusion="stable_diffusion"></Img2Img>
+                <div  v-else  class="animatable_content_box ">
+                    <LoaderModal :loading_percentage="stable_diffusion.loading_percentage" :loading_desc="stable_diffusion.model_loading_msg"  :loading_title="stable_diffusion.model_loading_title ||'Loading model'"> </LoaderModal>
                 </div>
+
             </template>
+
+            <template v-slot:outpainting>
+                <Outpainting></Outpainting>
+            </template>
+
+            
 
             <template v-slot:history>
                 <History :app_state="app_state"></History>
@@ -58,6 +68,9 @@ import StableDiffusion from "./StableDiffusion.vue"
 import SplashScreen from './components_bare/SplashScreen.vue'
 import ApplicationFrame from './components_bare/ApplicationFrame.vue'
 import ImgGenerate from './components/ImgGenerate.vue'
+import Img2Img from './components/Img2Img.vue'
+import Outpainting from './components/Outpainting.vue'
+
 import History from './components/History.vue'
 
 import LoaderModal from './components_bare/LoaderModal.vue'
@@ -75,7 +88,9 @@ export default
         ImgGenerate, 
         StableDiffusion,
         LoaderModal,
-        History
+        History,
+        Img2Img,
+        Outpainting
     },
 
     mounted() {

@@ -8,10 +8,17 @@
             <div v-for="history_box in get_history()" :key="history_box.key" style="clear: both;">
             
                 <div @click="delete_hist(history_box.key)" style="float:right; margin-top: 10px;"  class="l_button">Delete</div>
-                <p class="history_box_info">
-                    <span style="opacity: 0.5;" v-if="history_box.seed"> Seed : {{history_box.seed}} </span>
-                    <br  v-if="history_box.seed">
+                <p class="history_box_info text_bg">
+                    <img  v-if="history_box.inp_img" :src="'file://' + history_box.inp_img" style="height:50px">
+                    <br  v-if="history_box.inp_img" >
+                    <br  v-if="history_box.inp_img" >
+              
+                    <span style="opacity: 0.5;" v-if="get_box_params_str(history_box)"> {{get_box_params_str(history_box)}} </span>
+                    <br   v-if="get_box_params_str(history_box)">
+                    
                     {{history_box.prompt}}
+
+
                 </p>
                 
                 <div v-for="img in history_box.imgs" :key="img" class="history_box">
@@ -68,6 +75,18 @@ export default {
            Vue.set( this.app_state, "show_history_in_reverse", !this.app_state.show_history_in_reverse);
         },
 
+        get_box_params_str(box){
+            let r = "";
+            let vals = {"seed" : "Seed" , "guidence_scale" : "Scale" , "dif_steps":"Steps"  , "inp_img_strength" : "Image Strength" , "img_w":"Img Width" , "img_h": "Img Height"}
+            for(let k in vals)
+                if( box[k])
+                    r += " " + vals[k] +  " : " + box[k] + " |";
+            if(r.charAt(r.length - 1) == "|")
+                r = r.slice(0, -1);
+            return r;
+
+        },
+
         save_image(generated_image, prompt, seed){
             if(!generated_image)
                 return;
@@ -90,11 +109,14 @@ export default {
 </style>
 <style scoped>
 .history_box_info {
-    background-color: rgba(0, 0, 0, 0.05);
+   
     padding :12px;
     border-radius: 5px;
     max-width: calc(100vw - 200px );
 }
+
+
+
 .history_box {
     height:230px;
     float:left;

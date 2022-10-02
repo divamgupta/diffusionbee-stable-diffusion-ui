@@ -1,4 +1,4 @@
-from stable_diffusion_tf.stable_diffusion import Text2Image
+from stable_diffusion_tf.stable_diffusion import StableDiffusion
 import argparse
 from PIL import Image
 import json
@@ -8,7 +8,8 @@ from downloader import ProgressBarDownloader
 import sys
 import copy
 import math
-
+import time
+import traceback
 
 
 
@@ -73,6 +74,8 @@ def process_opt(d, generator):
             batch_size=batch_size,
             seed=seed,
             img_id=i,
+            input_image=d['input_image'],
+            input_image_strength=(1-float(d['img_strength'])),
         )
         if img is None:
             return
@@ -89,39 +92,58 @@ def main():
 
     print("sdbk mltl Loading Model")
 
-    p1 = ProgressBarDownloader(title="Downloading Model 1/3").download(
-                url="https://huggingface.co/fchollet/stable-diffusion/resolve/main/diffusion_model.h5",
-                md5_checksum="72db3d55b60691e1f8a6a68cd9f47ad0",
-                verify_ssl=False,
-                extract_zip=False,
-            )
+    for _ in range(5):
+        try:
+            p1 = ProgressBarDownloader(title="Downloading Model 1/4").download(
+                        url="https://huggingface.co/fchollet/stable-diffusion/resolve/main/diffusion_model.h5",
+                        md5_checksum="72db3d55b60691e1f8a6a68cd9f47ad0",
+                        verify_ssl=False,
+                        extract_zip=False,
+                    )
 
-    p2 = ProgressBarDownloader(title="Downloading Model 2/3").download(
-                url="https://huggingface.co/fchollet/stable-diffusion/resolve/main/text_encoder.h5",
-                md5_checksum="9ea30bed7728473b4270a76aabf1836b",
-                verify_ssl=False,
-                extract_zip=False,
-            )
+            p2 = ProgressBarDownloader(title="Downloading Model 2/4").download(
+                        url="https://huggingface.co/fchollet/stable-diffusion/resolve/main/text_encoder.h5",
+                        md5_checksum="9ea30bed7728473b4270a76aabf1836b",
+                        verify_ssl=False,
+                        extract_zip=False,
+                    )
 
 
-    p3 = ProgressBarDownloader(title="Downloading Model 3/3").download(
-                url="https://huggingface.co/fchollet/stable-diffusion/resolve/main/decoder.h5",
-                md5_checksum="8c86dc2fadfb0da9712a7a06cfa7bf11",
-                verify_ssl=False,
-                extract_zip=False,
-            )
+            p3 = ProgressBarDownloader(title="Downloading Model 3/4").download(
+                        url="https://huggingface.co/fchollet/stable-diffusion/resolve/main/decoder.h5",
+                        md5_checksum="8c86dc2fadfb0da9712a7a06cfa7bf11",
+                        verify_ssl=False,
+                        extract_zip=False,
+                    )
+            
+            p4 = ProgressBarDownloader(title="Downloading Model 4/4").download(
+                        url="https://huggingface.co/divamgupta/stable-diffusion-tensorflow/resolve/main/encoder_newW.h5",
+                        md5_checksum="bef951ed69aa5a7a3acae0ab0308b630",
+                        verify_ssl=False,
+                        extract_zip=False,
+                    )
+            break
+        except Exception as e:
+            pass
+
+        time.sleep(4)
+
+    
+
+            
 
     print("sdbk mltl Loading Model")
 
 
 
     cur_size = (512 , 512)
-    generator = Text2Image(img_height=512, img_width=512, jit_compile=False, download_weights=False)
+    generator = StableDiffusion(img_height=512, img_width=512, jit_compile=False, download_weights=False)
     generator.text_encoder .load_weights(p2)
     generator.diffusion_model.load_weights(p1)  
     generator.decoder.load_weights(p3) 
+    generator.encoder.load_weights(p4) 
 
-    default_d = { "W" : 512 , "H" : 512, "num_imgs":1 , "ddim_steps" : 25 , "scale" : 7.5, "batch_size":1 }
+    default_d = { "W" : 512 , "H" : 512, "num_imgs":1 , "ddim_steps" : 25 , "scale" : 7.5, "batch_size":1 , "input_image" : None, "img_strength": 0.5 }
 
 
     print("sdbk mdld")
@@ -145,7 +167,7 @@ def main():
 
             # if cur_size != (d['W'] , d['H']):
             #     print("sdbk mltl Loading Model")
-            #     generator = Text2Image(img_height= d['H'], img_width=d['W'], jit_compile=False, download_weights=False)
+            #     generator = StableDiffusion(img_height= d['H'], img_width=d['W'], jit_compile=False, download_weights=False)
             #     generator.text_encoder .load_weights(p2)
             #     generator.diffusion_model.load_weights(p1)  
             #     generator.decoder.load_weights(p3)
@@ -154,6 +176,7 @@ def main():
                 
             process_opt(d, generator)
         except Exception as e:
+            traceback.print_exc()
             print("sdbk errr %s"%(str(e)))
             print("py2b eror " + str(e))
 

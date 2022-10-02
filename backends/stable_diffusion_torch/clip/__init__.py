@@ -1,1 +1,0 @@
-from .clip import *
