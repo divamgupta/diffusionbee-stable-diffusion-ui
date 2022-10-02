@@ -1,7 +1,7 @@
 import Vue from 'vue'
 
 
-import {native_alert} from "./native_functions_vue_bridge.js"
+import { native_alert } from "./native_functions_vue_bridge.js"
 
 var app_component_object;
 
@@ -33,22 +33,22 @@ function update_state(msg) {
 
 
 function bind_app_component(app_component) {
-    // this should be called by the main vue componnet, to set bind the "app state" object to the bridge 
+    // this should be called by the main vue componnet, to set bind the "app state" object to the bridge
     app_component_object;
     app_component_object = app_component;
 }
 
 function on_msg_from_py(msg) {
 
-    if (msg.substring(0, 4) == "utds") // update the state of 
+    if (msg.substring(0, 4) == "utds") // update the state of
     {
         update_state(msg.substring(5));
     }
-    if (msg.substring(0, 4) == "sdbk") // update the state of 
+    if (msg.substring(0, 4) == "sdbk") // update the state of
     {
-        if(app_component_object)
+        if (app_component_object)
             app_component_object.stable_diffusion.state_msg(msg.substring(5))
-    } else if (msg.substring(0, 4) == "alrt") // just alert  
+    } else if (msg.substring(0, 4) == "alrt") // just alert
     {
         native_alert(msg.substring(5));
     }
@@ -60,13 +60,13 @@ function on_msg_from_py(msg) {
 
 function add_log(msg) {
     if (app_component_object) {
-        Vue.set(app_component_object.app_state, 'logs' , app_component_object.app_state.logs + "\n" + msg );
+        Vue.set(app_component_object.app_state, 'logs', app_component_object.app_state.logs + "\n" + msg);
     }
-    
+
 }
 
 
-function on_msg_recieve(msg) { // on new msg from python 
+function on_msg_recieve(msg) { // on new msg from python
 
     if (msg.substring(0, 4) == "py2b") {
         on_msg_from_py(msg.substring(5))

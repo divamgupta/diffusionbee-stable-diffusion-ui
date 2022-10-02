@@ -175,7 +175,7 @@ ipcMain.on('get_instance_id', (event) => {
 ipcMain.on('unfreeze_win', (event) => {
 
     if (win) {
-	win.savable=true;
+    win.savable=true;
         const primaryDisplay = screen.getPrimaryDisplay()
         const { width, height } = primaryDisplay.workAreaSize
 
@@ -215,8 +215,8 @@ ipcMain.on('unfreeze_win', (event) => {
 ipcMain.on('freeze_win', (event) => {
 
     if (win) {
-	win.savable=false;
-	win.restore()
+    win.savable=false;
+    win.restore()
         win.setSize(770, 550, false); 
         win.setResizable(false);
         win.setMaximizable(false);

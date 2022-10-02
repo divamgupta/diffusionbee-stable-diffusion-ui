@@ -7,7 +7,7 @@ let isMac = true;
 const menu_template = [
   // { role: 'appMenu' }
   ...(isMac ? [{
-    label: require('../package.json').name ,
+    label: require('../package.json').name,
     submenu: [
       { role: 'about' },
       { type: 'separator' },
@@ -72,4 +72,4 @@ const menu_template = [
 
 
 
-export {menu_template}
+export { menu_template }

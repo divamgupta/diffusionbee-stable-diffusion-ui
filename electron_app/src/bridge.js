@@ -68,7 +68,7 @@ function start_bridge() {
     python.on('close', () => {
         // if( code != 0 )
         // {
-        // 	dialog.showMessageBox("Backend quit unexpectedly")
+        //     dialog.showMessageBox("Backend quit unexpectedly")
         // }
 
         if(is_app_closing){

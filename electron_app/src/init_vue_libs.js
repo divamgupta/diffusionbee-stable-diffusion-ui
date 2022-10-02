@@ -5,9 +5,9 @@ import Vue from 'vue'
 // add the fond awesome stuff
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faChevronRight, faStopCircle, faPlayCircle , faPlus , faChevronLeft , 
-	faFileImage  , faFileAudio , faFile , faBars , faAngleDown , faTrash, faChevronDown ,
-	faGlobe, faFolder, faCamera, faKeyboard,
-	faMusic , faMicrophone , faTimes , faCheck } from '@fortawesome/free-solid-svg-icons'
+    faFileImage  , faFileAudio , faFile , faBars , faAngleDown , faTrash, faChevronDown ,
+    faGlobe, faFolder, faCamera, faKeyboard,
+    faMusic , faMicrophone , faTimes , faCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 library.add(faBars)
