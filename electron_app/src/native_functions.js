@@ -152,7 +152,7 @@ ipcMain.on('show_dialog_on_quit', (event, msg) => {
 })
 
 
-ipcMain.on('dont_show_dialog_on_quit', (event, arg) => {
+ipcMain.on('dont_show_dialog_on_quit', (event) => {
     if(win)
         win.show_dialog_on_quit = false;
     event.returnValue = 'ok';
@@ -160,7 +160,7 @@ ipcMain.on('dont_show_dialog_on_quit', (event, arg) => {
 })
 
 
-ipcMain.on('get_instance_id', (event, arg) => {
+ipcMain.on('get_instance_id', (event) => {
     if (settings.hasSync('instance_id')){
         event.returnValue =  settings.getSync('instance_id')
         return;
@@ -172,7 +172,7 @@ ipcMain.on('get_instance_id', (event, arg) => {
 })
 
 
-ipcMain.on('unfreeze_win', (event, arg) => {
+ipcMain.on('unfreeze_win', (event) => {
 
     if (win) {
 	win.savable=true;
@@ -212,7 +212,7 @@ ipcMain.on('unfreeze_win', (event, arg) => {
 
 
 
-ipcMain.on('freeze_win', (event, arg) => {
+ipcMain.on('freeze_win', (event) => {
 
     if (win) {
 	win.savable=false;
@@ -238,14 +238,14 @@ ipcMain.on('freeze_win', (event, arg) => {
 
 
 
-ipcMain.on('show_about', (event, arg) => {
+ipcMain.on('show_about', (event) => {
 
     if (win) {
 
         if(is_windows)
         {
             let about_content = require('../package.json').name + "\n" + "Version " + require('../package.json').version + " (" + require('../package.json').build_number + ")\n" + require('../package.json').description;
-            const choice = require('electron').dialog.showMessageBoxSync(this, {
+            require('electron').dialog.showMessageBoxSync(this, {
                 buttons: ['Okay'],
                 title: require('../package.json').name ,
                 message: about_content
@@ -291,7 +291,7 @@ ipcMain.on('native_confirm', (event, arg) => {
 
 
 
-ipcMain.on('close_window', (event, arg) => {
+ipcMain.on('close_window', (event) => {
 
     if (win) {
         
@@ -311,7 +311,7 @@ ipcMain.on('native_alert', (event, arg) => {
 
     if (win) {
         
-        const choice = require('electron').dialog.showMessageBoxSync(this, {
+        require('electron').dialog.showMessageBoxSync(this, {
             buttons: ['Okay'],
             title: require('../package.json').name ,
             message: arg
@@ -358,7 +358,7 @@ ipcMain.on('save_data', (event, arg) => {
 })
 
 
-ipcMain.on('load_data', (event, arg) => {
+ipcMain.on('load_data', (event) => {
     const path = require('path');
     const fs = require('fs');
     const homedir = require('os').homedir();

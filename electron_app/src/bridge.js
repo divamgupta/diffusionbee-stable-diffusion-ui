@@ -65,7 +65,7 @@ function start_bridge() {
              win.webContents.send('to_renderer', 'adlg ' + data.toString('utf8') );
     });
 
-    python.on('close', (code) => {
+    python.on('close', () => {
         // if( code != 0 )
         // {
         // 	dialog.showMessageBox("Backend quit unexpectedly")

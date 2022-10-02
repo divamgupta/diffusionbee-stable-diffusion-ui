@@ -1,6 +1,6 @@
 ﻿'use strict'
 
-import { app, protocol, BrowserWindow, nativeTheme, ipcMain , Menu} from 'electron'
+import { app, protocol, BrowserWindow, nativeTheme, Menu} from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -76,7 +76,7 @@ async function createWindow() {
 
 	// save the window state on resize , move, etc 
 	['resize', 'move'].forEach(event => {
-	  win.on(event, save_window_size);
+		win.on(event, save_window_size);
 	});
 
 
