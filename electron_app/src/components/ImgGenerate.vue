@@ -42,7 +42,7 @@
                                     <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Image Height: </label>
                                     <b-form-select
                                     v-model="img_h"
-                                    :options="[128*2 , 128*3 , 128*4 , 128*5 , 128*6, ]"
+                                    :options="[ 64*4 , 64*5 , 64*6, 64*7 , 64*8 , 64*9 , 64*10 , 64*11 , 64*12 ]"
                                     required
                                     ></b-form-select>
                                 </b-form-group>
@@ -51,7 +51,7 @@
                                     <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Image Width: </label>
                                     <b-form-select
                                     v-model="img_w"
-                                    :options="[128*2 , 128*3 , 128*4 , 128*5 , 128*6, ]"
+                                    :options="[64*4 , 64*5 , 64*6, 64*7 , 64*8 , 64*9 , 64*10 , 64*11 , 64*12 ]"
                                     required
                                     ></b-form-select>
                                 </b-form-group>
@@ -252,7 +252,7 @@ export default {
 
                     if(!(that.app_state.history[history_key]))
                         Vue.set(that.app_state.history, history_key , {
-                            "prompt":that.prompt , "seed": seed, "img_w":that.img_w , "img_h":that.img_w ,  "key":history_key , "imgs" : [],
+                            "prompt":that.prompt , "seed": seed, "img_w":that.img_w , "img_h":that.img_h ,  "key":history_key , "imgs" : [],
                             "guidence_scale" : that.guidence_scale , "dif_steps" : that.dif_steps 
                         });
 

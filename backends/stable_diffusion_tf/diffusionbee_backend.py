@@ -9,6 +9,7 @@ import sys
 import copy
 import math
 import time
+import traceback
 
 
 
@@ -175,6 +176,7 @@ def main():
                 
             process_opt(d, generator)
         except Exception as e:
+            traceback.print_exc()
             print("sdbk errr %s"%(str(e)))
             print("py2b eror " + str(e))
 

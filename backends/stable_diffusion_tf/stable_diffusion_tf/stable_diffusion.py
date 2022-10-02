@@ -10,8 +10,26 @@ from .clip_encoder import CLIPTextTransformer
 from .clip_tokenizer import SimpleTokenizer
 from .constants import _UNCONDITIONAL_TOKENS, _ALPHAS_CUMPROD
 from .stdin_input import is_avail, get_input
-from PIL import Image
+from PIL import Image, ImageOps
 MAX_TEXT_LEN = 77
+
+def process_inp_img(input_image):
+    input_image = Image.open(input_image)
+    input_image = input_image.convert('RGB')
+    w , h = input_image.size
+    
+    if w > h:
+        new_w = 512
+        new_h  = round((h * new_w / w)/64)*64
+    else:
+        new_h = 512
+        new_w  = round((w * new_h / h)/64)*64
+
+    input_image = ImageOps.fit(input_image, (new_w, new_h), method = Image.BILINEAR ,
+                   bleed = 0.0, centering =(0.5, 0.5))
+    input_image = np.array(input_image)[... , :3]
+    input_image = (input_image.astype("float") / 255.0)*2 - 1 
+    return new_h , new_w  , input_image
 
 
 class StableDiffusion:
@@ -48,6 +66,9 @@ class StableDiffusion:
         input_image=None,
         input_image_strength=0.5,
     ):
+
+        if type(input_image) is str:
+            img_height, img_width, input_image = process_inp_img(input_image)
         
         if self.img_height == img_height and self.img_width == img_width:
             self.use_eager = False
@@ -81,11 +102,7 @@ class StableDiffusion:
         else:
             context = self.text_encoder.predict_on_batch([phrase, pos_ids])
 
-        if type(input_image) is str:
-            input_image = Image.open(input_image)
-            input_image = input_image.resize((self.img_width, self.img_height))
-            input_image = np.array(input_image)[... , :3]
-            input_image = (input_image.astype("float") / 255.0)*2 - 1 
+        
 
         # Encode unconditional tokens (and their positions into an
         # "unconditional context vector"
@@ -146,7 +163,7 @@ class StableDiffusion:
 
     def add_noise(self, x , t , seed ):
         batch_size,w,h = x.shape[0] , x.shape[1] , x.shape[2]
-        noise = np.random.RandomState(seed).normal(size=(batch_size, h, w, 4)).astype('float32')
+        noise = np.random.RandomState(seed).normal(size=(batch_size, w, h, 4)).astype('float32')
         sqrt_alpha_prod = _ALPHAS_CUMPROD[t] ** 0.5
         sqrt_one_minus_alpha_prod = (1 - _ALPHAS_CUMPROD[t]) ** 0.5
 

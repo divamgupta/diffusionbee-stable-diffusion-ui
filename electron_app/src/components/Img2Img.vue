@@ -43,24 +43,6 @@
                                     required
                                     ></b-form-select>
                                 </b-form-group>
-
-                                <b-form-group inline label=""  style="margin-bottom: 6px;">
-                                    <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Image Height: </label>
-                                    <b-form-select
-                                    v-model="img_h"
-                                    :options="[128*2 , 128*3 , 128*4 , 128*5 , 128*6, ]"
-                                    required
-                                    ></b-form-select>
-                                </b-form-group>
-
-                                <b-form-group inline label=""  style="margin-bottom: 6px;">
-                                    <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Image Width: </label>
-                                    <b-form-select
-                                    v-model="img_w"
-                                    :options="[128*2 , 128*3 , 128*4 , 128*5 , 128*6, ]"
-                                    required
-                                    ></b-form-select>
-                                </b-form-group>
                                 
                                 <b-form-group inline  label="" style="margin-bottom: 6px;" >
                                     <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Num Images: </label>
@@ -182,8 +164,8 @@ export default {
 
             let params = {
                 prompt : this.prompt , 
-                W : Number(this.img_w) , 
-                H : Number(this.img_h) , 
+                W : -1 , 
+                H : -1, 
                 seed :seed,
                 scale : this.guidence_scale , 
                 ddim_steps : this.dif_steps, 
@@ -213,7 +195,7 @@ export default {
                     if(!(that.app_state.history[history_key]))
                         Vue.set(that.app_state.history, history_key , {
                             "prompt":that.prompt , "seed": seed, "key":history_key , "imgs" : [] , "inp_img": that.inp_img ,
-                            "img_w":that.img_w , "img_h":that.img_w , "dif_steps" : that.dif_steps , "inp_img_strength" : that.inp_img_strength,
+                            "dif_steps" : that.dif_steps , "inp_img_strength" : that.inp_img_strength,
                         });
                     
                     that.app_state.history[history_key].imgs.push(img_path)
