@@ -10,11 +10,11 @@
                                 <font-awesome-icon icon="bars" />
                             </div>
                         </template>
-                        <b-dropdown-item @click="$emit('menu_item_click_help',{})" href="#">Help</b-dropdown-item>
-                        <b-dropdown-item @click="$emit('menu_item_click_discord',{})" href="#">Discord Group</b-dropdown-item>
-                        <b-dropdown-item @click="selectTab('logs')"   href="#">Show Logs</b-dropdown-item>
-                        <b-dropdown-item @click="$emit('menu_item_click_about',{})" href="#">About</b-dropdown-item>
-                        <b-dropdown-item @click="$emit('menu_item_click_close',{})" href="#">Close</b-dropdown-item>
+                        <b-dropdown-item-button @click="$emit('menu_item_click_help',{})">Help</b-dropdown-item-button>
+                        <b-dropdown-item-button @click="$emit('menu_item_click_discord',{})">Discord Group</b-dropdown-item-button>
+                        <b-dropdown-item-button @click="selectTab('logs')">Show Logs</b-dropdown-item-button>
+                        <b-dropdown-item-button @click="$emit('menu_item_click_about',{})">About</b-dropdown-item-button>
+                        <b-dropdown-item-button @click="$emit('menu_item_click_close',{})">Close</b-dropdown-item-button>
                         <!-- #TODO set these menu items via python -->
                         
                     </b-dropdown>
