@@ -6,7 +6,7 @@
             <div v-for="history_box in Object.values(app_state.history).reverse()" :key="history_box.key" style="clear: both;">
             
                 <div @click="delete_hist(history_box.key)" style="float:right; margin-top: 10px;"  class="l_button">Delete</div>
-                <p class="history_box_info text_bg">
+                <div class="history_box_info text_bg">
                     <img  v-if="history_box.inp_img" :src="'file://' + history_box.inp_img" style="height:50px">
                     <br  v-if="history_box.inp_img" >
                     <br  v-if="history_box.inp_img" >
@@ -14,10 +14,8 @@
                     <span style="opacity: 0.5;" v-if="get_box_params_str(history_box)"> {{get_box_params_str(history_box)}} </span>
                     <br   v-if="get_box_params_str(history_box)">
                     
-                    {{history_box.prompt}}
-
-
-                </p>
+                    <textarea v-model="history_box.prompt" rows="3" readonly class="history_box_prompt form-control"></textarea>
+                </div>
                 
                 <div v-for="img in history_box.imgs" :key="img" class="history_box">
                     
@@ -99,17 +97,28 @@ export default {
 </style>
 <style scoped>
 .history_box_info {
-   
     padding :12px;
     border-radius: 5px;
-    max-width: calc(100vw - 200px );
+    max-width: calc(100vw - 200px);
+    margin-bottom: 16px;
 }
 
+.history_box_options {
+    margin: 0;
+}
 
+.history_box_prompt {
+    resize: none;
+    background-color: transparent;
+    width: 100%;
+    border: 0;
+    font-size: 13px;
+    padding: 0;
+}
 
 .history_box {
-    height:230px;
-    float:left;
+    height: 230px;
+    float: left;
     margin-right: 10px;
     margin-bottom: 30px;
 }
