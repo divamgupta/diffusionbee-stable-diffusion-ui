@@ -181,10 +181,8 @@
 
 </template>
 <script>
-
-import LoaderModal from '../components_bare/LoaderModal.vue'
-import Vue from 'vue'
-import {open_popup} from "../utils"
+import LoaderModal from "../components_bare/LoaderModal.vue";
+import Vue from "vue";
 
 export default {
     name: 'ImgGenerate',
@@ -272,13 +270,12 @@ export default {
 
             this.is_stopping = false;
 
-
            if(this.stable_diffusion)
                 this.stable_diffusion.text_to_img(params, callbacks, 'txt2img');
         } , 
 
-        open_image_popup(img){
-            open_popup("file://"+img , undefined);
+        open_image_popup(img) {
+            window.ipcRenderer.sendSync('open_popup', { img, title:this.prompt });
         },
 
         open_arthub(){

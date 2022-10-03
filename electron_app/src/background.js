@@ -139,7 +139,6 @@ app.on('ready', async () => {
 	}
 	createWindow();
 
-	console.log(win);
 	bind_window_bridge(win);
 
 	win.webContents.on('did-finish-load', function() {
