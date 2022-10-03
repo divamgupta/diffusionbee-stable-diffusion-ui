@@ -14,7 +14,7 @@
                     <span style="opacity: 0.5;" v-if="get_box_params_str(history_box)"> {{get_box_params_str(history_box)}} </span>
                     <br   v-if="get_box_params_str(history_box)">
                     
-                    <textarea v-model="history_box.prompt" rows="3" readonly class="history_box_prompt form-control"></textarea>
+                    <textarea v-model="history_box.prompt" rows="3" readonly class="history_box_prompt form-control" onfocus="this.select()"></textarea>
                 </div>
                 
                 <div v-for="img in history_box.imgs" :key="img" class="history_box">
