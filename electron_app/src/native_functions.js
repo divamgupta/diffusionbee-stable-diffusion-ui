@@ -59,7 +59,7 @@ ipcMain.on('file_dialog', (event, arg) => {
     else if(arg == 'img_file') // single image file 
     {
         properties = ['openFile' ]
-        options = { filters :[ {name: 'Images', extensions: ['jpg', 'png', 'bmp']}] , properties: properties } ;
+        options = { filters :[ {name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'bmp']}] , properties: properties } ;
     }
     else if(arg == 'img_files') // multi image files
     {
