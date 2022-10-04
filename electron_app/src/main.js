@@ -13,8 +13,6 @@ import {} from "./init_vue_libs.js"
 // include the py vue bridge 
 import {} from "./py_vue_bridge.js"
 
-
-
 import App from './App.vue'
 new Vue({
     render: h => h(App),

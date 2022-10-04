@@ -1,3 +1,4 @@
+@import '../assets/css/theme.css';
 <template>
     <center>
         
@@ -5,14 +6,14 @@
             
             <h2 style=" margin-bottom:-5px   "  class="head ">{{loading_title}}</h2>
                 <span v-if="loading_percentage <  0 "  style="zoom:0.35;   margin-left: 25px;   ">
-                    <MoonLoader color="#000000" size="50px"></MoonLoader>
+                    <MoonLoader class="moonloader" color="#000000" size="50px"></MoonLoader>
             </span>
             
             <div style="margin-bottom:30px"></div>
             <b-progress v-if="loading_percentage >= 0 "  :value="loading_percentage" style="height: 10px;"></b-progress>
 
             <div style="margin-bottom:10px"></div>
-            <p>{{loading_desc}}</p>
+            <p style="font-variant-numeric: tabular-nums;">{{loading_desc}}</p>
         </div>
 
     </center>
@@ -37,6 +38,16 @@ export default {
 }
 </script>
 <style>
+
+
+.loader_box{
+    padding: 20px;
+    /*height: calc(160px);*/
+    border-radius: 12px 12px 12px 12px;
+}
+
+
+
 </style>
 <style scoped>
     .center {
@@ -53,11 +64,7 @@ export default {
         opacity: 0.5;
     }
 
-    .loader_box{
-       padding: 20px;
-        background-color: rgba(255,255,255,0.9);
-        /*height: calc(160px);*/
-        border-radius: 12px 12px 12px 12px;
-    }
+   
+
 
 </style>
