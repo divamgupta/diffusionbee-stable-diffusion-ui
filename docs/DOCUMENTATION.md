@@ -24,7 +24,7 @@ To create an image, simply enter a prompt and press _generate_.
   * Steps: This corresponds to how many steps are used to improve the image quality. Setting to a low number gives faster image generation, and may be useful while exploring different prompts.
   * Batch size: This tells DiffusionBee to generate multiple images at a time. New batches of images will be created until "num images" have been created. (Just increasing _num images_ is usually a better option.)
   * Guidance scale: This kind of corresponds to how closely Stable Diffusion should stick to the prompt. Higher value means more strict interpretation.
-  * Seed: A number between 0 and 4,294,967,295 that is used as starting point for the image generation. If the same seed is used with the same prompt and the same settings (except *steps*), the same image will be generated. If left empty, a random seed will be used.
+  * Seed: A number between 0 and 4,294,967,295 that is used as starting point for the image generation. If the same seed is used with the same prompt and the same settings (except *steps*, which may vary), the same image will be generated. If left empty, a random seed will be used.
 
 ### Image to image
 
@@ -34,7 +34,7 @@ Click on the left pane to upload a sketch starting image (only png supported). A
   * Input strength: This tells DiffusionBee how closely to stick to the sketch input image. For rough sketches you normally want a low value.
   * Num images: The number of images to generate.
   * Steps: This corresponds to how many steps are used to build the image. Setting to a low number gives faster image generation, and may be useful while exploring different prompts.
-  * Seed: A number between 0 and 4,294,967,295 that is used as starting point for the image generation. If the same seed is used with the same image, the same prompt and the same settings (except *steps*), the same image will be generated. If left empty, a random seed will be used.
+  * Seed: A number between 0 and 4,294,967,295 that is used as starting point for the image generation. If the same seed is used with the same image, the same prompt and the same settings (except *steps*, which may vary), the same image will be generated. If left empty, a random seed will be used.
 
 ## History
 
