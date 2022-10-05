@@ -29,7 +29,7 @@
 
 ## Usage
 
-See [documentation](docs/DOCUMENTATION.md).
+See [documentation](./DOCUMENTATION.md).
 
 Join [our discord server](https://discord.gg/t6rC5RaJQn) for tips, inspiration, support and general discussion.
 
