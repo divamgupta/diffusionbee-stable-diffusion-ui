@@ -1,9 +1,11 @@
 @import '../assets/css/theme.css';
 <template>
     <div  class="animatable_content_box ">
-    
+        <div @click="toggle_order()" style="float:right; margin-bottom: 20px;" class="l_button">
+          {{this.app_state.show_history_in_oldest_first ? "Oldest": "Newest"}} First
+        </div>
         <div v-if="Object.values(app_state.history).length > 0">
-            <div v-for="history_box in Object.values(app_state.history).reverse()" :key="history_box.key" style="clear: both;">
+            <div v-for="history_box in get_history()" :key="history_box.key" style="clear: both;">
             
                 <div @click="delete_hist(history_box.key)" style="float:right; margin-top: 10px;"  class="l_button">Delete</div>
                 <p class="history_box_info text_bg" style="user-select: text;">
@@ -38,8 +40,6 @@
                     <p>No images generated yet.</p>
             </div>
         </div>
-        
-        
     </div>
 </template>
 <script>
@@ -61,10 +61,19 @@ export default {
     data() {
         return {};
     },
-    methods: { 
+    methods: {
         delete_hist(k){
             Vue.delete( this.app_state.history , k );
-        }, 
+        },
+
+        get_history() {
+          let history = Object.values(this.app_state.history);
+          return this.app_state.show_history_in_oldest_first ? history : history.reverse();
+        },
+
+        toggle_order() {
+           Vue.set( this.app_state, "show_history_in_oldest_first", !this.app_state.show_history_in_oldest_first);
+        },
 
         get_box_params_str(box){
             let r = "";
@@ -87,7 +96,8 @@ export default {
                 return
             let org_path = generated_image.replaceAll("file://" , "")
             window.ipcRenderer.sendSync('save_file', org_path+"||" +out_path);
-        }, 
+        },
+
         open_image_popup(img){
             open_popup("file://"+img , undefined);
         },
