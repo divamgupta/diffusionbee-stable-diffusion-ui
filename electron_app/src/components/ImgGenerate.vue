@@ -69,7 +69,7 @@
                                 <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Batch size: </label>
                                 <b-form-select
                                     v-model="batch_size"
-                                    :options="[1, 2, 3, 4, 5, 6, 7]"
+                                    :options="[1, 2, 3, 4, 5, 6]"
                                     required
                                 ></b-form-select>
                                 </b-form-group>

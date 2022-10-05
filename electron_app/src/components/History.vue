@@ -6,7 +6,7 @@
             <div v-for="history_box in Object.values(app_state.history).reverse()" :key="history_box.key" style="clear: both;">
             
                 <div @click="delete_hist(history_box.key)" style="float:right; margin-top: 10px;"  class="l_button">Delete</div>
-                <p class="history_box_info text_bg">
+                <p class="history_box_info text_bg" style="user-select: text;">
                     <img  v-if="history_box.inp_img" :src="'file://' + history_box.inp_img" style="height:50px">
                     <br  v-if="history_box.inp_img" >
                     <br  v-if="history_box.inp_img" >
