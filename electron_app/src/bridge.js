@@ -12,7 +12,9 @@ function start_bridge() {
     console.log("starting briddddd")
     const fs = require('fs')
 
-    let script_path = process.env.PY_SCRIPT || "./src/fake_backend.py"; 
+    // PY_SCRIPT_DEV can be set to "./src/fake_backend.py" when developing the electron app
+    // to simulate the model inference, without actually executing the code
+    let script_path = process.env.PY_SCRIPT_DEV || "../backends/stable_diffusion_torch/txt2img.py";
 
     if (fs.existsSync(script_path)) {
         python = require('child_process').spawn('python3', [script_path]);
