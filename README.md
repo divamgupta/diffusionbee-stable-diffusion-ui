@@ -1,6 +1,10 @@
 # DiffusionBee – Stable Diffusion GUI App for Mac
 [![Twitter](https://img.shields.io/twitter/url.svg?label=Follow%20%40divamgupta&style=social&url=https%3A%2F%2Ftwitter.com%2Fdivamgupta)](https://twitter.com/divamgupta) Visit [DiffusionBee.com](https://diffusionbee.com/)
 
+![generating image from text prompt]("https://user-images.githubusercontent.com/262940/194149310-acb6f349-103e-4a35-8b5a-0b014885e102.png")
+
+![images created from text prompt]("https://user-images.githubusercontent.com/262940/194149333-c1d942bf-44d5-442b-a873-137157bf519d.png")
+
 ## Why use DiffusionBee?
 
 * DiffusionBee is the easiest way to run Stable Diffusion locally on your Mac. Comes with a one-click installer. No dependencies or technical knowledge needed.
