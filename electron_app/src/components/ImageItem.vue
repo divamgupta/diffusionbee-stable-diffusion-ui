@@ -1,8 +1,25 @@
 <template>
-    <div style="height:100%">
-        <img   @click="open_image_popup( path )"  class="gal_img" :src="'file://' + path " v-bind:style="style_obj">
+    <div style="height:100%" v-bind:style="style_obj">
+                
+        <div style=" position:absolute ; margin-top:7px ; margin-left:7px " class="">
+            <b-dropdown left variant="link" size="sm" toggle-class="text-decoration-none" no-caret>
+                <template #button-content>
+                    <div   class=" l_button button_colored" style="background-color: rgba(0,0,0,0.6);">
+                        <font-awesome-icon icon="bars" />
+                    </div>
+                </template>
+                <b-dropdown-item-button   @click="save_image(path)"  >Save Image</b-dropdown-item-button>
+                <b-dropdown-item-button >Upscale Image</b-dropdown-item-button>
+                <b-dropdown-item-button >Send to Img2Img</b-dropdown-item-button>
+                
+                
+            </b-dropdown>
+        </div>
+        
+        
+        <img   @click="open_image_popup( path )"  class="gal_img" :src="'file://' + path " style="max-height: 100% ; max-width: 100%;" >
         <br>
-        <div @click="save_image(path)" class="l_button">Save Image</div>
+        <div v-if="!hide_extra_save_button" @click="save_image(path)" class="l_button">Save Image</div>
     </div>
 </template>
 <script>
@@ -13,7 +30,8 @@ export default {
     name: 'ImageItem',
     props: {
         path : String,
-        style_obj:String
+        style_obj:String,
+        hide_extra_save_button : Boolean,
     },
     components: {},
     mounted() {

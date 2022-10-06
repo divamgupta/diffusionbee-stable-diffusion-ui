@@ -137,7 +137,7 @@
             <div v-if="generated_images.length == 1" >
                 <center>
 
-                    <ImageItem :path="generated_images[0]" :style_obj="{ 'height': 'calc(100vh - 380px )' , 'margin-top': '60px' }"></ImageItem>
+                    <ImageItem :path="generated_images[0]" :style_obj="{ 'width': 'calc(100vh - 380px )' , 'margin-top': '60px' }"></ImageItem>
 
                 </center>
             </div>
