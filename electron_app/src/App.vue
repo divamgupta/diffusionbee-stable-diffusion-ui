@@ -39,6 +39,12 @@
                 <Outpainting></Outpainting>
             </template>
 
+            <template v-slot:upscale_img>
+                <UpscaleImage  :app_state="app_state" ref="upscale_img"></UpscaleImage>
+            </template>
+
+            
+
             
 
             <template v-slot:history>
@@ -70,6 +76,7 @@ import ApplicationFrame from './components_bare/ApplicationFrame.vue'
 import ImgGenerate from './components/ImgGenerate.vue'
 import Img2Img from './components/Img2Img.vue'
 import Outpainting from './components/Outpainting.vue'
+import UpscaleImage from './components/UpscaleImage.vue'
 
 import History from './components/History.vue'
 
@@ -90,7 +97,8 @@ export default
         LoaderModal,
         History,
         Img2Img,
-        Outpainting
+        Outpainting,
+        UpscaleImage
     },
 
     mounted() {

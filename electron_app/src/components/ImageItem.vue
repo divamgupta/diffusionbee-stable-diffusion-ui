@@ -1,7 +1,7 @@
 <template>
     <div style="height:100%" v-bind:style="style_obj">
                 
-        <div style=" position:absolute ; margin-top:7px ; margin-left:7px " class="">
+        <div v-if="!hide_dropdown" style=" position:absolute ; margin-top:7px ; margin-left:7px " class="">
             <b-dropdown left variant="link" size="sm" toggle-class="text-decoration-none" no-caret>
                 <template #button-content>
                     <div   class=" l_button button_colored" style="background-color: rgba(0,0,0,0.6);">
@@ -9,7 +9,7 @@
                     </div>
                 </template>
                 <b-dropdown-item-button   @click="save_image(path)"  >Save Image</b-dropdown-item-button>
-                <b-dropdown-item-button >Upscale Image</b-dropdown-item-button>
+                <b-dropdown-item-button @click="upsclae" >Upscale Image</b-dropdown-item-button>
                 <b-dropdown-item-button @click="send_img2img" >Send to Img2Img</b-dropdown-item-button>
                 
                 
@@ -33,6 +33,7 @@ export default {
         style_obj:Object,
         app_state:Object,
         hide_extra_save_button : Boolean,
+        hide_dropdown : Boolean,
     },
     components: {},
     mounted() {
@@ -63,12 +64,18 @@ export default {
                 if(this.app_state.app_object.$refs.stable_diffusion.is_input_avail){
                     this.app_state.app_object.$refs.img2img.inp_img = this.path;
                      this.app_state.app_object.$refs.app_frame.selected_tab = 'img2img';
-                }
+                } 
+            }
+        } , 
 
+        upsclae(){
+            if(this.app_state){
+                this.app_state.app_object.$refs.app_frame.selected_tab = 'upscale_img';
+                this.app_state.app_object.$refs.upscale_img.do_upscale(this.path);
                 
             }
-                
-        }
+            
+        },
 
     },
 }
