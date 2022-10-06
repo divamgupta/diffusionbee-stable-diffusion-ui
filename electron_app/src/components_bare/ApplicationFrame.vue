@@ -36,13 +36,15 @@
                     <slot name="txt2img"></slot>
                 </div>
 
+                <div  style="display:none"  :class="{ bl_display : selected_tab === 'img2img'  }" >
+                    <slot name="img2img"></slot>
+                </div>
+
                 <div  v-if="selected_tab === 'history' " style="display:none"  :class="{ bl_display : selected_tab === 'history'  }" >
                     <slot name="history"></slot>
                 </div>
                 
-                <div  style="display:none"  :class="{ bl_display : selected_tab === 'img2img'  }" >
-                    <slot name="img2img"></slot>
-                </div>
+                
 
                 <div  style="display:none"  :class="{ bl_display : selected_tab === 'upscale_img'  }" >
                     <slot name="upscale_img"></slot>
