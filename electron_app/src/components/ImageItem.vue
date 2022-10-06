@@ -10,7 +10,7 @@
                 </template>
                 <b-dropdown-item-button   @click="save_image(path)"  >Save Image</b-dropdown-item-button>
                 <b-dropdown-item-button >Upscale Image</b-dropdown-item-button>
-                <b-dropdown-item-button >Send to Img2Img</b-dropdown-item-button>
+                <b-dropdown-item-button @click="send_img2img" >Send to Img2Img</b-dropdown-item-button>
                 
                 
             </b-dropdown>
@@ -30,7 +30,8 @@ export default {
     name: 'ImageItem',
     props: {
         path : String,
-        style_obj:String,
+        style_obj:Object,
+        app_state:Object,
         hide_extra_save_button : Boolean,
     },
     components: {},
@@ -55,6 +56,19 @@ export default {
             let org_path = generated_image.replaceAll("file://" , "")
             window.ipcRenderer.sendSync('save_file', org_path+"||" +out_path);
         },
+
+        send_img2img(){
+            if(this.app_state){
+
+                if(this.app_state.app_object.$refs.stable_diffusion.is_input_avail){
+                    this.app_state.app_object.$refs.img2img.inp_img = this.path;
+                     this.app_state.app_object.$refs.app_frame.selected_tab = 'img2img';
+                }
+
+                
+            }
+                
+        }
 
     },
 }

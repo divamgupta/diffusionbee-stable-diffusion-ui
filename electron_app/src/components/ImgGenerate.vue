@@ -136,9 +136,7 @@
 
             <div v-if="generated_images.length == 1" >
                 <center>
-
-                    <ImageItem :path="generated_images[0]" :style_obj="{ 'width': 'calc(100vh - 380px )' , 'margin-top': '60px' }"></ImageItem>
-
+                    <ImageItem :app_state="app_state"  :path="generated_images[0]" :style_obj="{ 'width': 'calc(100vh - 380px )' , 'margin-top': '60px' }"></ImageItem>
                 </center>
             </div>
             
@@ -149,7 +147,7 @@
                     <b-col  v-for="img in generated_images" :key="img" style="margin-top:80px"  md="6" lg="4" xl="3"  >
                         <center>
                             
-                            <ImageItem :path="img" :style_obj="{'max-width' :'85%'}"></ImageItem>
+                            <ImageItem :app_state="app_state"  :path="img" :style_obj="{'max-width' :'85%'}"></ImageItem>
                         </center>
                     </b-col>
                         

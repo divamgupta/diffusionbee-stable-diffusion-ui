@@ -10,7 +10,7 @@
                 <SplashScreen v-if="app_state.show_splash_screen"></SplashScreen>
             </transition>
         </div>
-        <ApplicationFrame v-else title="DiffusionBee - Stable Diffusion App"
+        <ApplicationFrame ref="app_frame" v-else title="DiffusionBee - Stable Diffusion App"
 
             @menu_item_click_about="show_about"
             @menu_item_click_help="show_help"
@@ -28,7 +28,7 @@
 
             <template v-slot:img2img>
 
-                <Img2Img v-if="is_mounted && stable_diffusion.is_backend_loaded"  :app_state="app_state" :stable_diffusion="stable_diffusion"></Img2Img>
+                <Img2Img  ref="img2img" v-if="is_mounted && stable_diffusion.is_backend_loaded"  :app_state="app_state" :stable_diffusion="stable_diffusion"></Img2Img>
                 <div  v-else  class="animatable_content_box ">
                     <LoaderModal :loading_percentage="stable_diffusion.loading_percentage" :loading_desc="stable_diffusion.model_loading_msg"  :loading_title="stable_diffusion.model_loading_title ||'Loading model'"> </LoaderModal>
                 </div>
@@ -239,9 +239,8 @@ export default
 
     data() {
         let app_state = {
-
             is_start_screen: true, // if the start screen is showing or not
-            
+            app_object : this , 
             should_show_dialog_on_quit : false ,  // should ask "do you wanna quit" on closing
             show_dialog_on_quit_msg : "" ,  // the message to show while quiting 
             show_splash_screen : true , // is showing the loading splash screen

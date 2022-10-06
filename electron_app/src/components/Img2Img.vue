@@ -91,7 +91,7 @@
                 <div   v-for="img in generated_images" :key="img" >
                     <center>
                         
-                        <ImageItem :path="img" :style_obj="{ 'width': '75%' }"></ImageItem>
+                        <ImageItem :app_state="app_state" :path="img" :style_obj="{ 'width': '75%' }"></ImageItem>
 
                     </center>
                     <br>

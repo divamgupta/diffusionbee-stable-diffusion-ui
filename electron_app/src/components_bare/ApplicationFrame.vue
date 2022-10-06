@@ -30,21 +30,27 @@
         </div>
         <div class="tab_content_frame">
             <div class="tab_content">
-                <KeepAlive>
-                     <slot v-if=" selected_tab === 'txt2img' " name="txt2img"></slot>
-                </KeepAlive>
-
-                <KeepAlive>
-                     <slot v-if=" selected_tab === 'history' " name="history"></slot>
-                </KeepAlive>
-
-                <KeepAlive>
-                     <slot v-if=" selected_tab === 'img2img' " name="img2img"></slot>
-                </KeepAlive>
-                <slot v-if=" selected_tab === 'logs' " name="logs"></slot>
-
-                <slot v-if=" selected_tab === 'outpainting' " name="outpainting"></slot>
                 
+
+                <div style="display:none"  :class="{ bl_display : selected_tab === 'txt2img'  }" >
+                    <slot name="txt2img"></slot>
+                </div>
+
+                <div  v-if="selected_tab === 'history' " style="display:none"  :class="{ bl_display : selected_tab === 'history'  }" >
+                    <slot name="history"></slot>
+                </div>
+                
+                <div  style="display:none"  :class="{ bl_display : selected_tab === 'img2img'  }" >
+                    <slot name="img2img"></slot>
+                </div>
+
+                <div  v-if="selected_tab === 'logs' " style="display:none"  :class="{ bl_display : selected_tab === 'logs'  }" >
+                    <slot name="logs"></slot>
+                </div>
+
+                <div v-if="selected_tab === 'outpainting' " style="display:none"  :class="{ bl_display : selected_tab === 'outpainting'  }" >
+                    <slot name="outpainting"></slot>
+                </div>
              
             </div>
 
@@ -118,6 +124,10 @@ html {
 
 body {
     font-family: var(--main-font);
+}
+
+.bl_display{
+    display:block !important;
 }
 
 
