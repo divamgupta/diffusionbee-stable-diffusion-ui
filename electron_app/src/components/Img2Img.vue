@@ -90,9 +90,9 @@
                 <br> <br>
                 <div   v-for="img in generated_images" :key="img" >
                     <center>
-                        <img @click="open_image_popup( img)"  class="gal_img" v-if="img" :src="'file://' + img" style="width: 75%">
-                        <br>
-                        <div @click="save_image(img, prompt, seed)" class="l_button">Save Image</div>
+                        
+                        <ImageItem :path="img" :style_obj="{ 'width': '75%' }"></ImageItem>
+
                     </center>
                     <br>
                 </div>
@@ -116,7 +116,8 @@
      </div>
 </template>
 <script>
-import {open_popup} from "../utils"
+import ImageItem from '../components/ImageItem.vue'
+
 import LoaderModal from '../components_bare/LoaderModal.vue'
 import Vue from 'vue'
 
@@ -126,7 +127,7 @@ export default {
         app_state : Object   , 
         stable_diffusion : Object,
     },
-    components: {LoaderModal},
+    components: {LoaderModal, ImageItem},
     mounted() {
 
     },
@@ -226,29 +227,9 @@ export default {
                 this.inp_img = img_path;
         },
 
-        open_image_popup(img){
-            open_popup("file://"+img , undefined);
-        },
-
         stop_generation(){
             this.is_stopping = true;
             this.stable_diffusion.interupt();
-        },
-
-        save_image(generated_image, prompt, seed){
-            if(!generated_image)
-                return;
-
-            generated_image = generated_image.split("?")[0];
-            seed = seed ? seed : '0'
-            let out_path = window.ipcRenderer.sendSync('save_dialog', prompt, seed);
-            if(!out_path)
-                return
-
-            let org_path = generated_image.replaceAll("file://" , "")
-
-            window.ipcRenderer.sendSync('save_file', org_path+"||" +out_path);
-
         },
     },
 }

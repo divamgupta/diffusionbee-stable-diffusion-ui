@@ -136,9 +136,9 @@
 
             <div v-if="generated_images.length == 1" >
                 <center>
-                    <img @click="open_image_popup( generated_images[0])"  class="gal_img" v-if="generated_images[0]" :src="'file://' + generated_images[0]" style=" height: calc(100vh - 380px ); margin-top: 60px;">
-                    <br>
-                    <div @click="save_image(generated_images[0], prompt, seed)" class="l_button">Save Image</div>
+
+                    <ImageItem :path="generated_images[0]" :style_obj="{ 'height': 'calc(100vh - 380px )' , 'margin-top': '60px' }"></ImageItem>
+
                 </center>
             </div>
             
@@ -148,9 +148,8 @@
 
                     <b-col  v-for="img in generated_images" :key="img" style="margin-top:80px"  md="6" lg="4" xl="3"  >
                         <center>
-                            <img @click="open_image_popup( img )"  class="gal_img" v-if="img" :src="'file://' + img" style="max-width:85%">
-                            <br>
-                            <div @click="save_image(img, prompt, seed)" class="l_button">Save Image</div>
+                            
+                            <ImageItem :path="img" :style_obj="{'max-width' :'85%'}"></ImageItem>
                         </center>
                     </b-col>
                         
@@ -184,7 +183,7 @@
 
 import LoaderModal from '../components_bare/LoaderModal.vue'
 import Vue from 'vue'
-import {open_popup} from "../utils"
+import ImageItem from '../components/ImageItem.vue'
 
 export default {
     name: 'ImgGenerate',
@@ -192,7 +191,7 @@ export default {
         app_state : Object   , 
         stable_diffusion : Object,
     },
-    components: {LoaderModal},
+    components: {LoaderModal, ImageItem},
     mounted() {
        
     },
@@ -277,9 +276,6 @@ export default {
                 this.stable_diffusion.text_to_img(params, callbacks, 'txt2img');
         } , 
 
-        open_image_popup(img){
-            open_popup("file://"+img , undefined);
-        },
 
         open_arthub(){
             window.ipcRenderer.sendSync('open_url', "https://arthub.ai");
@@ -294,21 +290,6 @@ export default {
             this.prompt += ", " + tag;
         },
 
-        save_image(generated_image, prompt, seed){
-            if(!generated_image)
-                return;
-
-            generated_image = generated_image.split("?")[0];
-            seed = seed ? seed : '0'
-            let out_path = window.ipcRenderer.sendSync('save_dialog', prompt, seed);
-            if(!out_path)
-                return
-
-            let org_path = generated_image.replaceAll("file://" , "")
-
-            window.ipcRenderer.sendSync('save_file', org_path+"||" +out_path);
-
-        }
     },
 }
 </script>

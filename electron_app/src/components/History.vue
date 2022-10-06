@@ -22,11 +22,8 @@
                 </p>
                 
                 <div v-for="img in history_box.imgs" :key="img" class="history_box">
-                    
-                    <img  @click="open_image_popup( img )"  class="gal_img" v-if="img" :src="'file://' + img" style="height:100%">
-                    <br>
-                    <div @click="save_image(img, history_box.prompt, history_box.seed)" class="l_button">Save Image</div>
-                    <br>
+                
+                    <ImageItem :path="img" :style_obj="{height:'100%'}"></ImageItem>
                 
                 </div>
                 <div style="clear: both; display: table; margin-bottom: 10px;">
@@ -43,7 +40,7 @@
     </div>
 </template>
 <script>
-import {open_popup} from "../utils"
+import ImageItem from '../components/ImageItem.vue'
 
 import Vue from 'vue'
 
@@ -53,7 +50,7 @@ export default {
         app_state : Object,
     },
     components: {
-       
+        ImageItem
     },
     mounted() {
 
@@ -85,21 +82,6 @@ export default {
                 r = r.slice(0, -1);
             return r;
 
-        },
-
-        save_image(generated_image, prompt, seed){
-            if(!generated_image)
-                return;
-            generated_image = generated_image.split("?")[0];
-            let out_path = window.ipcRenderer.sendSync('save_dialog', prompt, seed);
-            if(!out_path)
-                return
-            let org_path = generated_image.replaceAll("file://" , "")
-            window.ipcRenderer.sendSync('save_file', org_path+"||" +out_path);
-        },
-
-        open_image_popup(img){
-            open_popup("file://"+img , undefined);
         },
 
     },
