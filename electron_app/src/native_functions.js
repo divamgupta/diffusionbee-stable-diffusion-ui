@@ -375,6 +375,44 @@ ipcMain.on('load_data', (event, arg) => {
 
 
 
+function run_realesrgan(input_path , cb ){
+    const path = require('path');
+    let out_path = "/tmp/"+Math.random()+".png";
+    const fs = require('fs');
+    let bin_path =  process.env.REALESRGAN_BIN || path.join(path.dirname(__dirname), 'core' , 'realesrgan_ncnn_macos' );
+    let weights_path = bin_path.replaceAll("realesrgan_ncnn_macos" , "models") + "/";
+    let proc = require('child_process').spawn( bin_path  , ['-m' , weights_path , '-i' , input_path , '-o' , out_path ]);
+
+    console.log([bin_path , '-m' , weights_path , '-i' , input_path , '-o' , out_path ])
+
+    proc.stderr.on('data', (data) => {
+        console.error(`sr stderr: ${data}`);
+    });
+
+    proc.stdout.on('data', (data) => {
+        console.error(`sr stderr: ${data}`);
+    });
+
+    proc.on('close', (code) => {
+        if (fs.existsSync(out_path)) {
+            cb(out_path);
+        }
+        else
+        {
+            cb('');
+        }
+    });
+}
+
+ipcMain.handle('run_realesrgan', async (event, arg) => {
+    const result = await new Promise(resolve => run_realesrgan( arg , resolve));
+    return result
+})
+
+// ipcRenderer.invoke('run_realesrgan', '/Users/divamgupta/Downloads/333.png' ).then((result) => {
+//     alert(result)
+//   })
+
 
 console.log("native functions imported")
 

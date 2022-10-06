@@ -101,17 +101,20 @@ ipcMain.on('to_python_sync', (event, arg) => {
         console.log("Python not binded yet!");
         event.returnValue = "not_ok";
     }
-
-
 })
 
 
 ipcMain.on('to_python_async', (event, arg) => {
     if (python) {
         python.stdin.write("b2py " + arg.toString() + "\n")
-
     }
 })
+
+
+
+
+
+
 
 app.on('window-all-closed', () => {
     if(python){
