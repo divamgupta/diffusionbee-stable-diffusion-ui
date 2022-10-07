@@ -24,7 +24,7 @@
 * Optimized for M1/M2 Chips
 
 ## Requirements 
-* MacOS 12.3 or later
+* MacOS 12.3 or later (but could work on earlier versions as well)
 * 16 GB RAM recommended
 
 ## Usage
