@@ -8,6 +8,18 @@
             <div v-for="history_box in get_history()" :key="history_box.key" style="clear: both;">
             
                 <div @click="delete_hist(history_box.key)" style="float:right; margin-top: 10px;"  class="l_button">Delete</div>
+                <!-- <div @click="share_on_arthub(history_box)" style="float:right; margin-top: 10px;"  class="l_button">Share</div> -->
+
+                <b-dropdown left variant="link" size="sm" toggle-class="text-decoration-none" no-caret style="float:right; margin-top: 5px;">
+                    <template #button-content>
+                        <div   class=" l_button "  >
+                            Share 
+                        </div>
+                    </template>
+                    <b-dropdown-item-button   @click="share_on_arthub(history_box)"  >Share on ArtHub.ai</b-dropdown-item-button>
+                </b-dropdown>
+
+                
                 <p class="history_box_info text_bg" style="user-select: text;">
                     <img  v-if="history_box.inp_img" :src="'file://' + history_box.inp_img" style="height:50px">
                     <br  v-if="history_box.inp_img" >
@@ -41,6 +53,7 @@
 </template>
 <script>
 import ImageItem from '../components/ImageItem.vue'
+import {share_on_arthub} from '../utils.js'
 
 import Vue from 'vue'
 
@@ -72,17 +85,35 @@ export default {
            Vue.set( this.app_state, "show_history_in_oldest_first", !this.app_state.show_history_in_oldest_first);
         },
 
-        get_box_params_str(box){
-            let r = "";
+        get_box_params_dict(box){
+            let r = {};
             let vals = {"seed" : "Seed" , "guidence_scale" : "Scale" , "dif_steps":"Steps"  , "inp_img_strength" : "Image Strength" , "img_w":"Img Width" , "img_h": "Img Height"}
             for(let k in vals)
                 if( box[k])
-                    r += " " + vals[k] +  " : " + box[k] + " |";
+                    r[vals[k]] =  box[k];
+            return r;
+        },
+
+        get_box_params_str(box){
+            let r = "";
+            let d = this.get_box_params_dict(box)
+            for(let k in d)
+                    r += " " +k  +  " : " + d[k] + " |";
             if(r.charAt(r.length - 1) == "|")
                 r = r.slice(0, -1);
             return r;
-
         },
+
+        share_on_arthub(box){
+            this.app_state.global_loader_modal_msg = "Uploading";
+            let params = this.get_box_params_dict(box);
+            let that = this;
+            share_on_arthub(box.imgs , params , box.prompt).then((
+                function(){ that.app_state.global_loader_modal_msg = ""}
+            )).catch(
+                function(){alert("Error in uploading.") ; that.app_state.global_loader_modal_msg = ""}
+            )
+        }
 
     },
 }

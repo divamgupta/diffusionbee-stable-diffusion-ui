@@ -5,6 +5,9 @@
         
         <StableDiffusion ref="stable_diffusion"> </StableDiffusion>
 
+            
+
+        
         <div v-if="app_state.is_start_screen">
             <transition name="slide_show">
                 <SplashScreen v-if="app_state.show_splash_screen"></SplashScreen>
@@ -23,7 +26,8 @@
                 <div  v-else  class="animatable_content_box ">
                     <LoaderModal :loading_percentage="stable_diffusion.loading_percentage" :loading_desc="stable_diffusion.model_loading_msg"  :loading_title="stable_diffusion.model_loading_title ||'Loading model'"> </LoaderModal>
                 </div>
-                
+
+               
             </template>
 
             <template v-slot:img2img>
@@ -63,6 +67,13 @@
 
             </template>
         </ApplicationFrame>
+
+        <LoaderModal v-if="app_state.global_loader_modal_msg" :loading_percentage="-1"  :loading_title="app_state.global_loader_modal_msg"> </LoaderModal>
+
+           
+
+       
+
     </div>
 </template>
 <script>
@@ -253,6 +264,7 @@ export default
             show_dialog_on_quit_msg : "" ,  // the message to show while quiting 
             show_splash_screen : true , // is showing the loading splash screen
             logs : "",
+            global_loader_modal_msg : "",
             history : {},
         };
 
