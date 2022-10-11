@@ -47,8 +47,20 @@ Join discord server : https://discord.gg/t6rC5RaJQn
 * 16 GB RAM preferred. It will run a bit slow with 8GB ram.
 * MacOS 12.5.1 or later
 
+## How do I start stable diffusion UI?
+* For Linux: After extracting the .tar.xz file, please open a terminal, and go to the stable-diffusion-ui directory. 
+* For Windows: Start Stable Diffusion UI.cmd by double-clicking it. 
+* For Linux: In the terminal, run ./start.sh (or bash start.sh) This will automatically install Stable Diffusion, set it up, and start the interface.
+
+## How do I install or uninstall stable diffusion?
+* For Windows: Start Stable Diffusion UI.cmd by double-clicking it. 
+* For Linux: In the terminal, run ./start.sh (or bash start.sh) This will automatically install Stable Diffusion, set it up, and start the interface. No additional       steps are needed. 
+* To Uninstall: Just delete the stable-diffusion-ui folder to uninstall all the downloaded packages.
+
 License : Stable Diffusion is released under the CreativeML OpenRAIL M license : https://github.com/CompVis/stable-diffusion/blob/main/LICENSE
 Diffusion Bee is just a GUI wrapper on top of Stable Diffusion, so all the term of Stable Diffusion are applied on the outputs. 
+
+
 
 References
 1) https://github.com/bfirsh/stable-diffusion/tree/apple-silicon-mps-support
