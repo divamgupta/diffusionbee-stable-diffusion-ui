@@ -47,5 +47,6 @@ def td_dot(a, b):
     bb = tf.reshape(b, (-1, b.shape[2], b.shape[3]))
     cc = tf.keras.backend.batch_dot(aa, bb)
     ans =  tf.reshape(cc, (-1, a.shape[1], cc.shape[1], cc.shape[2]))
-    assert ans.shape[1] * ans.shape[2] * ans.shape[3] < 8*4096*4096 - 1000 ,  "Shape too large"
+    # Gavin, 20221012: Updated from `8*4096*4096 - 1000` to `16*4096*4096 + 1` to accomodate up to 1024x1024 images
+    assert ans.shape[1] * ans.shape[2] * ans.shape[3] < 16*4096*4096 + 1 ,  "Shape too large"
     return ans

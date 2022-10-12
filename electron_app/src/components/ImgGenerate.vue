@@ -40,6 +40,7 @@
 
                                 <b-form-group inline label=""  style="margin-bottom: 6px;">
                                     <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Image Height: </label>
+                                    <!-- Gavin, 20221012: Added options to accomodate up to 1024x1024 images -->
                                     <b-form-select
                                     v-model="img_h"
                                     :options="[ 64*4 , 64*5 , 64*6, 64*7 , 64*8 , 64*9 , 64*10 , 64*11 , 64*12, 64*13, 64*14, 64*15, 64*16 ]"
@@ -49,6 +50,7 @@
 
                                 <b-form-group inline label=""  style="margin-bottom: 6px;">
                                     <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Image Width: </label>
+                                    <!-- Gavin, 20221012: Added options to accomodate up to 1024x1024 images -->
                                     <b-form-select
                                     v-model="img_w"
                                     :options="[ 64*4 , 64*5 , 64*6, 64*7 , 64*8 , 64*9 , 64*10 , 64*11 , 64*12, 64*13, 64*14, 64*15, 64*16 ]"
