@@ -42,7 +42,7 @@
                                     <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Image Height: </label>
                                     <b-form-select
                                     v-model="img_h"
-                                    :options="[ 64*4 , 64*5 , 64*6, 64*7 , 64*8 , 64*9 , 64*10 , 64*11 , 64*12 ]"
+                                    :options="[ 64*4 , 64*5 , 64*6, 64*7 , 64*8 , 64*9 , 64*10 , 64*11 , 64*12, 64*13, 64*14, 64*15, 64*16 ]"
                                     required
                                     ></b-form-select>
                                 </b-form-group>
@@ -51,7 +51,7 @@
                                     <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Image Width: </label>
                                     <b-form-select
                                     v-model="img_w"
-                                    :options="[64*4 , 64*5 , 64*6, 64*7 , 64*8 , 64*9 , 64*10 , 64*11 , 64*12 ]"
+                                    :options="[ 64*4 , 64*5 , 64*6, 64*7 , 64*8 , 64*9 , 64*10 , 64*11 , 64*12, 64*13, 64*14, 64*15, 64*16 ]"
                                     required
                                     ></b-form-select>
                                 </b-form-group>
