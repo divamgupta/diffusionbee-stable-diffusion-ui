@@ -9,7 +9,16 @@
                     style="border-radius: 12px 12px 12px 12px; width: calc(100%); resize: none; " 
                     class="form-control"  
                     v-bind:class="{ 'disabled' : !stable_diffusion.is_input_avail}"
-                    rows="3"></textarea>
+                    :rows="is_negative_prompt_avail ? 2:3"></textarea>
+
+                <textarea 
+                    v-if="is_negative_prompt_avail"
+                    v-model="negative_prompt" 
+                    placeholder="Enter your negative prompt here" 
+                    style="border-radius: 12px 12px 12px 12px; width: calc(100%); resize: none; margin-top: 5px; " 
+                    class="form-control negative_prompt_tb"  
+                    v-bind:class="{ 'disabled' : !stable_diffusion.is_input_avail}"
+                    :rows="1"></textarea>
 
                 <div v-if="stable_diffusion.is_input_avail" class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
                     
@@ -89,6 +98,9 @@
                                 <b-form-input onkeypress="return event.keyCode != 13;"  size="sm" class="mr-sm-2"  v-model="seed" style="max-width: 40px; float: right; margin-right: 30px;" ></b-form-input>
 
                                 </b-form-group>
+
+                                <div v-if="!is_negative_prompt_avail" class="l_button" @click="is_negative_prompt_avail=!is_negative_prompt_avail">Enable Negative Prompt</div>
+                                <div v-else class="l_button" @click="is_negative_prompt_avail=!is_negative_prompt_avail">Disable Negative Prompt</div>
 
                             </b-dropdown-form>
                         </b-dropdown>
@@ -209,6 +221,8 @@ export default {
             done_percentage : -1,
             is_stopping : false,
             modifiers : require("../modifiers.json"),
+            is_negative_prompt_avail : false, 
+            negative_prompt : "",
         };
         
     },
@@ -232,6 +246,10 @@ export default {
                 batch_size : this.batch_size , 
 
             }
+
+            if(this.is_negative_prompt_avail)
+                params['negative_prompt'] = this.negative_prompt;
+
             let that = this;
 
             if(this.prompt.trim() == "")
@@ -340,6 +358,17 @@ export default {
         .gal_img{
             border-color: rgba(255, 255, 255, 0.3);
         }
+    }
+
+    .negative_prompt_tb{
+        color:brown !important;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .negative_prompt_tb{
+            color:rgb(210, 0, 0) !important ;
+        }
+
     }
 
 </style>
