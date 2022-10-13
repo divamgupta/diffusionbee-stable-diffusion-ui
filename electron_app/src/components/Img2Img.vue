@@ -112,7 +112,7 @@
             </div>
 
             <div v-if="!stable_diffusion.is_input_avail && stable_diffusion.generated_by=='img2img'">
-                <LoaderModal :loading_percentage="done_percentage" loading_title="Generating"></LoaderModal>
+                <LoaderModal :loading_percentage="done_percentage" loading_title="Generating" :loading_desc="generate_progress_text"></LoaderModal>
             </div>
             
 
@@ -167,6 +167,7 @@ export default {
             img_h : 512 , 
             img_w : 512 , 
             is_inpaint : false,
+            generate_progress_text : "",
         };
     },
     methods: {
@@ -206,6 +207,7 @@ export default {
             
 
             this.backend_error = "";
+            this.generate_progress_text = "";
             Vue.set(this,'generated_images' ,[]);
             this.done_percentage = -1;
 
@@ -226,8 +228,10 @@ export default {
                     console.log(that.app_state.history)
 
                 },
-                on_progress(p){
+                on_progress(p, iter_time){
                     that.done_percentage = p;
+                    if(iter_time)
+                        that.generate_progress_text = iter_time/1000 + " s/it";
                 },
                 on_err(err){
                     that.backend_error = err;

@@ -177,14 +177,17 @@
         </div>
 
         <div v-if="!stable_diffusion.is_input_avail && stable_diffusion.generated_by=='txt2img'">
-            <LoaderModal :loading_percentage="done_percentage" loading_title="Generating"></LoaderModal>
+            <LoaderModal :loading_percentage="done_percentage" loading_title="Generating" :loading_desc="generate_progress_text"></LoaderModal>
         </div>
     
     <div class="bottom_float">
         <p>Please close other applications for best speed.</p>
     </div>
 
-    </div>
+    <div @click="share_current_arthub"  v-if="generated_images.length > 0"  class="l_button bottom_float" style="right : 10px; bottom : 15px; background-color: inherit; cursor: pointer;">Share on ArtHub.ai</div>
+
+
+</div>
 
 
 
@@ -194,6 +197,7 @@
 import LoaderModal from '../components_bare/LoaderModal.vue'
 import Vue from 'vue'
 import ImageItem from '../components/ImageItem.vue'
+import {share_on_arthub} from '../utils.js'
 
 export default {
     name: 'ImgGenerate',
@@ -223,6 +227,7 @@ export default {
             modifiers : require("../modifiers.json"),
             is_negative_prompt_avail : false, 
             negative_prompt : "",
+            generate_progress_text : "",
         };
         
     },
@@ -233,6 +238,8 @@ export default {
                 seed = Number(this.seed);
             else
                 seed = Math.floor(Math.random() * 100000);
+
+            this.computed_seed = seed;
 
 
             let params = {
@@ -256,6 +263,7 @@ export default {
                 return;
 
             this.backend_error = "";
+            this.generate_progress_text = "";
             Vue.set(this,'generated_images' ,[]);
             this.done_percentage = -1;
 
@@ -265,11 +273,16 @@ export default {
                 on_img(img_path){
                     that.generated_images.push(img_path);
 
-                    if(!(that.app_state.history[history_key]))
-                        Vue.set(that.app_state.history, history_key , {
+                    if(!(that.app_state.history[history_key])){
+                        let p = {
                             "prompt":that.prompt , "seed": seed, "img_w":that.img_w , "img_h":that.img_h ,  "key":history_key , "imgs" : [],
                             "guidence_scale" : that.guidence_scale , "dif_steps" : that.dif_steps 
-                        });
+                        }
+                        if(that.is_negative_prompt_avail)
+                            p['negative_prompt'] = that.negative_prompt;
+                        Vue.set(that.app_state.history, history_key , p);
+                    }
+                        
 
                     
                     that.app_state.history[history_key].imgs.push(img_path)
@@ -277,8 +290,10 @@ export default {
                     console.log(that.app_state.history)
 
                 },
-                on_progress(p){
+                on_progress(p, iter_time ){
                     that.done_percentage = p;
+                    if(iter_time)
+                        that.generate_progress_text = iter_time/1000 + " s/it";
                 },
                 on_err(err){
                     that.backend_error = err;
@@ -304,6 +319,26 @@ export default {
 
         add_style(tag){
             this.prompt += ", " + tag;
+        },
+
+        share_current_arthub(){
+            this.app_state.global_loader_modal_msg = "Uploading";
+            let params =  {
+                "Img Width": Number(this.img_w) , 
+                "Img Height" : Number(this.img_h) , 
+                Seed :this.computed_seed,
+                Scale : this.guidence_scale , 
+                Steps : this.dif_steps
+            }
+            if(this.is_negative_prompt_avail)
+                params['Negative Prompt'] = this.negative_prompt;
+
+            let that = this;
+            share_on_arthub( that.generated_images , params , that.prompt).then((
+                function(){ that.app_state.global_loader_modal_msg = ""}
+            )).catch(
+                function(){alert("Error in uploading.") ; that.app_state.global_loader_modal_msg = ""}
+            )
         },
 
     },

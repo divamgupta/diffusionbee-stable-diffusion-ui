@@ -69,9 +69,10 @@ export default {
 
             if(msg_code == "dnpr"){
                 let p = Number(msg.substring(5).trim());
+                let iter_time = this.last_iter_t -  Date.now();
                 if(this.attached_cbs){
                     if(this.attached_cbs.on_progress)
-                        this.attached_cbs.on_progress(p);
+                        this.attached_cbs.on_progress(p, -1*iter_time);
                 }
 
             }
@@ -86,6 +87,7 @@ export default {
         text_to_img(prompt_params, callbacks, generated_by){
             if(!this.is_input_avail)
                 return;
+            this.last_iter_t = Date.now()
             this.generated_by = generated_by;
             this.attached_cbs = callbacks;
             send_to_py("t2im " + JSON.stringify(prompt_params)) 

@@ -87,7 +87,7 @@ export default {
 
         get_box_params_dict(box){
             let r = {};
-            let vals = {"seed" : "Seed" , "guidence_scale" : "Scale" , "dif_steps":"Steps"  , "inp_img_strength" : "Image Strength" , "img_w":"Img Width" , "img_h": "Img Height"}
+            let vals = {"seed" : "Seed" , "guidence_scale" : "Scale" , "dif_steps":"Steps"  , "inp_img_strength" : "Image Strength" , "img_w":"Img Width" , "img_h": "Img Height" , "negative_prompt" : "Negative Prompt"}
             for(let k in vals)
                 if( box[k])
                     r[vals[k]] =  box[k];
