@@ -24,9 +24,9 @@ export default {
         };
     },
     methods: {
-        state_msg(msg) {
+        state_msg(code){
             const code = msg.substring(0, 4);
-            let p = msg.substring(5).trim();
+            const payload = msg.substring(5).trim();
 
             switch (code) {
                 case SD_STATE.model_loaded:
@@ -40,35 +40,29 @@ export default {
                     this.is_input_avail = false;
                     break;
                 case SD_STATE.new_done_percent:
-                    p = Number(msg.substring(5).trim());
-                    let iter_time = this.last_iter_t -  Date.now();
+                    let iter_time = this.last_iter_t -  Date.now();    
                     if (this.attached_cbs) {
-                        if (this.attached_cbs.on_progress) this.attached_cbs.on_progress(p);
+                        if (this.attached_cbs.on_progress) this.attached_cbs.on_progress(Number(payload));
                         this.attached_cbs.on_progress(p, -1*iter_time);
                     }
                     break;
                 case SD_STATE.new_image_ready:
-                    let impath = msg.substring(5).trim();
                     if (this.attached_cbs) {
-                        if (this.attached_cbs.on_img) this.attached_cbs.on_img(impath);
+                        if (this.attached_cbs.on_img) this.attached_cbs.on_img(payload);
                     }
                     break;
                 case SD_STATE.model_new_loading_percentage:
-                    p = Number(msg.substring(5).trim());
-                    this.loading_percentage = p;
+                    this.loading_percentage = Number(payload);
                     break;
                 case SD_STATE.model_new_loading_message:
-                    p = msg.substring(5).trim();
-                    this.model_loading_msg = p;
+                    this.model_loading_msg = payload;
                     break;
                 case SD_STATE.model_new_loading_title:
-                    p = msg.substring(5).trim();
-                    this.model_loading_title = p;
+                    this.model_loading_title = payload;
                     break;
                 case SD_STATE.error:
-                    let error = msg.substring(5).trim();
                     if (this.attached_cbs) {
-                        if (this.attached_cbs.on_err) this.attached_cbs.on_err(error);
+                        if (this.attached_cbs.on_err) this.attached_cbs.on_err(payload);
                     }
                     break;
 
