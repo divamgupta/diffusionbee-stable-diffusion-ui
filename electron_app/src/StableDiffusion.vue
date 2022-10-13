@@ -24,7 +24,7 @@ export default {
         };
     },
     methods: {
-        state_msg(code){
+        state_msg(msg) {
             const code = msg.substring(0, 4);
             const payload = msg.substring(5).trim();
 
@@ -39,17 +39,14 @@ export default {
                 case SD_STATE.input_busy:
                     this.is_input_avail = false;
                     break;
-                case SD_STATE.new_done_percent:
-                    let iter_time = this.last_iter_t -  Date.now();    
-                    if (this.attached_cbs) {
-                        if (this.attached_cbs.on_progress) this.attached_cbs.on_progress(Number(payload));
-                        this.attached_cbs.on_progress(p, -1*iter_time);
-                    }
+                case SD_STATE.new_done_percent: {
+                    const iter_time = this.last_iter_t - Date.now();
+                    this?.attached_cbs?.on_progress(Number(payload));
+                    this?.attached_cbs?.on_progress(payload, -1 * iter_time);
                     break;
+                }
                 case SD_STATE.new_image_ready:
-                    if (this.attached_cbs) {
-                        if (this.attached_cbs.on_img) this.attached_cbs.on_img(payload);
-                    }
+                    this?.attached_cbs?.on_img(payload)
                     break;
                 case SD_STATE.model_new_loading_percentage:
                     this.loading_percentage = Number(payload);
@@ -61,9 +58,7 @@ export default {
                     this.model_loading_title = payload;
                     break;
                 case SD_STATE.error:
-                    if (this.attached_cbs) {
-                        if (this.attached_cbs.on_err) this.attached_cbs.on_err(payload);
-                    }
+                    this?.attached_cbs?.on_err(payload);
                     break;
 
                 default:
