@@ -7,8 +7,8 @@
             <img class="gal_img" style="width: 90%;" src="https://colormadehappy.com/wp-content/uploads/2022/02/How-to-draw-a-cute-dog-6.jpg"/> 
          -->
 
-            <div v-if="inp_img" class="image_area" style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
-                <ImageCanvas :is_inpaint="is_inpaint" :image_source="inp_img"></ImageCanvas>
+            <div v-if="inp_img" class="image_area" :class="{ crosshair_cur  : is_inpaint }"  style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
+                <ImageCanvas ref="inp_img_canvas" :is_inpaint="is_inpaint" :image_source="inp_img"></ImageCanvas>
             </div>
             <div v-else @click="open_input_image" class="image_area" :class="{ pointer_cursor  : is_sd_active }" style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
                 <center>
@@ -143,6 +143,14 @@ export default {
             return this.stable_diffusion.is_input_avail;
         }
     },
+    watch: {
+        'inp_img': {
+            handler: function() {
+                this.is_inpaint = false;
+            },
+            deep: true
+        } , 
+    },
     data() {
         return {
             prompt : '',
@@ -171,6 +179,15 @@ export default {
             else
                 seed = Math.floor(Math.random() * 100000);
 
+                if(this.prompt.trim() == "")
+                    return;
+
+                if(!this.inp_img)
+                    return;
+
+            let  im_b64 = this.$refs.inp_img_canvas.get_img_b64();
+            let input_image = window.ipcRenderer.sendSync('save_b64_image',  im_b64  );
+
             let params = {
                 prompt : this.prompt , 
                 W : -1 , 
@@ -181,15 +198,12 @@ export default {
                 num_imgs : this.num_imgs , 
                 batch_size : this.batch_size , 
                 img_strength : this.inp_img_strength,
-                input_image : this.inp_img,
+                input_image : input_image,
+                is_inpaint : this.is_inpaint,
             }
             let that = this;
 
-            if(this.prompt.trim() == "")
-                return;
-
-            if(!this.inp_img)
-                return;
+            
 
             this.backend_error = "";
             Vue.set(this,'generated_images' ,[]);
@@ -278,4 +292,7 @@ export default {
     }
 </style>
 <style scoped>
+    .crosshair_cur{
+        cursor: crosshair;
+    }
 </style>

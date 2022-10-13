@@ -51,7 +51,8 @@ def process_opt(opts):
             time.sleep(0.1)
         impath = sample_path + "?%d"%random.randint(0,10000)
 
-        
+        if 'input_image' in opts:
+            impath = opts['input_image']
 
         print("sdbk nwim %s"%(impath) ) # new image generated
     

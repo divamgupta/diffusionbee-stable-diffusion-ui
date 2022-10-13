@@ -58,8 +58,8 @@ export default {
             prevY : 0 , 
             currX : 0 , 
             currY : 0 , 
-            x : "violet" ,
-            y : 15 ,
+            x : "#ff00ff" ,
+            y : 7 ,
             flag : false,
         };
     },
@@ -103,13 +103,20 @@ export default {
         draw() {
             let xmul =  this.canvas.width / this.canvas.offsetWidth;
             let ymul = this.canvas.height / this.canvas.offsetHeight;
+            // this.ctx.beginPath();
+            // this.ctx.moveTo(this.prevX*xmul, this.prevY*ymul  );
+            // this.ctx.lineTo(this.currX*xmul, this.currY*ymul );
+            // this.ctx.strokeStyle = this.x;
+            // this.ctx.lineWidth = this.y * Math.sqrt(xmul * ymul);
+            // this.ctx.stroke();
+            // this.ctx.closePath();
+
             this.ctx.beginPath();
-            this.ctx.moveTo(this.prevX*xmul, this.prevY*ymul  );
-            this.ctx.lineTo(this.currX*xmul, this.currY*ymul );
-            this.ctx.strokeStyle = this.x;
-            this.ctx.lineWidth = this.y * Math.sqrt(xmul * ymul);
-            this.ctx.stroke();
-            this.ctx.closePath();
+            this.ctx.arc(this.prevX*xmul, this.prevY*ymul , this.y* Math.sqrt(xmul * ymul), 0, 2 * Math.PI);
+            this.ctx.arc((this.prevX+this.currX)*xmul/2, (this.prevY+this.currY)*ymul/2 , this.y* Math.sqrt(xmul * ymul), 0, 2 * Math.PI);
+            this.ctx.arc(this.currX*xmul, this.currY*ymul , this.y* Math.sqrt(xmul * ymul), 0, 2 * Math.PI);
+            this.ctx.fill();
+
         },
 
         on_resize(){
@@ -157,7 +164,9 @@ export default {
                 ctx.drawImage(img, 0,0, img.width, img.height, 0,0, canvas.width, canvas.height);
 
             })
-            
+        },
+        get_img_b64(){
+            return this.canvas.toDataURL();
         }
     },
 

@@ -328,10 +328,26 @@ ipcMain.on('native_alert', (event, arg) => {
 
 ipcMain.on('save_b64_image', (event, arg) => {
 
-    let base64Data = arg.replace(/^data:image\/jpeg;base64,/, "");
-    let temp_dir = require("os").tmpdir();
+    const path = require('path');
+    const fs = require('fs');
 
-    let p = require('path').join(temp_dir,  Math.random().toString()+".jpg");
+    let base64Data = arg.replace(/^data:image\/png;base64,/, "");
+    
+    const homedir = require('os').homedir();
+    let save_dir = path.join(homedir , ".diffusionbee")
+
+
+    if (!fs.existsSync(save_dir)){
+        fs.mkdirSync(save_dir, { recursive: true });
+    }
+
+    save_dir = path.join(save_dir , "inp_images")
+
+    if (!fs.existsSync(save_dir)){
+        fs.mkdirSync(save_dir, { recursive: true });
+    }
+
+    let p = require('path').join(save_dir,  Math.random().toString()+".png");
 
     require("fs").writeFileSync(p , base64Data, 'base64'); 
     
