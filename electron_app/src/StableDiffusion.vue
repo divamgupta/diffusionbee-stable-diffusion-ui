@@ -3,6 +3,7 @@
 </template>
 <script>
 
+import { SD_STATE } from "./constants";
 import { send_to_py } from "./py_vue_bridge.js"
 
 export default {
@@ -23,62 +24,58 @@ export default {
         };
     },
     methods: {
-        state_msg(msg){
-            let msg_code = msg.substring(0, 4);
-            if(msg_code == "mdld"){
-                this.is_backend_loaded = true;
-            }
-            if(msg_code == "inrd"){
-                this.is_input_avail = true;
-                this.attached_cbs = undefined;
-            }
-            if(msg_code == "inwk"){
-                this.is_input_avail = false;
-            }
-            if(msg_code == "nwim"){
-                let impath = msg.substring(5).trim()
-                if(this.attached_cbs){
-                    if(this.attached_cbs.on_img)
-                        this.attached_cbs.on_img(impath);
-                }
+        state_msg(msg) {
+            const code = msg.substring(0, 4);
+            let p = msg.substring(5).trim();
 
-            }
-
-            if(msg_code == "mlpr"){
-                let p = Number(msg.substring(5).trim());
-                this.loading_percentage = p;
-            }
-            if(msg_code == "mlms"){
-                let p = (msg.substring(5).trim());
-                this.model_loading_msg = p;
-            }
-            if(msg_code == "mltl"){
-                let p = (msg.substring(5).trim());
-                this.model_loading_title = p;
-            }
-
-
-            if(msg_code == "errr"){
-                let error = msg.substring(5).trim()
-                if(this.attached_cbs){
-                    if(this.attached_cbs.on_err)
-                        this.attached_cbs.on_err(error);
-                }
-
-            }
-
-            if(msg_code == "dnpr"){
-                let p = Number(msg.substring(5).trim());
-                let iter_time = this.last_iter_t -  Date.now();
-                if(this.attached_cbs){
-                    if(this.attached_cbs.on_progress)
+            switch (code) {
+                case SD_STATE.model_loaded:
+                    this.is_backend_loaded = true;
+                    break;
+                case SD_STATE.input_ready:
+                    this.is_input_avail = true;
+                    this.attached_cbs = undefined;
+                    break;
+                case SD_STATE.input_busy:
+                    this.is_input_avail = false;
+                    break;
+                case SD_STATE.new_done_percent:
+                    p = Number(msg.substring(5).trim());
+                    let iter_time = this.last_iter_t -  Date.now();
+                    if (this.attached_cbs) {
+                        if (this.attached_cbs.on_progress) this.attached_cbs.on_progress(p);
                         this.attached_cbs.on_progress(p, -1*iter_time);
-                }
+                    }
+                    break;
+                case SD_STATE.new_image_ready:
+                    let impath = msg.substring(5).trim();
+                    if (this.attached_cbs) {
+                        if (this.attached_cbs.on_img) this.attached_cbs.on_img(impath);
+                    }
+                    break;
+                case SD_STATE.model_new_loading_percentage:
+                    p = Number(msg.substring(5).trim());
+                    this.loading_percentage = p;
+                    break;
+                case SD_STATE.model_new_loading_message:
+                    p = msg.substring(5).trim();
+                    this.model_loading_msg = p;
+                    break;
+                case SD_STATE.model_new_loading_title:
+                    p = msg.substring(5).trim();
+                    this.model_loading_title = p;
+                    break;
+                case SD_STATE.error:
+                    let error = msg.substring(5).trim();
+                    if (this.attached_cbs) {
+                        if (this.attached_cbs.on_err) this.attached_cbs.on_err(error);
+                    }
+                    break;
 
+                default:
+                    break;
             }
-
-
-        } ,
+        },
 
         interupt(){
             send_to_py("t2im __stop__") 
@@ -92,7 +89,6 @@ export default {
             this.attached_cbs = callbacks;
             send_to_py("t2im " + JSON.stringify(prompt_params)) 
         }
-
     },
 }
 </script>
