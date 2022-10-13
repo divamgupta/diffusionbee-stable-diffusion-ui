@@ -7,14 +7,20 @@
             <img class="gal_img" style="width: 90%;" src="https://colormadehappy.com/wp-content/uploads/2022/02/How-to-draw-a-cute-dog-6.jpg"/> 
          -->
 
-            <div @click="open_input_image" class="image_area" :class="{ pointer_cursor  : is_sd_active }" style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
-                <!-- <img v-if="inp_img" :src="'file://'+inp_img" style="width:100% ; height:100%; object-fit: contain;"> -->
-                <ImageCanvas v-if="inp_img" :image_source="inp_img"></ImageCanvas>
-                <center v-else>
+            <div v-if="inp_img" class="image_area" style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
+                <ImageCanvas :is_inpaint="is_inpaint" :image_source="inp_img"></ImageCanvas>
+            </div>
+            <div v-else @click="open_input_image" class="image_area" :class="{ pointer_cursor  : is_sd_active }" style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
+                <center>
                     <p style="margin-top: calc( 50vh - 180px); opacity: 70%;" >Click to add input image</p>
                 </center>
             </div>
-            <br> 
+            <div v-if="inp_img" class="l_button" @click="open_input_image" >Change Image</div>
+            <div v-if="inp_img" class="l_button" @click="inp_img =''">Clear</div>
+            <div v-if="inp_img && !is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Inpaint</div>
+            <div v-if="inp_img && is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Remove Inpaint</div>
+
+            <br> <br> 
             <textarea 
                     v-model="prompt" 
                     placeholder="Enter your prompt here" 
@@ -152,6 +158,7 @@ export default {
             inp_img_strength : 0.3 , 
             img_h : 512 , 
             img_w : 512 , 
+            is_inpaint : false,
         };
     },
     methods: {
@@ -224,8 +231,11 @@ export default {
             if( !this.stable_diffusion.is_input_avail)
                 return;
             let img_path = window.ipcRenderer.sendSync('file_dialog',  'img_file' );
-            if(img_path && img_path != 'NULL')
+            if(img_path && img_path != 'NULL'){
                 this.inp_img = img_path;
+                this.is_inpaint = false;
+            }
+                
         },
 
         stop_generation(){

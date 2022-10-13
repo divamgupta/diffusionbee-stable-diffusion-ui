@@ -20,6 +20,7 @@ export default {
     name: 'ImageCanvas',
     props: {
         image_source : String,
+        is_inpaint : Boolean,
     },
     components: {},
     mounted() {
@@ -29,6 +30,9 @@ export default {
         this.ctx = canvas.getContext("2d");
         this.ro.observe(canvas.parentElement);
         let that = this;
+
+        if(this.image_source)
+            this.on_img_change();
 
         canvas.addEventListener("mousemove", function (e) {
             that.findxy('move', e)
@@ -44,6 +48,9 @@ export default {
         }, false);
 
     },
+    beforeDestroy(){
+        this.ro.disconnect()
+    },
     data() {
         return {
             img_tag : undefined,
@@ -52,13 +59,17 @@ export default {
             currX : 0 , 
             currY : 0 , 
             x : "violet" ,
-            y : 10 ,
+            y : 15 ,
             flag : false,
         };
     },
     methods: {
 
         findxy(res, e) {
+
+            if(!(this.is_inpaint))
+                return;
+
             if (res == 'down') {
                 this.prevX = this.currX;
                 this.prevY = this.currY;
@@ -85,8 +96,6 @@ export default {
                     this.currX = e.clientX - this.canvas.parentElement.getBoundingClientRect().x;
                     this.currY = e.clientY - this.canvas.parentElement.getBoundingClientRect().y;
                     this.draw();
-
-                    console.log(e.clientX - this.canvas.parentElement.getBoundingClientRect().x)
                 }
             }
         },
@@ -125,6 +134,9 @@ export default {
             }
             
         },
+        clear_inpaint(){
+            this.on_img_change();
+        },
         on_img_change(){
             let that = this;
             addImageProcess('file://'+this.image_source).then(function(img_tag){
@@ -155,6 +167,15 @@ export default {
             handler: function() {
                 Vue.nextTick(this.on_img_change)
                 // this.on_img_change()
+            },
+            deep: true
+        } , 
+
+        'is_inpaint': {
+            handler: function(v) {
+                if(!v){
+                    this.clear_inpaint();
+                }
             },
             deep: true
         } , 
