@@ -8,8 +8,8 @@
          -->
 
             <div @click="open_input_image" class="image_area" :class="{ pointer_cursor  : is_sd_active }" style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
-                <img v-if="inp_img" :src="'file://'+inp_img" style="width:100% ; height:100%; object-fit: contain;">
-               
+                <!-- <img v-if="inp_img" :src="'file://'+inp_img" style="width:100% ; height:100%; object-fit: contain;"> -->
+                <ImageCanvas v-if="inp_img" :image_source="inp_img"></ImageCanvas>
                 <center v-else>
                     <p style="margin-top: calc( 50vh - 180px); opacity: 70%;" >Click to add input image</p>
                 </center>
@@ -117,6 +117,7 @@
 </template>
 <script>
 import ImageItem from '../components/ImageItem.vue'
+import ImageCanvas from '../components_bare/ImageCanvas.vue'
 
 import LoaderModal from '../components_bare/LoaderModal.vue'
 import Vue from 'vue'
@@ -127,7 +128,7 @@ export default {
         app_state : Object   , 
         stable_diffusion : Object,
     },
-    components: {LoaderModal, ImageItem},
+    components: {LoaderModal, ImageItem , ImageCanvas},
     mounted() {
 
     },
