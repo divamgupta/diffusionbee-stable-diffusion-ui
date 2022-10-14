@@ -1,6 +1,35 @@
 @import '../assets/css/theme.css';
 <template>
     <div  class="animatable_content_box ">
+        <b-form-input
+            onkeypress="return event.keyCode != 13;"
+            size="sm"
+            placeholder="Search by prompt text"
+            v-model="searchText"
+            autofocus
+            debounce="200"
+            style="max-width: 240px; float: left; margin-right: 30px;"
+            id="searchText"
+        />
+
+        <b-popover
+          :target="`searchText`"
+          title="Extended Search Rules"
+          triggers="hover"
+        >
+            By default the search is fuzzy (i.e. matches search patterns approximately), but you can make it more strict:
+            <ul>
+            <li>use double quotes to group words</li>
+            <li>white space acts as an <b>AND</b> operator, while a single pipe (|) character acts as an <b>OR</b> operator</li>
+            <li>use equal sign "=text" to search for prompts that are exactly <b>EQAUL</b> to text</li>
+            <li>use single quote "'text" to search for prompts that <b>CONTAIN</b> text exactly</li>
+            <li>use exclamation point "!text" to <b>IGNORE</b> prompts containing text</li>
+            <li>use caret "^text" to search for prompts <b>BEGINING</b> with text</li>
+            <li>use dollar sign "text$" to search for prompts <b>ENDING</b> with text</li>
+            </ul>
+
+            <b>Example:</b> <i>!^red | '"red herring"</i> - search for prompts <b>NOT BEGINING</b> with "red" <b>OR</b> prompts <b>CONTAINING</b> text "red herring" (in that order) 
+        </b-popover>
         <div @click="toggle_order()" style="float:right; margin-bottom: 20px;" class="l_button">
           {{this.app_state.show_history_in_oldest_first ? "Oldest": "Newest"}} First
         </div>
@@ -55,6 +84,7 @@
 import ImageItem from '../components/ImageItem.vue'
 import {share_on_arthub} from '../utils.js'
 
+import Fuse from 'fuse.js'
 import Vue from 'vue'
 
 export default {
@@ -69,7 +99,9 @@ export default {
 
     },
     data() {
-        return {};
+        return {
+            searchText: ''
+        };
     },
     methods: {
         delete_hist(k){
@@ -78,7 +110,18 @@ export default {
 
         get_history() {
           let history = Object.values(this.app_state.history);
-          return this.app_state.show_history_in_oldest_first ? history : history.reverse();
+          const that = this;
+          const list = this.app_state.show_history_in_oldest_first ? history : history.reverse();
+
+          if (that.searchText === '') {
+            return list;
+          }
+
+          const fuse = new Fuse(list, {
+            keys: ['prompt'],
+            useExtendedSearch: true,
+          });
+          return fuse.search(that.searchText).map(r => r.item);
         },
 
         toggle_order() {
