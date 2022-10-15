@@ -1,6 +1,7 @@
 import { ipcMain, dialog } from 'electron'
 import { app , screen } from 'electron'
 import settings from 'electron-settings';
+import truncate from 'truncate-utf8-bytes';
 
 var win;
 
@@ -29,10 +30,10 @@ ipcMain.on('save_dialog', (event, ...args) => {
     } else {
         filename = seed + '-' + prompt
     }
-    let trimmedFilename = filename.substring(0, 254) // filename size limit
+    const maxFilenameLength = 251; // online says 255, macOS 12 and 13 say otherwise
      let save_path = dialog.showSaveDialogSync({
             title: 'Save Image',
-            defaultPath: trimmedFilename,
+            defaultPath: truncate(filename, maxFilenameLength),
             filters: [{
               name: 'Image',
               extensions: ['png']
