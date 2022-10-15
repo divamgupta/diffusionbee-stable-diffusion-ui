@@ -20,28 +20,16 @@ console.log(require('os').freemem()/(1000000000) + " Is the free memory")
 console.log(require('os').totalmem()/(1000000000) + " Is the total memory")
 
 
-ipcMain.on('save_dialog', (event, ...args) => {
-
-    const seed = args[1] ? args[1] : "0"
-    const prompt = args[0] ? args[0] : "Untitled"
-    let filename = ''
-    if (seed === '0') {
-        filename = prompt
-    } else {
-        filename = seed + '-' + prompt
-    }
+ipcMain.on("save_dialog", (event, filename, seed) => {
     const maxFilenameLength = 251; // online says 255, macOS 12 and 13 say otherwise
-     let save_path = dialog.showSaveDialogSync({
-            title: 'Save Image',
-            defaultPath: truncate(filename, maxFilenameLength),
-            filters: [{
-              name: 'Image',
-              extensions: ['png']
-            }]
-          })
+    const save_path = dialog.showSaveDialogSync({
+        title: "Save Image",
+        defaultPath: truncate(`${seed}-${filename}`, maxFilenameLength),
+        filters: [{ name: "Image", extensions: ["png"] }],
+    });
 
-     event.returnValue = save_path;
-} )
+    event.returnValue = save_path;
+});
 
 console.log(require('os').release() + " ohoho")
 
