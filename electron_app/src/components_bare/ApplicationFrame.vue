@@ -135,9 +135,6 @@ export default {
 
 html {
     user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
 }
 
 body {
@@ -253,11 +250,7 @@ h4 {
 
 img {
     user-drag: none;
-    -webkit-user-drag: none;
     user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
 }
 
 .animatable_content_box {
@@ -290,7 +283,6 @@ img {
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.16);
     border-radius: 5px;
     border: 0.5px solid rgba(0, 0, 0, 0.1);
-    /*background: #F4F5F5;*/
 }
 
 /*overriding the bootstraps dropdown highlighting*/
@@ -306,13 +298,11 @@ img {
     width: 100%;
 }
 </style>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .title_bar {
     height: 35px;
     width: 100%;
-    /*background: red;*/
-    -webkit-user-select: none;
+    user-select: none;
     -webkit-app-region: drag;
     border-width: 0px;
     border-bottom-width: 1px;
