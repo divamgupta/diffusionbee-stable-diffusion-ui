@@ -30,40 +30,30 @@
         </div>
         <div class="tab_content_frame">
             <div class="tab_content">
-                
-
-                <div style="display:none"  :class="{ bl_display : selected_tab === 'txt2img'  }" >
+                <div v-show="selected_tab === 'txt2img'">
                     <slot name="txt2img"></slot>
                 </div>
 
-                <div  style="display:none"  :class="{ bl_display : selected_tab === 'img2img'  }" >
+                <div v-show="selected_tab === 'img2img'">
                     <slot name="img2img"></slot>
                 </div>
 
-                <div  v-if="selected_tab === 'history' " style="display:none"  :class="{ bl_display : selected_tab === 'history'  }" >
+                <div v-if="selected_tab === 'history'">
                     <slot name="history"></slot>
                 </div>
-                
-                
 
-                <div  style="display:none"  :class="{ bl_display : selected_tab === 'upscale_img'  }" >
+                <div v-show="selected_tab === 'upscale_img'">
                     <slot name="upscale_img"></slot>
                 </div>
 
-                <div  v-if="selected_tab === 'logs' " style="display:none"  :class="{ bl_display : selected_tab === 'logs'  }" >
+                <div v-if="selected_tab === 'logs'">
                     <slot name="logs"></slot>
                 </div>
 
-                <div v-if="selected_tab === 'outpainting' " style="display:none"  :class="{ bl_display : selected_tab === 'outpainting'  }" >
+                <div v-if="selected_tab === 'outpainting'">
                     <slot name="outpainting"></slot>
                 </div>
-
-
-
-             
             </div>
-
-
         </div>
     </div>
 </template>
@@ -139,11 +129,6 @@ html {
 body {
     font-family: var(--main-font);
 }
-
-.bl_display{
-    display:block !important;
-}
-
 
 .l_button {
     display: inline-block;
