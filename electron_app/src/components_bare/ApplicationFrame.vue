@@ -52,7 +52,7 @@
                     <slot name="img2img"></slot>
                 </div>
 
-                <div v-if="selected_tab === 'history'">
+                <div v-show="selected_tab === 'history'">
                     <slot name="history"></slot>
                 </div>
 
@@ -60,11 +60,11 @@
                     <slot name="upscale_img"></slot>
                 </div>
 
-                <div v-if="selected_tab === 'logs'">
+                <div v-show="selected_tab === 'logs'">
                     <slot name="logs"></slot>
                 </div>
 
-                <div v-if="selected_tab === 'outpainting'">
+                <div v-show="selected_tab === 'outpainting'">
                     <slot name="outpainting"></slot>
                 </div>
             </div>
