@@ -5,7 +5,7 @@
           {{this.app_state.show_history_in_oldest_first ? "Oldest": "Newest"}} First
         </div>
         <div v-if="Object.values(app_state.history).length > 0">
-            <div v-for="history_box in get_history()" :key="history_box.key" style="clear: both;">
+            <div v-for="history_box in get_history()" :key="history_box.key" style="clear: both;" class="history_item">
             
                 <div @click="delete_hist(history_box.key)" style="float:right; margin-top: 10px;"  class="l_button">Delete</div>
                 <!-- <div @click="share_on_arthub(history_box)" style="float:right; margin-top: 10px;"  class="l_button">Share</div> -->
@@ -121,6 +121,12 @@ export default {
 <style>
 </style>
 <style scoped>
+.history_item {
+    contain: paint style;
+    content-visibility: auto;
+    contain-intrinsic-size: 430px;
+}
+
 .history_box_info {
    
     padding :12px;
