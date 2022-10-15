@@ -35,7 +35,7 @@
                 
                 <div v-for="img in history_box.imgs" :key="img" class="history_box">
                 
-                    <ImageItem :app_state="app_state" :hide_extra_save_button="true" :path="img" :style_obj="{height:'100%'}"></ImageItem>
+                    <ImageItem :app_state="app_state" :hide_extra_save_button="true" :path="img" :prompt="history_box.prompt" :seed="history_box.seed" :style_obj="{height:'100%'}"></ImageItem>
                 
                 </div>
                 <div style="clear: both; display: table; margin-bottom: 10px;">

@@ -8,7 +8,7 @@
                         <font-awesome-icon icon="bars" />
                     </div>
                 </template>
-                <b-dropdown-item-button   @click="save_image(path)"  >Save Image</b-dropdown-item-button>
+                <b-dropdown-item-button   @click="save_image(path, prompt, seed)"  >Save Image</b-dropdown-item-button>
                 <b-dropdown-item-button @click="upsclae" >Upscale Image</b-dropdown-item-button>
                 <b-dropdown-item-button @click="send_img2img" >Send to Img2Img</b-dropdown-item-button>
                 
@@ -19,7 +19,7 @@
         
         <img   @click="open_image_popup( path )"  class="gal_img" :src="'file://' + path " style="max-height: 100% ; max-width: 100%;" >
         <br>
-        <div v-if="!hide_extra_save_button" @click="save_image(path)" class="l_button">Save Image</div>
+        <div v-if="!hide_extra_save_button" @click="save_image(path, prompt, seed)" class="l_button">Save Image</div>
     </div>
 </template>
 <script>
@@ -30,6 +30,8 @@ export default {
     name: 'ImageItem',
     props: {
         path : String,
+        prompt: String,
+        seed: Number,
         style_obj:Object,
         app_state:Object,
         hide_extra_save_button : Boolean,
