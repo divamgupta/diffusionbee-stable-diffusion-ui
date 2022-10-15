@@ -68,6 +68,7 @@
     </div>
 </template>
 <script>
+import Vue from "vue";
 
 export default {
     name: 'ApplicationFrame',
@@ -92,6 +93,10 @@ export default {
 
     methods: {
         selectTab(tab) {
+            if (this.selected_tab === 'history') {
+                // drop History's images so SD can gobble up memory
+                Vue.nextTick(window.clear_cache);
+            }
             this.selected_tab = tab;
         },
 
