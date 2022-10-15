@@ -199,19 +199,6 @@ body {
     padding-right: 15px;
 }
 
-.button_color_fancy {
-    background: #3e7bfa;
-    color: #ffffff;
-    height: 30px;
-    box-shadow: 0px 4px 4px #ccddff;
-}
-
-.button_color_fancy:hover {
-    background: #3e7bfa;
-    color: #ffffff;
-    box-shadow: 1px 1px 4px #ccddff;
-}
-
 p {
     font-family: var(--main-font);
     font-style: normal;
@@ -220,10 +207,6 @@ p {
     line-height: 16px;
     align-items: center;
     letter-spacing: -0.08px;
-}
-
-.p_light {
-    color: rgba(0, 0, 0, 0.5);
 }
 
 h1 {
@@ -310,10 +293,6 @@ img {
     /*background: #F4F5F5;*/
 }
 
-.opaciy_half {
-    opacity: 0.5;
-}
-
 /*overriding the bootstraps dropdown highlighting*/
 .btn-check:focus,
 .btn:focus {
@@ -356,14 +335,6 @@ img {
     padding-left: 22px;
 }
 
-@media (display-mode: fullscreen) {
-    .app_title {
-        /*works in chrome but not electron*/
-        display: none;
-        background-color: red;
-    }
-}
-
 .tabs_bar {
     height: 40px;
     width: 100%;
@@ -379,18 +350,6 @@ img {
     width: 100%;
     height: calc(100vh - 40px - 35px - 2px);
     overflow: auto;
-}
-
-.tab_content {
-    /*padding: 20px;*/
-}
-
-.vertical-center {
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
 }
 
 .tab {
