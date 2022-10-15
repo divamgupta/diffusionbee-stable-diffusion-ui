@@ -1,32 +1,46 @@
 <template>
     <div class="main_frame">
         <div class="title_bar">
-            <div class="app_title" v-bind:class="{ 'fullscreen' :is_fullscreen||detect_windows_os() }">
-                <span @click="$emit('on_title_click',{})"> {{title}} </span>
-                <div style="float: right; margin-right: 10px; margin-top: -8.5px;" class="">
+            <div class="app_title" v-bind:class="{ fullscreen: is_fullscreen || detect_windows_os() }">
+                <span @click="$emit('on_title_click', {})"> {{ title }} </span>
+                <div style="float: right; margin-right: 10px; margin-top: -8.5px" class="">
                     <b-dropdown right variant="link" size="sm" toggle-class="text-decoration-none" no-caret>
                         <template #button-content>
                             <div style="" class="tab l_button">
                                 <font-awesome-icon icon="bars" />
                             </div>
                         </template>
-                        <b-dropdown-item-button @click="$emit('menu_item_click_help',{})">Help</b-dropdown-item-button>
-                        <b-dropdown-item-button @click="$emit('menu_item_click_discord',{})">Discord Channel</b-dropdown-item-button>
+                        <b-dropdown-item-button @click="$emit('menu_item_click_help', {})">Help</b-dropdown-item-button>
+                        <b-dropdown-item-button @click="$emit('menu_item_click_discord', {})">Discord Channel
+                        </b-dropdown-item-button>
                         <b-dropdown-item-button @click="selectTab('logs')">Show Logs</b-dropdown-item-button>
-                        <b-dropdown-item-button @click="$emit('menu_item_click_about',{})">About</b-dropdown-item-button>
-                        <b-dropdown-item-button @click="$emit('menu_item_click_close',{})">Close</b-dropdown-item-button>
+                        <b-dropdown-item-button @click="$emit('menu_item_click_about', {})">About
+                        </b-dropdown-item-button>
+                        <b-dropdown-item-button @click="$emit('menu_item_click_close', {})">Close
+                        </b-dropdown-item-button>
                         <!-- #TODO set these menu items via python -->
-                        
                     </b-dropdown>
                 </div>
                 <!-- <div style="float: right; margin-right:0" class="tab l_button"><font-awesome-icon icon="bars" /></div> -->
             </div>
         </div>
         <div class="tabs_bar">
-            <div @click="selectTab('txt2img')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'txt2img'}">Text To Image</div>
-            <div @click="selectTab('img2img')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'img2img'}">Image To Image</div>
-            <div @click="selectTab('outpainting')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'outpainting'}">Outpainting</div>
-            <div @click="selectTab('history')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'history'}">History</div>
+            <div @click="selectTab('txt2img')" class="tab l_button"
+                v-bind:class="{ button_colored: selected_tab === 'txt2img' }">
+                Text To Image
+            </div>
+            <div @click="selectTab('img2img')" class="tab l_button"
+                v-bind:class="{ button_colored: selected_tab === 'img2img' }">
+                Image To Image
+            </div>
+            <div @click="selectTab('outpainting')" class="tab l_button"
+                v-bind:class="{ button_colored: selected_tab === 'outpainting' }">
+                Outpainting
+            </div>
+            <div @click="selectTab('history')" class="tab l_button"
+                v-bind:class="{ button_colored: selected_tab === 'history' }">
+                History
+            </div>
         </div>
         <div class="tab_content_frame">
             <div class="tab_content">
@@ -61,24 +75,24 @@
 import Vue from "vue";
 
 export default {
-    name: 'ApplicationFrame',
+    name: "ApplicationFrame",
     components: {},
     props: {
         title: String,
     },
 
-    data: function() {
+    data: function () {
         return {
-            selected_tab: 'txt2img' ,
-            is_fullscreen: false ,
-        }
+            selected_tab: "txt2img",
+            is_fullscreen: false,
+        };
     },
 
     mounted() {
-        window.addEventListener('resize', this.detect_fullscreen);
+        window.addEventListener("resize", this.detect_fullscreen);
     },
     unmounted() {
-        window.removeEventListener('resize', this.detect_fullscreen);
+        window.removeEventListener("resize", this.detect_fullscreen);
     },
 
     methods: {
@@ -90,33 +104,33 @@ export default {
             this.selected_tab = tab;
         },
 
-        detect_windows_os(){
-            return window.navigator.platform.toLowerCase().startsWith('win');
+        detect_windows_os() {
+            return window.navigator.platform.toLowerCase().startsWith("win");
         },
 
-        detect_fullscreen(){
+        detect_fullscreen() {
             let that = this;
-            setTimeout(function(){
-                if ( window.innerWidth == screen.width && window.innerHeight == screen.height && (!window.screenTop && !window.screenY) )
-                    that.is_fullscreen = true ;
-                else
-                    that.is_fullscreen = false; 
-            } , 100)
-
-            
-        }
+            setTimeout(function () {
+                if (
+                    window.innerWidth == screen.width &&
+                    window.innerHeight == screen.height &&
+                    !window.screenTop &&
+                    !window.screenY
+                )
+                    that.is_fullscreen = true;
+                else that.is_fullscreen = false;
+            }, 100);
+        },
     },
-
-
-}
+};
 </script>
 <style>
-@import '../assets/css/theme.css';
+@import "../assets/css/theme.css";
+
 :root {
     --main-font: -apple-system, BlinkMacSystemFont, sans-serif;
     --main-font-text: -apple-system, BlinkMacSystemFont, sans-serif;
     /*SF Pro Text;*/
-
 }
 
 html {
@@ -141,17 +155,11 @@ body {
     font-weight: 600;
     font-size: 13px;
     line-height: 16px;
-
     text-align: center;
     letter-spacing: -0.08px;
-
     margin-right: 9px;
-
     transition: background-color 150ms ease-out 10ms, color 150ms ease-out 10ms;
 }
-
-
-
 
 .button_white {
     background-color: white;
@@ -159,7 +167,7 @@ body {
 }
 
 .button_white:hover {
-    background-color: #E0E0E0;
+    background-color: #e0e0e0;
 }
 
 .rounded_button {
@@ -167,13 +175,13 @@ body {
 }
 
 .button_colored {
-    background: #3E7BFA;
-    color: #FFFFFF;
+    background: #3e7bfa;
+    color: #ffffff;
 }
 
 .button_grey {
     background: rgba(0, 0, 0, 0.25);
-    color: #FFFFFF;
+    color: #ffffff;
 }
 
 .button_grey:hover {
@@ -192,19 +200,16 @@ body {
 }
 
 .button_color_fancy {
-
-    background: #3E7BFA;
-    color: #FFFFFF;
+    background: #3e7bfa;
+    color: #ffffff;
     height: 30px;
-    box-shadow: 0px 4px 4px #CCDDFF;
+    box-shadow: 0px 4px 4px #ccddff;
 }
 
 .button_color_fancy:hover {
-
-    background: #3E7BFA;
-    color: #FFFFFF;
-    box-shadow: 1px 1px 4px #CCDDFF;
-    ;
+    background: #3e7bfa;
+    color: #ffffff;
+    box-shadow: 1px 1px 4px #ccddff;
 }
 
 p {
@@ -217,7 +222,7 @@ p {
     letter-spacing: -0.08px;
 }
 
-.p_light{
+.p_light {
     color: rgba(0, 0, 0, 0.5);
 }
 
@@ -228,14 +233,12 @@ h1 {
     font-size: 30px;
     line-height: 38px;
     /* identical to box height, or 53% */
-
     display: flex;
     align-items: center;
     letter-spacing: -0.08px;
 }
 
 h2 {
-
     font-family: var(--main-font-text);
     font-style: normal;
     font-weight: 600;
@@ -251,16 +254,13 @@ h3 {
     font-size: 15px;
     line-height: 22px;
     /* or 107% */
-
     display: flex;
     align-items: center;
     letter-spacing: -0.08px;
-
     color: rgba(0, 0, 0, 0.9);
 }
 
-
-h4{
+h4 {
     font-family: var(--main-font-text);
     font-style: normal;
     font-weight: 600;
@@ -277,7 +277,6 @@ img {
     -ms-user-select: none;
 }
 
-
 .animatable_content_box {
     height: calc(100vh - 40px - 35px - 2px);
     position: fixed;
@@ -286,20 +285,17 @@ img {
     overflow: auto;
 }
 
-
 /*the slide transitions */
-
 .slide_show-enter-active,
 .slide_show-leave-enter {
     transform: translateX(0);
-    transition: all .25s linear;
-
+    transition: all 0.25s linear;
 }
 
 .slide_show-enter,
 .slide_show-leave-to {
     transform: translateX(100%);
-    transition: all .25s linear;
+    transition: all 0.25s linear;
 }
 
 /*overriding some styles of bootstrap dropdown*/
@@ -314,23 +310,22 @@ img {
     /*background: #F4F5F5;*/
 }
 
-.opaciy_half{
+.opaciy_half {
     opacity: 0.5;
 }
 
 /*overriding the bootstraps dropdown highlighting*/
-.btn-check:focus, .btn:focus {
+.btn-check:focus,
+.btn:focus {
     box-shadow: none !important;
 }
 
-
-.content_toolbox{
-    margin-bottom: 23px; 
+.content_toolbox {
+    margin-bottom: 23px;
     display: inline-block;
-    height: 22px; 
+    height: 22px;
     width: 100%;
 }
-
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
@@ -348,19 +343,16 @@ img {
 .app_title {
     padding-left: 80px;
     padding-top: 10px;
-
     font-family: var(--main-font-text);
     font-style: normal;
     font-weight: 600;
     font-size: 15px;
     line-height: 16px;
-
     letter-spacing: -0.08px;
-
     color: #000000;
 }
 
-.app_title.fullscreen{
+.app_title.fullscreen {
     padding-left: 22px;
 }
 
@@ -378,7 +370,6 @@ img {
     border-width: 0px;
     border-bottom-width: 1px;
     border-style: solid;
-
     padding-top: 8px;
     padding-left: 20px;
     padding-right: 20px;
@@ -386,13 +377,12 @@ img {
 
 .tab_content_frame {
     width: 100%;
-    height: calc(100vh - 40px  - 35px - 2px);
+    height: calc(100vh - 40px - 35px - 2px);
     overflow: auto;
 }
 
 .tab_content {
     /*padding: 20px;*/
-
 }
 
 .vertical-center {
@@ -404,9 +394,7 @@ img {
 }
 
 .tab {
-
     margin-right: 10px;
     cursor: pointer;
-
 }
 </style>
