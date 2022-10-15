@@ -1,24 +1,19 @@
-import { ipcMain, dialog } from 'electron'
-import { app , screen } from 'electron'
-import settings from 'electron-settings';
-import truncate from 'truncate-utf8-bytes';
+import { ipcMain, dialog } from "electron";
+import { app, screen } from "electron";
+import settings from "electron-settings";
+import truncate from "truncate-utf8-bytes";
 
-var win;
-
+let win;
 
 function bind_window_native_functions(w) {
-    console.log("browser object binded")
+    console.log("browser object binded");
     win = w;
 }
 
+let is_windows = process.platform.startsWith("win");
 
-let is_windows = process.platform.startsWith('win');
-
-
-
-console.log(require('os').freemem()/(1000000000) + " Is the free memory")
-console.log(require('os').totalmem()/(1000000000) + " Is the total memory")
-
+console.log(`${require("os").freemem() / 1000000000} Is the free memory`);
+console.log(`${require("os").totalmem() / 1000000000} Is the total memory`);
 
 ipcMain.on("save_dialog", (event, filename, seed) => {
     const maxFilenameLength = 251; // online says 255, macOS 12 and 13 say otherwise
@@ -31,59 +26,73 @@ ipcMain.on("save_dialog", (event, filename, seed) => {
     event.returnValue = save_path;
 });
 
-console.log(require('os').release() + " ohoho")
+console.log(`${require("os").release()} ohoho`);
 
-
-
-ipcMain.on('file_dialog', (event, arg) => {
-    console.log("file dialog request recieved" + arg) // prints "ping"
+ipcMain.on("file_dialog", (event, arg) => {
+    console.log(`file dialog request recieved${arg}`); // prints "ping"
     let properties;
     let options;
 
-    if (arg == "folder") // single folder 
-    {
-        properties = ['openDirectory'];
-        options = { properties: properties } ;
-    }
-    else if(arg == 'img_file') // single image file 
-    {
-        properties = ['openFile' ]
-        options = { filters :[ {name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'bmp']}] , properties: properties } ;
-    }
-    else if(arg == 'img_files') // multi image files
-    {
-        properties = ['multiSelections' , 'openFile' ]
-        options = { filters :[ {name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'bmp']}] , properties: properties } ;
-    }
-    else if(arg == 'text_files') // multi image files
-    {
-        properties = ['multiSelections' , 'openFile' ]
-        options = { filters :[ {name: 'Images', extensions: ['txt']}] , properties: properties } ;
-    }
-    else if(arg == 'audio_files') // multi image files
-    {
-        properties = ['multiSelections' , 'openFile' ]
-        options = { filters :[ {name: 'Images', extensions: ['mp3', 'wav']}] , properties: properties } ;
-    }
-    else if(arg == 'video_files') // multi image files
-    {
-        properties = ['multiSelections' , 'openFile' ]
-        options = { filters :[ {name: 'Images', extensions: ["mp4", "mov", "avi", "flv", "wmv", "mkv"]}] , properties: properties } ;
-    }
-    else if(arg == 'any_files') // multi image files
-    {
-        properties = ['multiSelections' , 'openFile' ]
-        options = {  properties: properties } ;
-    }
-    else
-    {
-        properties = ['openFile'];
-        options = { properties: properties } ;
+    if (arg == "folder") {
+        // single folder
+        properties = ["openDirectory"];
+        options = { properties };
+    } else if (arg == "img_file") {
+        // single image file
+        properties = ["openFile"];
+        options = {
+            filters: [
+                { name: "Images", extensions: ["jpg", "jpeg", "png", "bmp"] },
+            ],
+            properties,
+        };
+    } else if (arg == "img_files") {
+        // multi image files
+        properties = ["multiSelections", "openFile"];
+        options = {
+            filters: [
+                { name: "Images", extensions: ["jpg", "jpeg", "png", "bmp"] },
+            ],
+            properties,
+        };
+    } else if (arg == "text_files") {
+        // multi image files
+        properties = ["multiSelections", "openFile"];
+        options = {
+            filters: [{ name: "Images", extensions: ["txt"] }],
+            properties,
+        };
+    } else if (arg == "audio_files") {
+        // multi image files
+        properties = ["multiSelections", "openFile"];
+        options = {
+            filters: [{ name: "Images", extensions: ["mp3", "wav"] }],
+            properties,
+        };
+    } else if (arg == "video_files") {
+        // multi image files
+        properties = ["multiSelections", "openFile"];
+        options = {
+            filters: [
+                {
+                    name: "Images",
+                    extensions: ["mp4", "mov", "avi", "flv", "wmv", "mkv"],
+                },
+            ],
+            properties,
+        };
+    } else if (arg == "any_files") {
+        // multi image files
+        properties = ["multiSelections", "openFile"];
+        options = { properties };
+    } else {
+        properties = ["openFile"];
+        options = { properties };
     }
 
     // let options = {
     //     See place holder 1 in above image
-    //     title : "Custom title bar", 
+    //     title : "Custom title bar",
     //     message : "Custom title bar",
 
     //     buttonLabel : "Custom button",
@@ -99,327 +108,274 @@ ipcMain.on('file_dialog', (event, arg) => {
     // }
 
     // //Synchronous
-    let filePaths = dialog.showOpenDialogSync(options)
+    let filePaths = dialog.showOpenDialogSync(options);
 
     if (filePaths && filePaths.length > 0)
         event.returnValue = filePaths.join(";;;");
-    else
-        event.returnValue = "NULL";
-})
+    else event.returnValue = "NULL";
+});
 
+ipcMain.on("open_url", (event, url) => {
+    let website_domain = require("../package.json").website;
+    url = url.replace("__domain__", website_domain);
+    require("electron").shell.openExternal(url);
+    event.returnValue = "";
+});
 
-
-
-ipcMain.on('open_url', (event, url) => {
-    let website_domain = require('../package.json').website ; 
-    url = url.replace("__domain__" , website_domain );
-    require('electron').shell.openExternal(url);
-    event.returnValue = '';
-})
-
-
-
-ipcMain.on('save_file', (event, arg) => {
+ipcMain.on("save_file", (event, arg) => {
     let p1 = arg.split("||")[0];
     let p2 = arg.split("||")[1];
-    require('fs').copyFileSync(p1, p2);
-    event.returnValue = '';
-})
+    require("fs").copyFileSync(p1, p2);
+    event.returnValue = "";
+});
 
-
-
-
-
-ipcMain.on('show_dialog_on_quit', (event, msg) => {
-    if(win)
-    {
+ipcMain.on("show_dialog_on_quit", (event, msg) => {
+    if (win) {
         win.show_dialog_on_quit = true;
         win.dialog_on_msg = msg;
     }
-    event.returnValue = 'ok';
+    event.returnValue = "ok";
+});
 
-})
+ipcMain.on("dont_show_dialog_on_quit", (event, arg) => {
+    if (win) win.show_dialog_on_quit = false;
+    event.returnValue = "ok";
+});
 
-
-ipcMain.on('dont_show_dialog_on_quit', (event, arg) => {
-    if(win)
-        win.show_dialog_on_quit = false;
-    event.returnValue = 'ok';
-
-})
-
-
-ipcMain.on('get_instance_id', (event, arg) => {
-    if (settings.hasSync('instance_id')){
-        event.returnValue =  settings.getSync('instance_id')
+ipcMain.on("get_instance_id", (event, arg) => {
+    if (settings.hasSync("instance_id")) {
+        event.returnValue = settings.getSync("instance_id");
         return;
     }
-    let instance_id =  (Math.random() + 1).toString(36);
-    settings.set('instance_id', instance_id);
-    event.returnValue =   instance_id;
+    let instance_id = (Math.random() + 1).toString(36);
+    settings.set("instance_id", instance_id);
+    event.returnValue = instance_id;
+});
 
-})
-
-
-ipcMain.on('unfreeze_win', (event, arg) => {
-
+ipcMain.on("unfreeze_win", (event, arg) => {
     if (win) {
-	win.savable=true;
-        const primaryDisplay = screen.getPrimaryDisplay()
-        const { width, height } = primaryDisplay.workAreaSize
+        win.savable = true;
+        const primaryDisplay = screen.getPrimaryDisplay();
+        const { width, height } = primaryDisplay.workAreaSize;
 
-        if (settings.hasSync('windowPosState')) {
-            let windowState = settings.getSync('windowPosState');
-            console.log("stateeee")
-            console.log(windowState)
+        if (settings.hasSync("windowPosState")) {
+            let windowState = settings.getSync("windowPosState");
+            console.log("stateeee");
+            console.log(windowState);
 
-            if( windowState.x  >  0.8*width ||  windowState.y  >  0.8*height ||  windowState.x  < -0.2*width || windowState.y  < -0.2*height    ){
+            if (
+                windowState.x > 0.8 * width ||
+                windowState.y > 0.8 * height ||
+                windowState.x < -0.2 * width ||
+                windowState.y < -0.2 * height
+            ) {
                 win.setSize(850, 650, false);
             } else {
-               win.setPosition( windowState.x  ,  windowState.y  , false);
-                win.setSize(windowState.width, windowState.height , false); 
+                win.setPosition(windowState.x, windowState.y, false);
+                win.setSize(windowState.width, windowState.height, false);
             }
-
-            
-        }
-        else{
+        } else {
             win.setSize(850, 650, false);
         }
 
-
         win.setResizable(true);
         win.setMaximizable(true);
-
-
-        
-        
     }
 
-    event.returnValue = 'ok';
+    event.returnValue = "ok";
+});
 
-})
-
-
-
-ipcMain.on('freeze_win', (event, arg) => {
-
+ipcMain.on("freeze_win", (event, arg) => {
     if (win) {
-	win.savable=false;
-	win.restore()
-        win.setSize(770, 550, false); 
+        win.savable = false;
+        win.restore();
+        win.setSize(770, 550, false);
         win.setResizable(false);
         win.setMaximizable(false);
 
-        const primaryDisplay = screen.getPrimaryDisplay()
+        const primaryDisplay = screen.getPrimaryDisplay();
         const { width, height } = primaryDisplay.workAreaSize;
 
-        console.log( width +" " +  height)
+        console.log(`${width} ${height}`);
 
-        win.setPosition( parseInt((width-770)/2)  , parseInt((height-550)/2), false);
-
-              
-
+        win.setPosition(
+            parseInt((width - 770) / 2),
+            parseInt((height - 550) / 2),
+            false
+        );
     }
 
-    event.returnValue = 'ok';
+    event.returnValue = "ok";
+});
 
-})
-
-
-
-ipcMain.on('show_about', (event, arg) => {
-
+ipcMain.on("show_about", (event, arg) => {
     if (win) {
-
-        if(is_windows)
-        {
-            let about_content = require('../package.json').name + "\n" + "Version " + require('../package.json').version + " (" + require('../package.json').build_number + ")\n" + require('../package.json').description;
-            const choice = require('electron').dialog.showMessageBoxSync(this, {
-                buttons: ['Okay'],
-                title: require('../package.json').name ,
-                message: about_content
+        if (is_windows) {
+            let about_content = `${require("../package.json").name}\nVersion ${require("../package.json").version
+                } (${require("../package.json").build_number})\n${require("../package.json").description
+                }`;
+            const choice = require("electron").dialog.showMessageBoxSync(this, {
+                buttons: ["Okay"],
+                title: require("../package.json").name,
+                message: about_content,
             });
+        } else {
+            app.showAboutPanel();
         }
-        else{
-            app.showAboutPanel()
-        }
-
-        
     }
 
-    event.returnValue = 'ok';
+    event.returnValue = "ok";
+});
 
-})
-
-
-
-
-ipcMain.on('native_confirm', (event, arg) => {
-
+ipcMain.on("native_confirm", (event, arg) => {
     if (win) {
-        
-        const choice = require('electron').dialog.showMessageBoxSync(this, {
-            type: 'question',
-            buttons: ['Yes', 'No'],
-            title: require('../package.json').name ,
-            message: arg
+        const choice = require("electron").dialog.showMessageBoxSync(this, {
+            type: "question",
+            buttons: ["Yes", "No"],
+            title: require("../package.json").name,
+            message: arg,
         });
         if (choice === 1) {
-            event.returnValue = false ;
+            event.returnValue = false;
+        } else {
+            event.returnValue = true;
         }
-        else{
-            event.returnValue = true ;
-        }
-
+    } else {
+        event.returnValue = false;
     }
-    else{
-        event.returnValue = false ;
-    }
+});
 
-})
-
-
-
-ipcMain.on('close_window', (event, arg) => {
-
+ipcMain.on("close_window", (event, arg) => {
     if (win) {
-        
-        win.close()
-        event.returnValue = true ;
+        win.close();
+        event.returnValue = true;
+    } else {
+        event.returnValue = false;
     }
-    else{
-        event.returnValue = false ;
-    }
+});
 
-})
-
-
-
-
-ipcMain.on('native_alert', (event, arg) => {
-
+ipcMain.on("native_alert", (event, arg) => {
     if (win) {
-        
-        const choice = require('electron').dialog.showMessageBoxSync(this, {
-            buttons: ['Okay'],
-            title: require('../package.json').name ,
-            message: arg
+        const choice = require("electron").dialog.showMessageBoxSync(this, {
+            buttons: ["Okay"],
+            title: require("../package.json").name,
+            message: arg,
         });
-        
     }
-    
-    event.returnValue = true ;
 
-})
+    event.returnValue = true;
+});
 
-
-
-
-ipcMain.on('save_b64_image', (event, arg) => {
-
-    const path = require('path');
-    const fs = require('fs');
+ipcMain.on("save_b64_image", (event, arg) => {
+    const path = require("path");
+    const fs = require("fs");
 
     let base64Data = arg.replace(/^data:image\/png;base64,/, "");
-    
-    const homedir = require('os').homedir();
-    let save_dir = path.join(homedir , ".diffusionbee")
 
+    const homedir = require("os").homedir();
+    let save_dir = path.join(homedir, ".diffusionbee");
 
-    if (!fs.existsSync(save_dir)){
+    if (!fs.existsSync(save_dir)) {
         fs.mkdirSync(save_dir, { recursive: true });
     }
 
-    save_dir = path.join(save_dir , "inp_images")
+    save_dir = path.join(save_dir, "inp_images");
 
-    if (!fs.existsSync(save_dir)){
+    if (!fs.existsSync(save_dir)) {
         fs.mkdirSync(save_dir, { recursive: true });
     }
 
-    let p = require('path').join(save_dir,  Math.random().toString()+".png");
+    let p = require("path").join(save_dir, `${Math.random().toString()}.png`);
 
-    require("fs").writeFileSync(p , base64Data, 'base64'); 
-    
-    event.returnValue = p ;
+    require("fs").writeFileSync(p, base64Data, "base64");
 
-})
+    event.returnValue = p;
+});
 
+ipcMain.on("save_data", (event, arg) => {
+    const path = require("path");
+    const fs = require("fs");
+    const homedir = require("os").homedir();
+    let save_dir = path.join(homedir, ".diffusionbee");
 
-ipcMain.on('save_data', (event, arg) => {
-    const path = require('path');
-    const fs = require('fs');
-    const homedir = require('os').homedir();
-    let save_dir = path.join(homedir , ".diffusionbee")
-
-
-    if (!fs.existsSync(save_dir)){
+    if (!fs.existsSync(save_dir)) {
         fs.mkdirSync(save_dir, { recursive: true });
     }
 
-    let data_path = path.join(homedir , ".diffusionbee" , "data.json")
-    fs.writeFileSync( data_path, JSON.stringify(arg) );
-    event.returnValue = true ;
+    let data_path = path.join(homedir, ".diffusionbee", "data.json");
+    fs.writeFileSync(data_path, JSON.stringify(arg));
+    event.returnValue = true;
+});
 
-})
+ipcMain.on("load_data", (event, arg) => {
+    const path = require("path");
+    const fs = require("fs");
+    const homedir = require("os").homedir();
+    let data_path = path.join(homedir, ".diffusionbee", "data.json");
 
-
-ipcMain.on('load_data', (event, arg) => {
-    const path = require('path');
-    const fs = require('fs');
-    const homedir = require('os').homedir();
-    let data_path = path.join(homedir , ".diffusionbee" , "data.json");
-
-    if (fs.existsSync(data_path)){
-        event.returnValue = JSON.parse(fs.readFileSync( data_path ));
+    if (fs.existsSync(data_path)) {
+        event.returnValue = JSON.parse(fs.readFileSync(data_path));
+    } else {
+        event.returnValue = {};
     }
-    else{
-        event.returnValue = {} ;
-    }       
+});
 
-})
+function run_realesrgan(input_path, cb) {
+    const path = require("path");
+    let out_path = `/tmp/${Math.random()}.png`;
+    const fs = require("fs");
+    let bin_path =
+        process.env.REALESRGAN_BIN ||
+        path.join(path.dirname(__dirname), "core", "realesrgan_ncnn_macos");
+    let weights_path = `${bin_path.replaceAll(
+        "realesrgan_ncnn_macos",
+        "models"
+    )}/`;
+    let proc = require("child_process").spawn(bin_path, [
+        "-m",
+        weights_path,
+        "-i",
+        input_path,
+        "-o",
+        out_path,
+    ]);
 
+    console.log([
+        bin_path,
+        "-m",
+        weights_path,
+        "-i",
+        input_path,
+        "-o",
+        out_path,
+    ]);
 
-
-function run_realesrgan(input_path , cb ){
-    const path = require('path');
-    let out_path = "/tmp/"+Math.random()+".png";
-    const fs = require('fs');
-    let bin_path =  process.env.REALESRGAN_BIN || path.join(path.dirname(__dirname), 'core' , 'realesrgan_ncnn_macos' );
-    let weights_path = bin_path.replaceAll("realesrgan_ncnn_macos" , "models") + "/";
-    let proc = require('child_process').spawn( bin_path  , ['-m' , weights_path , '-i' , input_path , '-o' , out_path ]);
-
-    console.log([bin_path , '-m' , weights_path , '-i' , input_path , '-o' , out_path ])
-
-    proc.stderr.on('data', (data) => {
+    proc.stderr.on("data", (data) => {
         console.error(`sr stderr: ${data}`);
     });
 
-    proc.stdout.on('data', (data) => {
+    proc.stdout.on("data", (data) => {
         console.error(`sr stderr: ${data}`);
     });
 
-    proc.on('close', (code) => {
+    proc.on("close", (code) => {
         if (fs.existsSync(out_path)) {
             cb(out_path);
-        }
-        else
-        {
-            cb('');
+        } else {
+            cb("");
         }
     });
 }
 
-ipcMain.handle('run_realesrgan', async (event, arg) => {
-    const result = await new Promise(resolve => run_realesrgan( arg , resolve));
-    return result
-})
+ipcMain.handle("run_realesrgan", async (event, arg) => {
+    const result = await new Promise((resolve) => run_realesrgan(arg, resolve));
+    return result;
+});
 
 // ipcRenderer.invoke('run_realesrgan', '/Users/divamgupta/Downloads/333.png' ).then((result) => {
 //     alert(result)
 //   })
 
+console.log("native functions imported");
 
-console.log("native functions imported")
-
-
-export { bind_window_native_functions }
+export { bind_window_native_functions };
