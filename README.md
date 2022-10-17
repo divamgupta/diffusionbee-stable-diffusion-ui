@@ -6,7 +6,16 @@
 
 * Runs locally on your computer no data is sent to the cloud ( other than request to download the weights and checking for software updates ).
 *  *If you like Diffusion Bee, consider checking https://Liner.ai , a one-click tool to train machine learning models*
+# What Are JavaScript Libraries?
+* JavaScript libraries contain various functions, methods, or objects to perform practical tasks on a webpage or JS-based application. You can even build a WordPress site with them.
 
+Think of them as a book library where you revisit to read your favorite books. You may be an author and enjoy other authors’ books, get a new perspective or idea, and utilize the same in your life.
+
+Similarly, a JavaScript library has codes or functions that developers can reuse and repurpose. A developer writes these codes, and other developers reuse the same code to perform a certain task, like preparing a slideshow, instead of writing it from scratch. It saves them significant time and effort.
+# How to Use JavaScript Libraries?
+*To use a JavaScript library in your app, add <script> to the <head> element using the src attribute that references the library source path or the URL.
+
+Read the JavaScript library’s documentation you intend to use for more information and follow the steps provided there.
 <br>
 
 [![Download](https://user-images.githubusercontent.com/1890549/189538422-52d50488-c1fa-4924-bec6-186c9e0f307b.png)](https://diffusionbee.com/)
