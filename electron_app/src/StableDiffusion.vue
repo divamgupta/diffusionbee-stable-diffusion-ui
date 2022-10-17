@@ -4,6 +4,8 @@
 <script>
 
 import { send_to_py } from "./py_vue_bridge.js"
+import {get_tokens} from './clip_tokeniser/clip_encoder.js'
+
 
 export default {
     name: 'StableDiffusion',
@@ -87,6 +89,8 @@ export default {
         text_to_img(prompt_params, callbacks, generated_by){
             if(!this.is_input_avail)
                 return;
+            let tokens = [49406].concat((get_tokens(prompt_params.prompt))).concat([49407])
+            prompt_params.prompt_tokens = tokens;
             this.last_iter_t = Date.now()
             this.generated_by = generated_by;
             this.attached_cbs = callbacks;
