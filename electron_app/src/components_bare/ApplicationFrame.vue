@@ -11,7 +11,7 @@
                             </div>
                         </template>
                         <b-dropdown-item-button @click="$emit('menu_item_click_help',{})">Help</b-dropdown-item-button>
-                        <b-dropdown-item-button @click="$emit('menu_item_click_discord',{})">Discord Channel</b-dropdown-item-button>
+                        <b-dropdown-item-button @click="$emit('menu_item_click_discord',{})">Start Discord Chat</b-dropdown-item-button>
                         <b-dropdown-item-button @click="selectTab('logs')">Show Logs</b-dropdown-item-button>
                         <b-dropdown-item-button @click="$emit('menu_item_click_about',{})">About</b-dropdown-item-button>
                         <b-dropdown-item-button @click="$emit('menu_item_click_close',{})">Close</b-dropdown-item-button>

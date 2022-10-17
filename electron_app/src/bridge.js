@@ -13,8 +13,11 @@ function start_bridge() {
     const fs = require('fs')
 
     let script_path = process.env.PY_SCRIPT || "./src/fake_backend.py"; 
-
-    if (fs.existsSync(script_path)) {
+    let bin_path =  process.env.BIN_PATH;
+    if(bin_path && (fs.existsSync(script_path))){
+        python = require('child_process').spawn( bin_path );
+    }
+    else if (fs.existsSync(script_path)) {
         python = require('child_process').spawn('python3', [script_path]);
     }
     else{

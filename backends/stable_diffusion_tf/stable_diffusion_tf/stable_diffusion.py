@@ -91,6 +91,7 @@ class StableDiffusion:
         assert len(inputs) < 77, "Prompt is too long!"
         phrase = inputs + [49407] * (77 - len(inputs))
         phrase = np.array(phrase)[None].astype("int32")
+        print("promt tokens : " , phrase)
         phrase = np.repeat(phrase, batch_size, axis=0)
 
         # Encode prompt tokens (and their positions) into a "context vector"
