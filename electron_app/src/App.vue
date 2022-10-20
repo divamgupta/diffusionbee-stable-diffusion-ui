@@ -40,7 +40,12 @@
             </template>
 
             <template v-slot:outpainting>
-                <Outpainting></Outpainting>
+                <Outpainting v-if="false"></Outpainting>
+                <div class="center">
+                    <p> Coming soon! </p>
+                </div>
+
+                
             </template>
 
             <template v-slot:upscale_img>

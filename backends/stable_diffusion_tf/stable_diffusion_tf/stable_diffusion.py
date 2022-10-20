@@ -64,11 +64,22 @@ class StableDiffusion:
         seed=None,
         img_id=0,
         input_image=None,
+        mask_image=None,
+        negative_prompt="",
         input_image_strength=0.5,
     ):
 
         if type(input_image) is str:
             img_height, img_width, input_image = process_inp_img(input_image)
+
+        if type(mask_image) is str and mask_image != "" and mask_image is not None:
+            img_height_, img_width_, mask_image = process_inp_img(mask_image)
+            assert img_height_ == img_height
+            assert img_width_ == img_width
+            mask_image = (mask_image + 1 )/2 
+            mask_image = mask_image[... , :1 ]
+            mask_image_sm = mask_image[::8 , ::8  ]
+
         
         if self.img_height == img_height and self.img_width == img_width:
             self.use_eager = False
@@ -91,7 +102,7 @@ class StableDiffusion:
         assert len(inputs) < 77, "Prompt is too long!"
         phrase = inputs + [49407] * (77 - len(inputs))
         phrase = np.array(phrase)[None].astype("int32")
-        print("promt tokens : " , phrase)
+        print("prompt tokens : " , phrase)
         phrase = np.repeat(phrase, batch_size, axis=0)
 
         # Encode prompt tokens (and their positions) into a "context vector"
@@ -110,6 +121,17 @@ class StableDiffusion:
         unconditional_tokens = np.array(_UNCONDITIONAL_TOKENS)[None].astype("int32")
         unconditional_tokens = np.repeat(unconditional_tokens, batch_size, axis=0)
         self.unconditional_tokens = tf.convert_to_tensor(unconditional_tokens)
+
+        if negative_prompt is not None and negative_prompt != "":
+            inputs_neg = self.tokenizer.encode(negative_prompt)
+            assert len(inputs_neg) < 77, "Prompt is too long!"
+            phrase_neg = inputs_neg + [49407] * (77 - len(inputs_neg))
+            phrase_neg = np.array(phrase_neg)[None].astype("int32")
+            print("negative prompt tokens : " , phrase_neg)
+            phrase_neg = np.repeat(phrase_neg, batch_size, axis=0)
+            unconditional_tokens = phrase_neg
+            self.unconditional_tokens = tf.convert_to_tensor(unconditional_tokens)
+
 
         if self.use_eager:
             unconditional_context = self.text_encoder_f(
@@ -154,11 +176,24 @@ class StableDiffusion:
                 latent, e_t, index, a_t, a_prev, temperature, seed + index
             )
 
+            if mask_image is not None and input_image is not None:
+                # If mask is provided, noise at current timestep will be added to input image.
+                # The intermediate latent will be merged with input latent.
+                latent_orgin, _, _ = self.get_starting_parameters(
+                    img_height, img_width , timesteps, batch_size, seed , input_image=input_image, input_img_noise_t=timestep
+                )
+
+                latent = latent_orgin * (1-mask_image_sm) + latent * mask_image_sm
+
         # Decoding stage
         if self.use_eager:
             decoded = self.decoder_f(latent)
         else:
             decoded = self.decoder.predict_on_batch(latent)
+
+        if mask_image is not None:
+            decoded = input_image * (1-mask_image) + decoded * mask_image
+        
         decoded = ((decoded + 1) / 2) * 255
         return np.clip(decoded, 0, 255).astype("uint8")
 

@@ -1,7 +1,9 @@
 <template>
-    <div style="height:100% ; width:100%">
+    <div style="height:100% ; width:100%; position:  relative;">
         <img id="myImg" :src="'file://'+image_source" style="display:none">
-        <canvas id="myCanvas" style="width:100% ; height:100%;" ></canvas>
+        <canvas id="myCanvasD" style="width:100% ; height:100%; position: absolute ; top:0 , left:0  " ></canvas>
+        <canvas id="myCanvas" style="width:100% ; height:100%; position: absolute ; top:0 , left:0 " ></canvas>
+       
    </div>
 </template>
 <script>
@@ -21,12 +23,14 @@ export default {
     props: {
         image_source : String,
         is_inpaint : Boolean,
+        is_disabled : Boolean,
     },
     components: {},
     mounted() {
         this.ro = new ResizeObserver(this.on_resize);
         let canvas = document.getElementById("myCanvas");
         this.canvas = canvas;
+        this.canvasD = document.getElementById("myCanvasD");
         this.ctx = canvas.getContext("2d");
         this.ro.observe(canvas.parentElement);
         let that = this;
@@ -58,7 +62,8 @@ export default {
             prevY : 0 , 
             currX : 0 , 
             currY : 0 , 
-            x : "#ff00ff" ,
+            // x : "#ff00ff" ,
+            x : "#ffffff" ,
             y : 7 ,
             flag : false,
         };
@@ -68,6 +73,9 @@ export default {
         findxy(res, e) {
 
             if(!(this.is_inpaint))
+                return;
+
+            if(this.is_disabled)
                 return;
 
             if (res == 'down') {
@@ -101,6 +109,9 @@ export default {
         },
 
         draw() {
+            if(this.is_disabled)
+                return;
+
             let xmul =  this.canvas.width / this.canvas.offsetWidth;
             let ymul = this.canvas.height / this.canvas.offsetHeight;
             // this.ctx.beginPath();
@@ -121,6 +132,7 @@ export default {
 
         on_resize(){
             let canvas = document.getElementById("myCanvas");
+            let canvasD = document.getElementById("myCanvasD");
             let img = this.img_tag;
 
             if(!img)
@@ -134,39 +146,71 @@ export default {
             if(ph*r <= pw ){
                 canvas.style.height = ph +'px';
                 canvas.style.width = ph*r +'px';
+
+                canvasD.style.height = ph +'px';
+                canvasD.style.width = ph*r +'px';
             }
             else{
                 canvas.style.height = pw*r2 +'px';
                 canvas.style.width = pw +'px';
+
+                canvasD.style.height = pw*r2 +'px';
+                canvasD.style.width = pw +'px';
             }
             
         },
         clear_inpaint(){
-            this.on_img_change();
+            let canvas = document.getElementById("myCanvas");
+            let ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
         },
         on_img_change(){
             let that = this;
             addImageProcess('file://'+this.image_source).then(function(img_tag){
 
                 that.img_tag = img_tag;
+                let canvasD = document.getElementById("myCanvasD");
                 let canvas = document.getElementById("myCanvas");
                 let img = that.img_tag;
-                let ctx = canvas.getContext("2d");
+                let ctxD = canvasD.getContext("2d");
                 
                 that.on_resize()
 
+                canvasD.height = img.height;
+                canvasD.width = img.width;
                 canvas.height = img.height;
                 canvas.width = img.width;
 
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-
-                ctx.drawImage(img, 0,0, img.width, img.height, 0,0, canvas.width, canvas.height);
+                ctxD.clearRect(0, 0, canvasD.width, canvasD.height);
+                ctxD.drawImage(img, 0,0, img.width, img.height, 0,0, canvasD.width, canvasD.height);
 
             })
         },
         get_img_b64(){
-            return this.canvas.toDataURL();
+            return this.canvasD.toDataURL();
+        } , 
+        get_mask_b46(){
+            let canvas = document.createElement('canvas');
+            canvas.width = this.canvas.width;
+            canvas.height = this.canvas.height;
+            let ctx =  canvas.getContext("2d");
+            let filt_w = canvas.width/50    
+            ctx.filter = 'blur('+filt_w+'px) grayscale(1) brightness(100) contrast(100)';
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(this.canvas, 0, 0);
+            return canvas.toDataURL();
+
+        }, 
+        get_img_mask_bg4(){
+            let canvas = document.createElement('canvas');
+            canvas.width = this.canvasD.width;
+            canvas.height = this.canvasD.height;
+            let ctx =  canvas.getContext("2d");
+            ctx.drawImage(this.canvasD, 0, 0);
+            ctx.drawImage(this.canvas, 0, 0);
+            
+            return canvas.toDataURL();
         }
     },
 

@@ -21,6 +21,7 @@ export default {
             model_loading_msg : "",
             model_loading_title : "",
             loading_percentage : -1 , 
+            generation_state_msg : "",
             attached_cbs : undefined,
         };
     },
@@ -54,6 +55,11 @@ export default {
                 let p = (msg.substring(5).trim());
                 this.model_loading_msg = p;
             }
+            if(msg_code == "gnms"){
+                let p = (msg.substring(5).trim());
+                this.generation_state_msg = p;
+            }
+
             if(msg_code == "mltl"){
                 let p = (msg.substring(5).trim());
                 this.model_loading_title = p;
@@ -71,10 +77,15 @@ export default {
 
             if(msg_code == "dnpr"){
                 let p = Number(msg.substring(5).trim());
-                let iter_time = this.last_iter_t -  Date.now();
+                let iter_time =  Date.now()  -this.last_iter_t;
+                this.last_iter_t  = Date.now();
                 if(this.attached_cbs){
-                    if(this.attached_cbs.on_progress)
-                        this.attached_cbs.on_progress(p, -1*iter_time);
+                    if(this.attached_cbs.on_progress){
+                        if(p >= 0 )
+                            this.generation_state_msg = iter_time/1000 + " s/it";
+                        this.attached_cbs.on_progress(p, iter_time);
+                    }
+                        
                 }
 
             }
@@ -91,9 +102,19 @@ export default {
                 return;
             let tokens = [49406].concat((get_tokens(prompt_params.prompt))).concat([49407])
             prompt_params.prompt_tokens = tokens;
+
+            if(prompt_params.negative_prompt)
+            {
+                let tokens2 = [49406].concat((get_tokens(prompt_params.negative_prompt))).concat([49407])
+                prompt_params.negative_prompt_tokens = tokens2
+            }
+
+            prompt_params.seed = Number(prompt_params.seed) || 0 
+
             this.last_iter_t = Date.now()
             this.generated_by = generated_by;
             this.attached_cbs = callbacks;
+            this.generation_state_msg = ""
             send_to_py("t2im " + JSON.stringify(prompt_params)) 
         }
 

@@ -8,17 +8,18 @@
          -->
 
             <div v-if="inp_img" class="image_area" :class="{ crosshair_cur  : is_inpaint }"  style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
-                <ImageCanvas ref="inp_img_canvas" :is_inpaint="is_inpaint" :image_source="inp_img"></ImageCanvas>
+                <ImageCanvas ref="inp_img_canvas" :is_inpaint="is_inpaint" :image_source="inp_img"  :is_disabled="!stable_diffusion.is_input_avail"  ></ImageCanvas>
             </div>
             <div v-else @click="open_input_image" class="image_area" :class="{ pointer_cursor  : is_sd_active }" style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
                 <center>
                     <p style="margin-top: calc( 50vh - 180px); opacity: 70%;" >Click to add input image</p>
                 </center>
             </div>
-            <div v-if="inp_img" class="l_button" @click="open_input_image" >Change Image</div>
-            <div v-if="inp_img" class="l_button" @click="inp_img =''">Clear</div>
-            <div v-if="inp_img && !is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Inpaint</div>
-            <div v-if="inp_img && is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Remove Inpaint</div>
+
+            <div v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" @click="open_input_image" >Change Image</div>
+            <div v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" @click="inp_img =''">Clear</div>
+            <div v-if="inp_img && stable_diffusion.is_input_avail && !is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Inpaint</div>
+            <div v-if="inp_img && stable_diffusion.is_input_avail && is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Remove Inpaint</div>
 
             <br> <br> 
             <textarea 
@@ -112,7 +113,7 @@
             </div>
 
             <div v-if="!stable_diffusion.is_input_avail && stable_diffusion.generated_by=='img2img'">
-                <LoaderModal :loading_percentage="done_percentage" loading_title="Generating" :loading_desc="generate_progress_text"></LoaderModal>
+                <LoaderModal :loading_percentage="done_percentage" loading_title="Generating" :loading_desc="stable_diffusion.generation_state_msg"></LoaderModal>
             </div>
             
 
@@ -167,7 +168,6 @@ export default {
             img_h : 512 , 
             img_w : 512 , 
             is_inpaint : false,
-            generate_progress_text : "",
         };
     },
     methods: {
@@ -186,8 +186,18 @@ export default {
                 if(!this.inp_img)
                     return;
 
-            let  im_b64 = this.$refs.inp_img_canvas.get_img_b64();
-            let input_image = window.ipcRenderer.sendSync('save_b64_image',  im_b64  );
+            let input_image = window.ipcRenderer.sendSync('save_b64_image',  this.$refs.inp_img_canvas.get_img_b64()  );
+            let input_image_with_mask;
+            let mask_img;
+            if(this.is_inpaint)
+            { // #TODO save those in tmp
+                input_image_with_mask = window.ipcRenderer.sendSync('save_b64_image',  this.$refs.inp_img_canvas.get_img_mask_bg4() );
+                mask_img = window.ipcRenderer.sendSync('save_b64_image',  this.$refs.inp_img_canvas.get_mask_b46() , true );
+            } else {
+                input_image_with_mask = input_image;
+                mask_img = undefined;
+            }
+            
 
             let params = {
                 prompt : this.prompt , 
@@ -202,12 +212,10 @@ export default {
                 input_image : input_image,
                 is_inpaint : this.is_inpaint,
             }
+            if(this.is_inpaint)
+                params['mask_image'] = mask_img;
             let that = this;
-
-            
-
             this.backend_error = "";
-            this.generate_progress_text = "";
             Vue.set(this,'generated_images' ,[]);
             this.done_percentage = -1;
 
@@ -219,7 +227,7 @@ export default {
 
                     if(!(that.app_state.history[history_key]))
                         Vue.set(that.app_state.history, history_key , {
-                            "prompt":that.prompt , "seed": seed, "key":history_key , "imgs" : [] , "inp_img": that.inp_img ,
+                            "prompt":that.prompt , "seed": seed, "key":history_key , "imgs" : [] , "inp_img": input_image_with_mask,
                             "dif_steps" : that.dif_steps , "inp_img_strength" : that.inp_img_strength,
                         });
                     
@@ -228,10 +236,9 @@ export default {
                     console.log(that.app_state.history)
 
                 },
-                on_progress(p, iter_time){
+                on_progress(p){
                     that.done_percentage = p;
-                    if(iter_time)
-                        that.generate_progress_text = iter_time/1000 + " s/it";
+                    
                 },
                 on_err(err){
                     that.backend_error = err;

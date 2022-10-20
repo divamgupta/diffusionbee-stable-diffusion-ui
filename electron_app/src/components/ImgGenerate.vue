@@ -177,7 +177,7 @@
         </div>
 
         <div v-if="!stable_diffusion.is_input_avail && stable_diffusion.generated_by=='txt2img'">
-            <LoaderModal :loading_percentage="done_percentage" loading_title="Generating" :loading_desc="generate_progress_text"></LoaderModal>
+            <LoaderModal :loading_percentage="done_percentage" loading_title="Generating" :loading_desc="stable_diffusion.generation_state_msg"></LoaderModal>
         </div>
     
     <div class="bottom_float">
@@ -227,7 +227,6 @@ export default {
             modifiers : require("../modifiers.json"),
             is_negative_prompt_avail : false, 
             negative_prompt : "",
-            generate_progress_text : "",
         };
         
     },
@@ -263,7 +262,6 @@ export default {
                 return;
 
             this.backend_error = "";
-            this.generate_progress_text = "";
             Vue.set(this,'generated_images' ,[]);
             this.done_percentage = -1;
 
@@ -290,10 +288,8 @@ export default {
                     console.log(that.app_state.history)
 
                 },
-                on_progress(p, iter_time ){
-                    that.done_percentage = p;
-                    if(iter_time)
-                        that.generate_progress_text = iter_time/1000 + " s/it";
+                on_progress(p ){
+                    that.done_percentage = p;                
                 },
                 on_err(err){
                     that.backend_error = err;

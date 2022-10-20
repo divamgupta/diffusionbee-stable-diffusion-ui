@@ -6,6 +6,7 @@ var python;
 var py_buffer = "";
 var is_app_closing = false;
 
+var last_few_err = ""
 
 function start_bridge() {
 
@@ -64,6 +65,8 @@ function start_bridge() {
 
     python.stderr.on('data', (data) => {
         console.error(`stderr: ${data}`);
+        last_few_err = last_few_err + data.toString();
+        last_few_err = last_few_err.slice(-300);
         if(win && !is_app_closing )
              win.webContents.send('to_renderer', 'adlg ' + data.toString('utf8') );
     });
@@ -81,7 +84,7 @@ function start_bridge() {
             return;
         }
 
-        dialog.showMessageBox({ message: "Backend quit unexpectedly" });
+        dialog.showMessageBox({ message: "Backend quit unexpectedly. " + last_few_err });
         if (win)
         {
             is_app_closing = true;
