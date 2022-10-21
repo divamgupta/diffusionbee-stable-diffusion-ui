@@ -55,7 +55,7 @@
                                     <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Num Images: </label>
                                     <b-form-select
                                     v-model="num_imgs"
-                                    :options="[1,2,3,4,5,6,7,8,9,10,11,12,13,14]"
+                                    :options="[1,2,3,4,5,6,7,8,9,10,11,12,13,14, 15 , 20 , 30 , 50 , 100]"
                                     required
                                     ></b-form-select>
                                 </b-form-group>
@@ -86,6 +86,8 @@
                 <div v-if="is_stopping" class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stopping ...</div>
                 <div v-else class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stop</div>
             </div>
+            <br><br>
+            <p style="opacity:0.5; zoom:0.8"> Please describe the complete image which you want to see as the output. </p>
         
         </div>
 

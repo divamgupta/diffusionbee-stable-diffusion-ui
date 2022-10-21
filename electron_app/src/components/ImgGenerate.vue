@@ -41,7 +41,7 @@
                                     <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Num Images: </label>
                                     <b-form-select
                                     v-model="num_imgs"
-                                    :options="[1,2,3,4,5,6,7,8,9,10,11,12,13,14]"
+                                    :options="[1,2,3,4,5,6,7,8,9,10,11,12,13,14, 15 , 20 , 30 , 50 , 100]"
                                     required
                                     ></b-form-select>
                                 </b-form-group>
@@ -87,7 +87,7 @@
                                 <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Guidance Scale: </label>
                                 <b-form-select
                                     v-model="guidence_scale"
-                                    :options="[1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 7.5 , 8.0]"
+                                    :options="[1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 7.5 , 8.0 , 9.0 , 10.0 , 11.0 , 12.0 , 13.0 , 15.0 , 20.0 ]"
                                     required
                                 ></b-form-select>
                                 </b-form-group>
