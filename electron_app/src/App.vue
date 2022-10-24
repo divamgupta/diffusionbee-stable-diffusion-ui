@@ -40,11 +40,11 @@
             </template>
 
             <template v-slot:outpainting>
-                <Outpainting v-if="false"></Outpainting>
-                <div class="center">
-                    <p> Coming soon! </p>
+                
+                <Outpainting  ref="outpaint" v-if="is_mounted && stable_diffusion.is_backend_loaded"  :app_state="app_state" :stable_diffusion="stable_diffusion"></Outpainting>
+                <div  v-else  class="animatable_content_box ">
+                    <LoaderModal :loading_percentage="stable_diffusion.loading_percentage" :loading_desc="stable_diffusion.model_loading_msg"  :loading_title="stable_diffusion.model_loading_title ||'Loading model'"> </LoaderModal>
                 </div>
-
                 
             </template>
 

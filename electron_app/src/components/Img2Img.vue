@@ -182,11 +182,11 @@ export default {
             else
                 seed = Math.floor(Math.random() * 100000);
 
-                if(this.prompt.trim() == "")
-                    return;
+            if(this.prompt.trim() == "")
+                return;
 
-                if(!this.inp_img)
-                    return;
+            if(!this.inp_img)
+                return;
 
             let input_image = window.ipcRenderer.sendSync('save_b64_image',  this.$refs.inp_img_canvas.get_img_b64()  );
             let input_image_with_mask;

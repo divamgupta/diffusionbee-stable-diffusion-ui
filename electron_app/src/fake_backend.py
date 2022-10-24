@@ -45,6 +45,9 @@ def process_opt(opts):
         print("sdbk errr just a random error lol")
         return
 
+    if 'num_imgs' not in opts:
+        opts['num_imgs'] = 1
+
     for _ in range(opts['num_imgs']):
         for i in range(0,100,5):
             print("sdbk dnpr "+str(i) ) # done percentage
@@ -59,8 +62,8 @@ def process_opt(opts):
 while True:
         print("sdbk inrd") # input ready
 
-        inp_str = input()
-
+        inp_str = input()   
+        print("got " , inp_str )
         if inp_str.strip() == "":
             continue
         else:

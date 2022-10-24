@@ -194,8 +194,8 @@ export default {
             canvas.width = this.canvas.width;
             canvas.height = this.canvas.height;
             let ctx =  canvas.getContext("2d");
-            let filt_w = canvas.width/50    
-            ctx.filter = 'blur('+filt_w+'px) grayscale(1) brightness(100) contrast(100)';
+            // let filt_w = canvas.width/50    
+            ctx.filter = ' grayscale(1) brightness(100) contrast(100)'; // blur('+filt_w+'px)
             ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(this.canvas, 0, 0);
