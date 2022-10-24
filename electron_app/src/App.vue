@@ -16,9 +16,11 @@
         <ApplicationFrame ref="app_frame" v-else title="DiffusionBee - Stable Diffusion App"
 
             @menu_item_click_about="show_about"
-            @menu_item_click_help="show_help"
+            @menu_item_click_help="open_url('https://diffusionbee.com/')"
             @menu_item_click_close="close_window"
-            @menu_item_click_discord="menu_item_click_discord"
+            @menu_item_click_discord="open_url('https://discord.gg/t6rC5RaJQn')"
+            @menu_item_click_model_license="open_url('https://diffusionbee.com/MODEL_LICENSE.txt')"
+            @menu_item_click_oss_license="open_url('https://diffusionbee.com/OPEN_SOURCE_LICENSES.txt')"
 
         > 
             <template v-slot:txt2img>
@@ -252,6 +254,10 @@ export default
         },
         show_help(){
             window.ipcRenderer.sendSync('open_url', "https://diffusionbee.com");
+        } ,
+
+        open_url(url){
+            window.ipcRenderer.sendSync('open_url', url);
         } ,
 
         menu_item_click_discord(){
