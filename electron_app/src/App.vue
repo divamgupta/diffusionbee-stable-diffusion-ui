@@ -209,7 +209,9 @@ export default
                     let latest_app_version = xmlHttp.responseText.split("|")[0];
                     console.log("Latest app version" + latest_app_version+ " " + user_id)
                     let current_versoin = require('../package.json').version + "_" + require('../package.json').build_number
-                    if( latest_app_version != current_versoin ){
+                    let latest_build_no = Number(latest_app_version.split("_")[1])
+                    let current_build_no = Number(require('../package.json').build_number)
+                    if( latest_app_version != current_versoin && latest_build_no > current_build_no ){
                         if(native_confirm("A new version of " + require('../package.json').name +" is available. Do you want to visit " +require('../package.json').website+ " to update?"  ))
                             window.ipcRenderer.sendSync('open_url', require('../package.json').website);
                     }

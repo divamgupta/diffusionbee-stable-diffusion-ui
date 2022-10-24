@@ -1,5 +1,11 @@
 <template>
      <div  class="animatable_content_box ">
+
+        <div class="content_toolbox" style="margin-bottom: 5px; margin-top: -5px ;">
+            <div class="l_button" v-if="is_stage_modified"  style="float:right "  @click="init_state"> Clear</div>
+            <div class="l_button"  v-if="is_stage_modified"   style="float:right "  @click="save_image"> Save Image </div>
+            <div v-if="undo_history.length > 0 " class="l_button"  style="float:right " @click="do_undo" > Undo </div>
+        </div>
        
         <div id="outpainting_container" style="  ">
         </div>
@@ -12,7 +18,12 @@
                     :rows="2">
         </textarea>
         
-        <div v-if="stable_diffusion.is_input_avail" class="l_button button_medium button_colored" style="float:right ; margin-top: 20px; " @click="generate()" >Generate</div>
+        <div v-if="stable_diffusion.is_input_avail" style="margin-top: 20px">
+            
+            <div  class="l_button button_medium button_colored" style="float:right ; " @click="generate()" >Generate</div>
+            
+
+        </div>
         <span v-else-if="stable_diffusion.generated_by=='outpainting'"   >
             <div v-if="is_stopping" class="l_button button_medium button_colored" style="float:right; float:right ; margin-top: 20px; " @click="stop_generation">Stopping ...</div>
             <div v-else class="l_button button_medium button_colored" style="float:right; float:right ; margin-top: 20px; " @click="stop_generation">Stop</div>
@@ -36,6 +47,18 @@
 import Konva from 'konva';
 import LoaderModal from '../components_bare/LoaderModal.vue'
 
+function onVisible(element, callback) {
+  new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if(entry.intersectionRatio > 0) {
+        callback(element);
+        observer;
+        // observer.disconnect();
+      }
+    });
+  }).observe(element);
+}
+
 
 export default {
     name: 'Outpainting',
@@ -52,16 +75,42 @@ export default {
         return {
             stage : undefined,
             stage_w : 1000 , 
-            stage_h : 500 ,
+            stage_h : 400 ,
             prompt : "" ,
 
+            undo_history : [],
+            is_stage_modified: false, 
             is_stopping : false,
             backend_error : "",
             done_percentage : -1,
         };
     },
+    watch: {
+        'stable_diffusion.is_input_avail': {
+            handler: function(v) {
+                if(v)
+                    this.box.draggable(true)
+                else
+                    this.box.draggable(false)
+            },
+            deep: true
+        } , 
+    },
+
     methods: {
         init_state(){
+
+            let canvas_bg_color = "#F2F2F2"
+            let box_color = '#4070f7'
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                // dark mode
+                canvas_bg_color = "#1c1c1c"
+            }
+
+            this.undo_history = []
+            this.is_stage_modified = false
+
+
             this.stage = new Konva.Stage({
                 container: 'outpainting_container',   // id of container <div>
                 width: this.stage_w,
@@ -76,7 +125,7 @@ export default {
                 y: rectY,
                 width: 200,
                 height: 200,
-                stroke: 'red',
+                stroke: box_color,
                 strokeWidth: 1,
                 draggable: true,
             });
@@ -90,11 +139,32 @@ export default {
                 document.body.style.cursor = 'default';
             });
 
-            this.alpha_layer = new Konva.Layer();
+            this.alpha_layer = new Konva.Layer({opacity	:1 });
             this.stage.add(this.alpha_layer);
+
+            let bg = new Konva.Rect({
+                                x: 0,
+                                y: 0,
+                                width: this.stage.width(),
+                                height: this.stage.height(),
+                                fill : "white",
+                            });
+            this.alpha_layer.add(bg);
+                    
 
             this.images_layer = new Konva.Layer();
             this.stage.add(this.images_layer);
+
+            
+
+            bg = new Konva.Rect({
+                                x: 0,
+                                y: 0,
+                                width: this.stage.width(),
+                                height: this.stage.height(),
+                                fill : canvas_bg_color,
+                            });
+            this.images_layer.add(bg);
 
             
 
@@ -102,10 +172,12 @@ export default {
             this.box_layer = new Konva.Layer();
             this.stage.add(this.box_layer);
             this.box_layer.add(box);
-
+            
+            this.resize_stage()
             
 
             window.addEventListener('resize', this.resize_stage);
+            onVisible(document.querySelector("#outpainting_container") , this.resize_stage )
         },
 
         resize_stage() {
@@ -113,12 +185,14 @@ export default {
 
             // now we need to fit stage into parent container
             let containerWidth = container.offsetWidth;
+            if(containerWidth < 10 )
+                return;
 
             // but we also make the full scene visible
             // so we need to scale all objects on canvas
             let scale = containerWidth / this.stage_w;
 
-            this.stage.width(this.stage_w * scale);
+            this.stage.width(this.stage_w * scale - 5 );
             this.stage.height(this.stage_h * scale);
             this.stage.scale({ x: scale, y: scale });
         } , 
@@ -130,22 +204,26 @@ export default {
 
             Konva.Image.fromURL('file://'+ img_path , function (imgg) {
                 imgg.setAttrs({
-                x: that.box.x(),
-                y: that.box.y(),
-                scaleX: scale,
-                scaleY: scale ,
-                });
+                    x: that.box.x(),
+                    y: that.box.y(),
+                    scaleX: scale,
+                    scaleY: scale ,
+                    });
                 that.images_layer.add(imgg);
+                
 
                 let box = new Konva.Rect({
                                 x: that.box.x(),
                                 y: that.box.y(),
                                 width: that.box.width(),
                                 height: that.box.height(),
-                                fill : "white",
+                                fill : "black",
                                 strokeWidth : 0,
                             });
                 that.alpha_layer.add(box);
+
+                that.undo_history.push({alpha : box , img : imgg })
+                that.is_stage_modified = true
 
 
             });
@@ -173,6 +251,19 @@ export default {
         stop_generation(){
             this.is_stopping = true;
             this.stable_diffusion.interupt();
+        },
+
+        save_image(){
+            let img_b64 = this.images_layer.toDataURL({ pixelRatio: 3})
+
+            let out_path = window.ipcRenderer.sendSync('save_dialog' );
+            if(!out_path)
+                return
+            let org_path = window.ipcRenderer.sendSync('save_b64_image',  img_b64 , true );
+            org_path = org_path.replaceAll("file://" , "")
+            window.ipcRenderer.sendSync('save_file', org_path+"||" +out_path);
+
+
         },
 
 
@@ -207,11 +298,36 @@ export default {
         //     };
         // },
 
+        do_undo(){
+            // if(! this.prev_canvas_b64)
+            //     return;
+            // let myImage = new Image();
+            // myImage.src = this.prev_canvas_b64 ;
+            // let that = this;
+            // myImage.onload = function() {
+            //     var kimg = new Konva.Image({
+            //         x: 0,
+            //         y: 0,
+            //         image: myImage,
+            //         width: 300,
+            //          height: 300,
+            //     });
+            //     that.images_layer.add(kimg)
+            // }
+            let im = this.undo_history.pop()
+            im.img.destroy()
+            im.alpha.destroy()
 
+        },
 
         generate(){
             let img_path = this.get_img_of_box(false)
             let mask_path = this.get_img_of_box(true)
+
+            if(this.prompt == "")
+                return; 
+
+            this.prev_canvas_b64 = this.images_layer.toDataURL()
 
             let seed = 0;
             if(this.seed)
@@ -261,13 +377,19 @@ export default {
 <style>
     #outpainting_container{
         /* background-color: #e5e5f7; */
-        opacity: 0.8;
-        background-image: radial-gradient( rgba(255,255,255,0.25) 0.5px, rgba(0,0,0,0) 0.5px);
+        /* opacity: 0.8; */
+        /* background-image: radial-gradient( rgba(255,255,255,0.25) 0.5px, rgba(0,0,0,0) 0.5px); */
         background-size: 10px 10px;
-        border-color: rgba(255,255,255,0.25);
+        border-color: rgb(206, 212, 218);
         border-width: 1px;
         border-style: solid;
 
+    }
+
+    @media (prefers-color-scheme: dark) {
+        #outpainting_container{
+            border-color: #606060
+        }
     }
 
     .outpaint_textbox{
