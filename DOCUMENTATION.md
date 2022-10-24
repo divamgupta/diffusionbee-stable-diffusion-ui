@@ -36,6 +36,12 @@ Click on the left pane to upload a sketch starting image (only png supported). A
   * Steps: This corresponds to how many steps are used to build the image. Setting to a low number gives faster image generation, and may be useful while exploring different prompts.
   * Seed: A number between 0 and 4,294,967,295 that is used as starting point for the image generation. If the same seed is used with the same image, the same prompt and the same settings (except *steps*, which may vary), the same image will be generated. If left empty, a random seed will be used.
 
+#### Inpainting
+
+To use the inpainting functions, select *image to image*, add an image and select *inpainting* below the image. Then scribble in the image to mask the are you wish DiffusionBee to re-paint for you.
+
+You may have better chances of getting inpainting to work well if you use low input strength in the options (0.3 or below), use many steps (50 or more) and mask a larger area than you actually want to replace.
+
 ## History
 
 The **History** tab show previously generated images along with prompts and settings (including seed).
