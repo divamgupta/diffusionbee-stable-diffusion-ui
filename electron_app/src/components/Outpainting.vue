@@ -5,6 +5,7 @@
             <div class="l_button" v-if="is_stage_modified && stable_diffusion.is_input_avail"  style="float:right "  @click="init_state"> Clear</div>
             <div class="l_button"  v-if="is_stage_modified && stable_diffusion.is_input_avail"   style="float:right "  @click="save_image"> Save Image </div>
             <div v-if="undo_history.length > 0 && stable_diffusion.is_input_avail " class="l_button"  style="float:right " @click="do_undo" > Undo </div>
+            <div class="l_button" v-if="stable_diffusion.is_input_avail"  style="float:right "  @click="add_ext_img"> Add Image</div>
         </div>
        
         <div id="outpainting_container" style="  ">
@@ -107,6 +108,8 @@ export default {
                 canvas_bg_color = "#1c1c1c"
             }
 
+            this.freeze_last_resizable_img()
+
             this.undo_history = []
             this.is_stage_modified = false
 
@@ -152,7 +155,7 @@ export default {
             this.alpha_layer.add(bg);
                     
 
-            this.images_layer = new Konva.Layer();
+            this.images_layer = new Konva.Layer({opacity:1});
             this.stage.add(this.images_layer);
 
             
@@ -180,6 +183,14 @@ export default {
             onVisible(document.querySelector("#outpainting_container") , this.resize_stage )
         },
 
+        freeze_last_resizable_img(){
+            if(this.last_resizable_img){
+                this.last_resizable_img.img.draggable(false)
+                this.last_resizable_img.tr.destroy()
+                this.last_resizable_img = undefined
+            }
+        },
+
         resize_stage() {
             let container = document.querySelector('#outpainting_container');
 
@@ -197,12 +208,17 @@ export default {
             this.stage.scale({ x: scale, y: scale });
         } , 
 
-        add_img_to_box(img_path){
+
+        add_img_to_stage(img_path, is_resizable  ){
             
             let that = this;
-            let scale =  that.box.width() / 512 
+            let scale =  that.box.width() / 512  // IMP rn i am assuming that the returned image will be 512x512 
+
+            this.freeze_last_resizable_img()
 
             Konva.Image.fromURL('file://'+ img_path , function (imgg) {
+            
+
                 imgg.setAttrs({
                     x: that.box.x(),
                     y: that.box.y(),
@@ -210,24 +226,65 @@ export default {
                     scaleY: scale ,
                     });
                 that.images_layer.add(imgg);
-                
 
                 let box = new Konva.Rect({
-                                x: that.box.x(),
-                                y: that.box.y(),
-                                width: that.box.width(),
-                                height: that.box.height(),
+                                x: imgg.x(),
+                                y: imgg.y(),
+                                width: imgg.width(),
+                                height: imgg.height(),
+                                scaleX: scale,
+                                scaleY: scale ,
                                 fill : "black",
                                 strokeWidth : 0,
                             });
-                that.alpha_layer.add(box);
 
+
+                that.alpha_layer.add(box);
                 that.undo_history.push({alpha : box , img : imgg })
                 that.is_stage_modified = true
+
+                if(is_resizable){
+                    imgg.draggable(true)
+                    let tr = new Konva.Transformer({keepRatio : true , rotateEnabled:false , flipEnabled:false  });
+                    that.images_layer.add(tr);
+                    tr.nodes([imgg]);
+                    that.last_resizable_img = { img: imgg, tr:tr }
+
+                    imgg.on('transformend',     function () {
+                        console.log("treee")
+                        box.height(imgg.height())
+                        box.width(imgg.width())
+                        box.x(imgg.x())
+                        box.y(imgg.y())
+                        box.scaleY(imgg.scaleY())
+                        box.scaleX(imgg.scaleX())
+                    });
+
+                    imgg.on('dragmove',     function () {
+                        console.log("treee")
+                        box.height(imgg.height())
+                        box.width(imgg.width())
+                        box.x(imgg.x())
+                        box.y(imgg.y())
+                        box.scaleY(imgg.scaleY())
+                        box.scaleX(imgg.scaleX())
+                    });
+
+
+                }
 
 
             });
         } , 
+
+        add_ext_img(){
+            if( !this.stable_diffusion.is_input_avail)
+                return;
+            let img_path = window.ipcRenderer.sendSync('file_dialog',  'img_file' );
+            if(img_path && img_path != 'NULL'){
+                this.add_img_to_stage(img_path, true)
+            }
+        },
 
         get_img_of_box(is_mask=false){
             let s = this.stage.scale().x
@@ -314,6 +371,7 @@ export default {
             //     });
             //     that.images_layer.add(kimg)
             // }
+            this.freeze_last_resizable_img()
             let im = this.undo_history.pop()
             im.img.destroy()
             im.alpha.destroy()
@@ -321,11 +379,22 @@ export default {
         },
 
         generate(){
-            let img_path = this.get_img_of_box(false)
-            let mask_path = this.get_img_of_box(true)
+
+            
 
             if(this.prompt == "")
                 return; 
+
+            if(this.last_resizable_img){
+                this.freeze_last_resizable_img()
+                setTimeout(this.generate, 100); // there is delay coz the rectangle wont go away
+                return;
+            }
+
+            let img_path = this.get_img_of_box(false)
+            let mask_path = this.get_img_of_box(true)
+
+            
 
             this.prev_canvas_b64 = this.images_layer.toDataURL()
 
@@ -354,7 +423,7 @@ export default {
 
             let callbacks = {
                 on_img(img_path){
-                    that.add_img_to_box(img_path)
+                    that.add_img_to_stage(img_path)
                 },
                 on_progress(p){
                     that.done_percentage = p;

@@ -27,12 +27,11 @@ module.exports = {
                     "extendInfo": {
                         "LSMinimumSystemVersion": "12.3.0"
                     } , 
-                    "extendInfo": {
-                    } , 
+                    
                     "target": {
                         "target": "dmg",
                         "arch": [
-                            process.arch   
+                            ['arm64' , 'x64']
                         ]
                     }
                 },
