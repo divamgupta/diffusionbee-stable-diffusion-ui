@@ -30,6 +30,7 @@
         <div class="tabs_bar">
             <div @click="selectTab('txt2img')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'txt2img'}">Text To Image</div>
             <div @click="selectTab('img2img')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'img2img'}">Image To Image</div>
+            <div @click="selectTab('inpainting')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'inpainting'}">Inpainting</div>
             <div @click="selectTab('outpainting')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'outpainting'}">Outpainting</div>
             <div @click="selectTab('history')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'history'}">History</div>
         </div>
@@ -54,6 +55,11 @@
                 <div  style="display:none"  :class="{ bl_display : selected_tab === 'upscale_img'  }" >
                     <slot name="upscale_img"></slot>
                 </div>
+
+                <div style="display:none"  :class="{ bl_display : selected_tab === 'inpainting'  }" >
+                    <slot name="inpainting"></slot>
+                </div>
+
 
                 <div style="display:none"  :class="{ bl_display : selected_tab === 'outpainting'  }" >
                     <slot name="outpainting"></slot>

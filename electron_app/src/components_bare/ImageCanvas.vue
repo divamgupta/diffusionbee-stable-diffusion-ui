@@ -1,8 +1,8 @@
 <template>
     <div style="height:100% ; width:100%; position:  relative;">
         <img id="myImg" :src="'file://'+image_source" style="display:none">
-        <canvas id="myCanvasD" style="width:100% ; height:100%; position: absolute ; top:0 , left:0  " ></canvas>
-        <canvas id="myCanvas" style="width:100% ; height:100%; position: absolute ; top:0 , left:0 " ></canvas>
+        <canvas :id="canvas_d_id" style="width:100% ; height:100%; position: absolute ; top:0 , left:0  " ></canvas>
+        <canvas :id="canvas_id" style="width:100% ; height:100%; position: absolute ; top:0 , left:0 ; opacity:0.7" ></canvas>
        
    </div>
 </template>
@@ -24,13 +24,17 @@ export default {
         image_source : String,
         is_inpaint : Boolean,
         is_disabled : Boolean,
+        canvas_d_id : String, 
+        canvas_id: String,
     },
     components: {},
+    computed: {
+    },
     mounted() {
         this.ro = new ResizeObserver(this.on_resize);
-        let canvas = document.getElementById("myCanvas");
+        let canvas = document.getElementById(this.canvas_id);
         this.canvas = canvas;
-        this.canvasD = document.getElementById("myCanvasD");
+        this.canvasD = document.getElementById(this.canvas_d_id);
         this.ctx = canvas.getContext("2d");
         this.ro.observe(canvas.parentElement);
         let that = this;
@@ -62,8 +66,8 @@ export default {
             prevY : 0 , 
             currX : 0 , 
             currY : 0 , 
-            // x : "#ff00ff" ,
-            x : "#ffffff" ,
+            x : "#ff00ff" ,
+            // x : "#ffffff" ,
             y : 7 ,
             flag : false,
         };
@@ -131,8 +135,8 @@ export default {
         },
 
         on_resize(){
-            let canvas = document.getElementById("myCanvas");
-            let canvasD = document.getElementById("myCanvasD");
+            let canvas = document.getElementById(this.canvas_id);
+            let canvasD = document.getElementById(this.canvas_d_id);
             let img = this.img_tag;
 
             if(!img)
@@ -160,7 +164,7 @@ export default {
             
         },
         clear_inpaint(){
-            let canvas = document.getElementById("myCanvas");
+            let canvas = document.getElementById(this.canvas_id);
             let ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         },
@@ -169,8 +173,8 @@ export default {
             addImageProcess('file://'+this.image_source).then(function(img_tag){
 
                 that.img_tag = img_tag;
-                let canvasD = document.getElementById("myCanvasD");
-                let canvas = document.getElementById("myCanvas");
+                let canvasD = document.getElementById(that.canvas_d_id);
+                let canvas = document.getElementById(that.canvas_id);
                 let img = that.img_tag;
                 let ctxD = canvasD.getContext("2d");
                 
@@ -195,7 +199,7 @@ export default {
             canvas.height = this.canvas.height;
             let ctx =  canvas.getContext("2d");
             // let filt_w = canvas.width/50    
-            ctx.filter = ' grayscale(1) brightness(100) contrast(100)'; // blur('+filt_w+'px)
+            ctx.filter = ' grayscale(1) brightness(10000) contrast(10000)'; // blur('+filt_w+'px)
             ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(this.canvas, 0, 0);

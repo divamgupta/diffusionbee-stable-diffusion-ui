@@ -8,7 +8,7 @@
          -->
 
             <div v-if="inp_img" class="image_area" :class="{ crosshair_cur  : is_inpaint }"  style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
-                <ImageCanvas ref="inp_img_canvas" :is_inpaint="is_inpaint" :image_source="inp_img"  :is_disabled="!stable_diffusion.is_input_avail"  ></ImageCanvas>
+                <ImageCanvas ref="inp_img_canvas" :is_inpaint="is_inpaint" :image_source="inp_img"  :is_disabled="!stable_diffusion.is_input_avail" canvas_id="img2imgcan" canvas_d_id="img2imgcand" ></ImageCanvas>
             </div>
             <div v-else @click="open_input_image" class="image_area" :class="{ pointer_cursor  : is_sd_active }" style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
                 <center>
@@ -18,8 +18,8 @@
 
             <div v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" @click="open_input_image" >Change Image</div>
             <div v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" @click="inp_img =''">Clear</div>
-            <div v-if="inp_img && stable_diffusion.is_input_avail && !is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Inpaint</div>
-            <div v-if="inp_img && stable_diffusion.is_input_avail && is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Remove Inpaint</div>
+            <div v-if="inp_img && stable_diffusion.is_input_avail && !is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Draw Mask</div>
+            <div v-if="inp_img && stable_diffusion.is_input_avail && is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Remove Mask</div>
 
             <br> <br> 
             <textarea 
@@ -192,7 +192,7 @@ export default {
             let input_image_with_mask;
             let mask_img;
             if(this.is_inpaint)
-            { // #TODO save those in tmp
+            { 
                 input_image_with_mask = window.ipcRenderer.sendSync('save_b64_image',  this.$refs.inp_img_canvas.get_img_mask_bg4() );
                 mask_img = window.ipcRenderer.sendSync('save_b64_image',  this.$refs.inp_img_canvas.get_mask_b46() , true );
             } else {
@@ -230,7 +230,7 @@ export default {
                     if(!(that.app_state.history[history_key]))
                         Vue.set(that.app_state.history, history_key , {
                             "prompt":that.prompt , "seed": seed, "key":history_key , "imgs" : [] , "inp_img": input_image_with_mask,
-                            "dif_steps" : that.dif_steps , "inp_img_strength" : that.inp_img_strength,
+                            "dif_steps" : that.dif_steps , "inp_img_strength" : that.inp_img_strength, "model_version": that.stable_diffusion.model_version
                         });
                     
                     that.app_state.history[history_key].imgs.push(img_path)

@@ -251,7 +251,6 @@ export default {
                     that.last_resizable_img = { img: imgg, tr:tr }
 
                     imgg.on('transformend',     function () {
-                        console.log("treee")
                         box.height(imgg.height())
                         box.width(imgg.width())
                         box.x(imgg.x())
@@ -261,7 +260,6 @@ export default {
                     });
 
                     imgg.on('dragmove',     function () {
-                        console.log("treee")
                         box.height(imgg.height())
                         box.width(imgg.width())
                         box.x(imgg.x())

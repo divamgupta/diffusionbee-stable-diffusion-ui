@@ -151,7 +151,9 @@ async function share_on_arthub(imgs , params,  prompt ) {
 
 
     share_url += "description="+ prompt + "&";
-    params.model_version = "DiffusionBee";
+    if(!params.model_version)
+        params.model_version = ""
+    params.model_version = "DiffusionBee" + params.model_version  ;
     share_url += "params="+ JSON.stringify(params) + "&"
     share_url += "images="+ urls.join(',')
     window.ipcRenderer.sendSync('open_url', share_url );

@@ -274,8 +274,10 @@ export default {
                     if(!(that.app_state.history[history_key])){
                         let p = {
                             "prompt":that.prompt , "seed": seed, "img_w":that.img_w , "img_h":that.img_h ,  "key":history_key , "imgs" : [],
-                            "guidence_scale" : that.guidence_scale , "dif_steps" : that.dif_steps 
+                            "guidence_scale" : that.guidence_scale , "dif_steps" : that.dif_steps  
                         }
+                        if(that.stable_diffusion.model_version)
+                            p['model_version'] = that.stable_diffusion.model_version;
                         if(that.is_negative_prompt_avail)
                             p['negative_prompt'] = that.negative_prompt;
                         Vue.set(that.app_state.history, history_key , p);
@@ -324,7 +326,8 @@ export default {
                 "Img Height" : Number(this.img_h) , 
                 Seed :this.computed_seed,
                 Scale : this.guidence_scale , 
-                Steps : this.dif_steps
+                Steps : this.dif_steps ,
+                model_version: this.stable_diffusion.model_version
             }
             if(this.is_negative_prompt_avail)
                 params['Negative Prompt'] = this.negative_prompt;

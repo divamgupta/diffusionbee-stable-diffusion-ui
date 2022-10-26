@@ -6,6 +6,15 @@
 import { send_to_py } from "./py_vue_bridge.js"
 import {get_tokens} from './clip_tokeniser/clip_encoder.js'
 
+function remove_non_ascii(str) {
+  
+  if ((str===null) || (str===''))
+       return false;
+ else
+   str = str.toString();
+  
+  return str.replace(/[^\x20-\x7E]/g, '');
+}
 
 export default {
     name: 'StableDiffusion',
@@ -23,6 +32,7 @@ export default {
             loading_percentage : -1 , 
             generation_state_msg : "",
             attached_cbs : undefined,
+            model_version : "",
         };
     },
     methods: {
@@ -45,6 +55,10 @@ export default {
                         this.attached_cbs.on_img(impath);
                 }
 
+            }
+
+            if(msg_code == "mdvr"){
+                this.model_version = msg.substring(5).trim()
             }
 
             if(msg_code == "mlpr"){
@@ -110,6 +124,15 @@ export default {
             }
 
             prompt_params.seed = Number(prompt_params.seed) || 0 
+
+            if(prompt_params.prompt){
+                prompt_params.prompt = remove_non_ascii(prompt_params.prompt)
+            }
+
+            if(prompt_params.negative_prompt){
+                prompt_params.negative_prompt = remove_non_ascii(prompt_params.negative_prompt)
+            }
+                
 
             this.last_iter_t = Date.now()
             this.generated_by = generated_by;
