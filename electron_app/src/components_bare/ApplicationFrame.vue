@@ -357,6 +357,13 @@ img {
     width: 100%;
 }
 
+
+.bottom_float{
+    position: fixed ;
+    bottom: 1px;
+}
+
+
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>

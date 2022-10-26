@@ -82,12 +82,7 @@ function open_popup( img_url , text ){
             p{
                 padding:40px;
             }
-            audio{
-                position: fixed ; 
-                bottom: 20px;
-               left: 50%;
-                transform: translateX(-50%);
-            }
+
        </style>
     `
     let html = '<html><head>'+css+'</head><body>' ;
@@ -99,8 +94,10 @@ function open_popup( img_url , text ){
          html += '<p> '+ escapeHtml(text) +' </p>';
     
     html += '</body></html>'
+    
     let uri = "data:text/html," + encodeURIComponent(html);
-    window.open(uri, '_blank', 'top=100,left=100,frame=false,nodeIntegration=no');
+    uri;
+    window.open(escapeHtml(img_url), '_blank', 'top=100,left=100,nodeIntegration=no'); // ,frame=false
     
 
 }

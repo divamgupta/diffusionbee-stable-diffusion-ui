@@ -364,10 +364,6 @@ export default {
         border-radius: 12px 12px 12px 12px;
     }
 
-    .bottom_float{
-        position: fixed ;
-        bottom: 1px;
-    }
 
     .ad_form_box{
         float:left; 
