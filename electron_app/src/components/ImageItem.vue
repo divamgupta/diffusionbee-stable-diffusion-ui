@@ -11,6 +11,7 @@
                 <b-dropdown-item-button   @click="save_image(path)"  >Save Image</b-dropdown-item-button>
                 <b-dropdown-item-button @click="upsclae" >Upscale Image</b-dropdown-item-button>
                 <b-dropdown-item-button @click="send_img2img" >Send to Img2Img</b-dropdown-item-button>
+                <b-dropdown-item-button @click="send_inpaint" >Send to Inpaint</b-dropdown-item-button>
                 
                 
             </b-dropdown>
@@ -67,6 +68,19 @@ export default {
                 } 
             }
         } , 
+
+        send_inpaint(){
+            
+
+            if(this.app_state){
+
+                if(this.app_state.app_object.$refs.stable_diffusion.is_input_avail){
+                    this.app_state.app_object.$refs.inpaint.set_inp_image(this.path);
+                    this.app_state.app_object.$refs.app_frame.selected_tab = 'inpainting';
+                } 
+            }
+
+        },
 
         upsclae(){
             if(this.app_state){

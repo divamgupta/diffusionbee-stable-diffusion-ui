@@ -10,6 +10,8 @@
     --menu-background: #eaebef;
 }
 
+
+
 @media (prefers-color-scheme: light) {
     body {
         background-color: #F2F2F2;

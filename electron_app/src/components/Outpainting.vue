@@ -2,7 +2,7 @@
      <div  class="animatable_content_box ">
 
         <div class="content_toolbox" style="margin-bottom: 5px; margin-top: -5px ;">
-            <div class="l_button" v-if="is_stage_modified && stable_diffusion.is_input_avail"  style="float:right "  @click="init_state"> Clear</div>
+            <div class="l_button" v-if="stable_diffusion.is_input_avail"  style="float:right "  @click="init_state"> Reset</div>
             <div class="l_button"  v-if="is_stage_modified && stable_diffusion.is_input_avail"   style="float:right "  @click="save_image"> Save Image </div>
             <div v-if="undo_history.length > 0 && stable_diffusion.is_input_avail " class="l_button"  style="float:right " @click="do_undo" > Undo </div>
             <div class="l_button" v-if="stable_diffusion.is_input_avail"  style="float:right "  @click="add_ext_img"> Add Image</div>
@@ -100,6 +100,10 @@ export default {
 
     methods: {
         init_state(){
+
+            this.stage_h = this.stage_w / (window.innerWidth  / ( window.innerHeight - 200 ));
+
+            this.prompt = ""
 
             let canvas_bg_color = "#F2F2F2"
             let box_color = '#4070f7'

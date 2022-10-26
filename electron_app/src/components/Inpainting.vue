@@ -1,17 +1,29 @@
 <template>
     <div  class="animatable_content_box ">
         <div class="content_toolbox" style="margin-bottom: -13px; ">
+
+            
+
             <div v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" style="float:right " @click="clear" > Clear</div>
             <div v-if="undo_history.length > 0  && stable_diffusion.is_input_avail" class="l_button" style="float:right " @click="do_undo" > Undo</div>
             <div v-if="inp_img " class="l_button" style="float:right " @click="save_img" > Save Image</div>
             <div v-if="retry_params  && stable_diffusion.is_input_avail" class="l_button" style="float:right "   @click="generate(true)"> Retry</div>
+            
+            
+            <div v-if="stable_diffusion.is_input_avail && inp_img"   style="float:right ; margin-right: 10px" >
+                <input v-model="stroke_size_no" style="zoom:0.8; margin-top: 7px; width:100px" type="range"
+                        min="1" max="100" >                
+            </div>
+            <div v-if="stable_diffusion.is_input_avail && inp_img"   class="l_button no_hover_bg" style="float:right ; margin-right: -5px; " > Stroke Size</div>
+            
+
         </div>
 
         <div class="inapint_container"   >
-            <ImageCanvas style="cursor: crosshair;"  v-if="inp_img"  ref="inp_img_canvas" :is_inpaint="true" :image_source="inp_img"  :is_disabled="!stable_diffusion.is_input_avail" id="inpaint"  canvas_id="inpaintcan" canvas_d_id="inpaintcand" ></ImageCanvas>
+            <ImageCanvas style="cursor: crosshair;"  v-if="inp_img"  ref="inp_img_canvas" :is_inpaint="true" :image_source="inp_img"  :is_disabled="!stable_diffusion.is_input_avail" id="inpaint"  canvas_id="inpaintcan" canvas_d_id="inpaintcand" :stroke_size_no="stroke_size_no" ></ImageCanvas>
             <div v-else @click="open_input_image" style=" "  :class="{ pointer_cursor  : is_sd_active }" >
                 <center>
-                    <p style="padding-top: calc( 50vh - 115px);padding-bottom: calc( 50vh - 155px);  opacity: 70%;" >Click to add input image</p>
+                    <p style="padding-top: calc( 50vh - 115px);padding-bottom: calc( 50vh - 155px);  opacity: 70%;" >Click to add input image and draw a mask</p>
                 </center>
             </div>
         </div>
@@ -22,7 +34,7 @@
                     placeholder="Enter your prompt here" 
                     style="border-radius: 12px 12px 12px 12px; resize: none; " 
                     class="form-control inpaint_textbox"  
-                    
+                    v-bind:class="{ 'disabled' : !stable_diffusion.is_input_avail}"
                     :rows="1">
 
                     <!-- v-bind:class="{ 'disabled' : !stable_diffusion.is_input_avail}" -->
@@ -84,6 +96,7 @@ export default {
             is_stopping : false,
             undo_history : [],
             retry_params: undefined,
+            stroke_size_no : "30",
         };
     },
     methods: {
@@ -110,6 +123,9 @@ export default {
                 return;
 
                 if(!this.inp_img)
+                    return;
+
+                if(!this.$refs.inp_img_canvas.is_something_drawn)
                     return;
 
                 prompt = this.prompt;
@@ -159,20 +175,22 @@ export default {
                 this.stable_diffusion.text_to_img(params, callbacks, 'inpainting');
         } , 
 
+        set_inp_image(img_path){
+            this.inp_img = img_path;
+            this.undo_history = []
+
+            if(this.$refs.inp_img_canvas){
+                this.$refs.inp_img_canvas.clear_inpaint()
+            }
+        },
+
         open_input_image(){
             if( !this.stable_diffusion.is_input_avail)
                 return;
             let img_path = window.ipcRenderer.sendSync('file_dialog',  'img_file' );
             if(img_path && img_path != 'NULL'){
-                this.inp_img = img_path;
-                this.undo_history = []
-
-                if(this.$refs.inp_img_canvas){
-                    this.$refs.inp_img_canvas.clear_inpaint()
-                }
-
+               this.set_inp_image(img_path)
             }
-                
         },
 
         do_undo(){

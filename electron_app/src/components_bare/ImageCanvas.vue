@@ -26,9 +26,15 @@ export default {
         is_disabled : Boolean,
         canvas_d_id : String, 
         canvas_id: String,
+        stroke_size_no : String,
     },
     components: {},
     computed: {
+        stroke_size(){
+            if(this.stroke_size_no)
+                return Number( this.stroke_size_no)/5
+            return 7;
+        }
     },
     mounted() {
         this.ro = new ResizeObserver(this.on_resize);
@@ -66,10 +72,12 @@ export default {
             prevY : 0 , 
             currX : 0 , 
             currY : 0 , 
-            x : "#ff00ff" ,
+            
+            stroke_color : "#ff00ff" ,
             // x : "#ffffff" ,
-            y : 7 ,
+            
             flag : false,
+            is_something_drawn : false,
         };
     },
     methods: {
@@ -85,14 +93,14 @@ export default {
             if (res == 'down') {
                 this.prevX = this.currX;
                 this.prevY = this.currY;
-                this.currX = e.clientX - this.canvas.parentElement.getBoundingClientRect().x;
-                this.currY = e.clientY - this.canvas.parentElement.getBoundingClientRect().y;
+                this.currX = e.clientX - this.canvas.getBoundingClientRect().x;
+                this.currY = e.clientY - this.canvas.getBoundingClientRect().y;
         
                 this.flag = true;
                 let dot_flag = true;
                 if (dot_flag) {
                     this.ctx.beginPath();
-                    this.ctx.fillStyle = this.x;
+                    this.ctx.fillStyle = this.stroke_color;
                     this.ctx.fillRect(this.currX, this.currY, 2, 2);
                     this.ctx.closePath();
                     dot_flag = false;
@@ -105,8 +113,8 @@ export default {
                 if (this.flag) {
                     this.prevX = this.currX;
                     this.prevY = this.currY;
-                    this.currX = e.clientX - this.canvas.parentElement.getBoundingClientRect().x;
-                    this.currY = e.clientY - this.canvas.parentElement.getBoundingClientRect().y;
+                    this.currX = e.clientX - this.canvas.getBoundingClientRect().x;
+                    this.currY = e.clientY - this.canvas.getBoundingClientRect().y;
                     this.draw();
                 }
             }
@@ -127,10 +135,11 @@ export default {
             // this.ctx.closePath();
 
             this.ctx.beginPath();
-            this.ctx.arc(this.prevX*xmul, this.prevY*ymul , this.y* Math.sqrt(xmul * ymul), 0, 2 * Math.PI);
-            this.ctx.arc((this.prevX+this.currX)*xmul/2, (this.prevY+this.currY)*ymul/2 , this.y* Math.sqrt(xmul * ymul), 0, 2 * Math.PI);
-            this.ctx.arc(this.currX*xmul, this.currY*ymul , this.y* Math.sqrt(xmul * ymul), 0, 2 * Math.PI);
+            this.ctx.arc(this.prevX*xmul, this.prevY*ymul , this.stroke_size* Math.sqrt(xmul * ymul), 0, 2 * Math.PI);
+            this.ctx.arc((this.prevX+this.currX)*xmul/2, (this.prevY+this.currY)*ymul/2 , this.stroke_size* Math.sqrt(xmul * ymul), 0, 2 * Math.PI);
+            this.ctx.arc(this.currX*xmul, this.currY*ymul , this.stroke_size* Math.sqrt(xmul * ymul), 0, 2 * Math.PI);
             this.ctx.fill();
+            this.is_something_drawn = true
 
         },
 
@@ -153,6 +162,13 @@ export default {
 
                 canvasD.style.height = ph +'px';
                 canvasD.style.width = ph*r +'px';
+
+                canvas.style.marginLeft = (pw - ph*r )/2  + "px"
+                canvasD.style.marginLeft = (pw - ph*r )/2  + "px"
+
+                canvas.style.marginTop = 0 + "px"
+                canvasD.style.marginTop = 0 + "px"
+
             }
             else{
                 canvas.style.height = pw*r2 +'px';
@@ -160,6 +176,13 @@ export default {
 
                 canvasD.style.height = pw*r2 +'px';
                 canvasD.style.width = pw +'px';
+
+                canvas.style.marginLeft =  0 + "px"
+                canvasD.style.marginLeft =  0 + "px"
+
+                canvas.style.marginTop = (ph - pw*r2 )/2 + "px"
+                canvasD.style.marginTop = (ph - pw*r2 )/2 + "px"
+
             }
             
         },
@@ -167,6 +190,7 @@ export default {
             let canvas = document.getElementById(this.canvas_id);
             let ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            this.is_something_drawn = false 
         },
         on_img_change(){
             let that = this;
@@ -187,6 +211,8 @@ export default {
 
                 ctxD.clearRect(0, 0, canvasD.width, canvasD.height);
                 ctxD.drawImage(img, 0,0, img.width, img.height, 0,0, canvasD.width, canvasD.height);
+
+                that.clear_inpaint()
 
             })
         },

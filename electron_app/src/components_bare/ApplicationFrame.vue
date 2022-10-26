@@ -174,7 +174,9 @@ body {
     transition: background-color 150ms ease-out 10ms, color 150ms ease-out 10ms;
 }
 
-
+.no_hover_bg:hover{
+    background-color: transparent !important;
+}
 
 
 .button_white {
