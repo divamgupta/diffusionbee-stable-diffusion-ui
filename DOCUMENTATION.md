@@ -21,7 +21,7 @@ To create an image, simply enter a prompt and press _generate_.
 * The **Advanced options** buttons gives the following options:
   * Num images: The number of images to generate.
   * Image height/width: Sets the dimensions of the image. Note that Stable Diffusion is trained on 512 x 512 (the default setting). Other dimensions may give less good result and take more time.
-  * Steps: This corresponds to how many steps are used to improve the image quality. Setting to a low number gives faster image generation, and may be useful while exploring different prompts.
+  * Steps: This corresponds to how many steps are used to build information about the image. Setting to a low number gives faster image generation, and may be useful while exploring different prompts.
   * Batch size: This tells DiffusionBee to generate multiple images at a time. New batches of images will be created until "num images" have been created. (Just increasing _num images_ is usually a better option.)
   * Guidance scale: This kind of corresponds to how closely Stable Diffusion should stick to the prompt. Higher value means more strict interpretation.
   * Seed: A number between 0 and 4,294,967,295 that is used as starting point for the image generation. If the same seed is used with the same prompt and the same settings (except *steps*, which may vary), the same image will be generated. If left empty, a random seed will be used.
@@ -50,7 +50,7 @@ To use the inpainting functions, add an image and scribble in the image to mask 
 
 The outpainting function is used to expand an image a larger area.
 
-To use the outpainting functions, add an image and move the 512×512 frame to a place where you want to expand the image, and provide a text prompt.
+To use the outpainting functions, add an image and move the 512×512 frame to a place where you want to expand the image, and provide a text prompt. The process may be repeated to expand the image several times and in different directions.
 
 **Note that options in *image to image* also affect outpainting.** Using a high input strength (0.7 or above) may give better results.
 
