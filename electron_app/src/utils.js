@@ -97,7 +97,7 @@ function open_popup( img_url , text ){
     
     let uri = "data:text/html," + encodeURIComponent(html);
     uri;
-    window.open(escapeHtml(img_url), '_blank', 'top=100,left=100,nodeIntegration=no'); // ,frame=false
+    window.open(escapeHtml(uri), '_blank', 'top=100,left=100,nodeIntegration=no,frame=false'); // 
     
 
 }
