@@ -14,17 +14,23 @@ Clicking on an image opens a separate window displaying the image in full size.
 
 ### Text to image
 
+The text to image function is used to create an image based on text input only.
+
 To create an image, simply enter a prompt and press _generate_.
 
 * The **Prompt ideas** button opens a web page where you can browse a gallery for finding useful prompts.
 * The **Styles** button provides a palette of often-used terms to add to the prompt.
-* The **Advanced options** buttons gives the following options:
+* The **Options** buttons gives the following options:
   * Num images: The number of images to generate.
   * Image height/width: Sets the dimensions of the image. Note that Stable Diffusion is trained on 512 x 512 (the default setting). Other dimensions may give less good result and take more time.
   * Steps: This corresponds to how many steps are used to build information about the image. Setting to a low number gives faster image generation, and may be useful while exploring different prompts.
   * Batch size: This tells DiffusionBee to generate multiple images at a time. New batches of images will be created until "num images" have been created. (Just increasing _num images_ is usually a better option.)
   * Guidance scale: This kind of corresponds to how closely Stable Diffusion should stick to the prompt. Higher value means more strict interpretation.
   * Seed: A number between 0 and 4,294,967,295 that is used as starting point for the image generation. If the same seed is used with the same prompt and the same settings (except *steps*, which may vary), the same image will be generated. If left empty, a random seed will be used.
+
+#### Negative prompt
+
+Enabling the negative prompt option allows adding descriptions of things to avoid including in the image, in combination with the standard prompt. As with the standard prompt the model's understanding of the negative prompt is not perfect, so things described in the negative prompt may still occur in the image.
 
 ### Image to image
 
