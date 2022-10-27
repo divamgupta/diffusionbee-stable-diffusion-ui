@@ -54,7 +54,7 @@ To use the inpainting functions, add an image and scribble in the image to mask 
 
 ### Outpainting
 
-The outpainting function is used to expand an image a larger area.
+The outpainting function is used to expand an image to a larger area.
 
 To use the outpainting functions, add an image and move the 512×512 frame to a place where you want to expand the image, and provide a text prompt. The process may be repeated to expand the image several times and in different directions.
 
