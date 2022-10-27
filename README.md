@@ -43,7 +43,7 @@ Join discord server : https://discord.gg/t6rC5RaJQn
 
 
 ## Requirements 
-* M1 / M2 Mac
+* M1/M2 Mac
 * 16 GB RAM preferred. It will run a bit slow with 8GB ram.
 * MacOS 12.5.1 or later
 
