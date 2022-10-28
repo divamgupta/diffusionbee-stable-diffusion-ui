@@ -116,7 +116,7 @@ class ProgressBarDownloader(object):
                     if time.time() - last_time > 0.1:
                         last_time = time.time()
                         print("sdbk mlpr %d"%int(done_percentage) ) # model loading percentage
-                        print("sdbk mlms \"%s\""%("%.2fMB out of %.2fMB"%(dl/1000000 , total_length/1000000) ))
+                        print("sdbk mlms %s"%("%.2fMB out of %.2fMB"%(dl/1000000 , total_length/1000000) ))
 
         print("sdbk mlpr %d"%int(-1) )
         print("sdbk mltl Checking Model")

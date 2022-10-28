@@ -8,7 +8,7 @@ from .autoencoder_kl import Decoder, Encoder
 from .diffusion_model import UNetModel
 from .clip_encoder import CLIPTextTransformer
 from .clip_tokenizer import SimpleTokenizer
-from .constants import _UNCONDITIONAL_TOKENS, _ALPHAS_CUMPROD
+from .constants import _UNCONDITIONAL_TOKENS, _ALPHAS_CUMPROD, PYTORCH_CKPT_MAPPING
 from .stdin_input import is_avail, get_input
 from PIL import Image, ImageOps
 MAX_TEXT_LEN = 77
@@ -28,17 +28,18 @@ def process_inp_img(input_image):
     input_image = ImageOps.fit(input_image, (new_w, new_h), method = Image.BILINEAR ,
                    bleed = 0.0, centering =(0.5, 0.5))
     input_image = np.array(input_image)[... , :3]
-    input_image = (input_image.astype("float") / 255.0)*2 - 1 
+    input_image = (input_image.astype("float32") / 255.0)*2 - 1 
     return new_h , new_w  , input_image
 
 
 class StableDiffusion:
-    def __init__(self, img_height=1000, img_width=1000, jit_compile=False, download_weights=True):
+    def __init__(self, img_height=1000, img_width=1000, jit_compile=False, download_weights=True , is_sd_15_inpaint=False):
         self.img_height = img_height
         self.img_width = img_width
         self.tokenizer = SimpleTokenizer()
+        self.is_sd_15_inpaint = is_sd_15_inpaint
 
-        text_encoder, diffusion_model, decoder, encoder , text_encoder_f , diffusion_model_f , decoder_f , encoder_f = get_models(img_height, img_width, download_weights=download_weights)
+        text_encoder, diffusion_model, decoder, encoder , text_encoder_f , diffusion_model_f , decoder_f , encoder_f = get_models(img_height, img_width, download_weights=download_weights, is_sd_15_inpaint=is_sd_15_inpaint )
         self.text_encoder = text_encoder
         self.diffusion_model = diffusion_model
         self.decoder = decoder
@@ -147,8 +148,15 @@ class StableDiffusion:
             img_height, img_width , timesteps, batch_size, seed , input_image=input_image, input_img_noise_t=input_img_noise_t
         )
 
-        if input_image is not None:
+        if input_image is not None and (not self.is_sd_15_inpaint):
             timesteps = timesteps[: int(len(timesteps)*input_image_strength)]
+
+        
+
+        if self.is_sd_15_inpaint:
+            masked_img  = input_image[None] * (1-mask_image[None])
+            masked_inp_enc  = self.encoder_f( masked_img )
+            masked_inp_enc = tf.repeat(masked_inp_enc , batch_size , axis=0)
 
         # Diffusion stage
         ii = 0
@@ -163,8 +171,13 @@ class StableDiffusion:
             percentage = 100*ii/len(timesteps)
             ii += 1
             print("sdbk dnpr "+str(percentage) ) # done percentage 
+
+            latent_cat = latent
+            if self.is_sd_15_inpaint:
+                latent_cat = tf.concat([latent , tf.repeat(mask_image_sm[None] , batch_size , axis=0) , masked_inp_enc ], axis=-1)
+
             e_t = self.get_model_output(
-                latent,
+                latent_cat,
                 timestep,
                 context,
                 unconditional_context,
@@ -176,7 +189,7 @@ class StableDiffusion:
                 latent, e_t, index, a_t, a_prev, temperature, seed + index
             )
 
-            if mask_image is not None and input_image is not None:
+            if mask_image is not None and input_image is not None and not self.is_sd_15_inpaint :
                 # If mask is provided, noise at current timestep will be added to input image.
                 # The intermediate latent will be merged with input latent.
                 latent_orgin, _, _ = self.get_starting_parameters(
@@ -191,8 +204,8 @@ class StableDiffusion:
         else:
             decoded = self.decoder.predict_on_batch(latent)
 
-        if mask_image is not None:
-            decoded = input_image * (1-mask_image) + decoded * mask_image
+        if mask_image is not None and (not self.is_sd_15_inpaint):
+            decoded = input_image[None] * (1-mask_image[None]) + decoded * mask_image[None]
         
         decoded = ((decoded + 1) / 2) * 255
         return np.clip(decoded, 0, 255).astype("uint8")
@@ -262,7 +275,7 @@ class StableDiffusion:
         alphas = [_ALPHAS_CUMPROD[t] for t in timesteps]
         alphas_prev = [1.0] + alphas[:-1]
 
-        if input_image is None:
+        if input_image is None or self.is_sd_15_inpaint :
             latent_np = np.random.RandomState(seed).normal(size=(batch_size, n_h, n_w, 4)).astype('float32')
             latent = tf.convert_to_tensor(latent_np)
         else:
@@ -274,8 +287,21 @@ class StableDiffusion:
         # latent = tf.random.normal((batch_size, n_h, n_w, 4), seed=seed)
         return latent, alphas, alphas_prev
 
+    def load_weights_from_pytorch_ckpt(self , pytorch_ckpt_path):
+        import torch
+        pt_weights = torch.load(pytorch_ckpt_path)
+        for module_name in ['text_encoder', 'diffusion_model', 'decoder', 'encoder' ]:
+            module_weights = []
+            for i , (key , perm ) in enumerate(PYTORCH_CKPT_MAPPING[module_name]):
+                w = pt_weights['state_dict'][key].numpy()
+                if perm is not None:
+                    w = np.transpose(w , perm )
+                module_weights.append(w)
+            getattr(self, module_name).set_weights(module_weights)
+            print("Loaded %d weights for %s"%(len(module_weights) , module_name))
 
-def get_models(img_height, img_width, download_weights=True):
+
+def get_models(img_height, img_width, download_weights=True, is_sd_15_inpaint=False):
     n_h = img_height // 8
     n_w = img_width // 8
 
@@ -289,7 +315,11 @@ def get_models(img_height, img_width, download_weights=True):
     # Creation diffusion UNet
     context = tf.keras.layers.Input((MAX_TEXT_LEN, 768))
     t_emb = tf.keras.layers.Input((320,))
-    latent = tf.keras.layers.Input((n_h, n_w, 4))
+    if is_sd_15_inpaint:
+        n_unet_ch = 4 + 4 + 1
+    else:
+        n_unet_ch = 4
+    latent = tf.keras.layers.Input((n_h, n_w, n_unet_ch))
     unet = UNetModel()
     diffusion_model_f = unet
     diffusion_model = tf.keras.models.Model(

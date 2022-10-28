@@ -28,59 +28,19 @@
                     style="border-radius: 12px 12px 12px 12px; width: calc(100%); resize: none; " 
                     class="form-control"  
                     v-bind:class="{ 'disabled' : !stable_diffusion.is_input_avail}"
-                    rows="3"></textarea>
+                    :rows="is_negative_prompt_avail ? 2:3"></textarea>
+            <textarea 
+                    v-if="is_negative_prompt_avail"
+                    v-model="negative_prompt" 
+                    placeholder="Enter your negative prompt here" 
+                    style="border-radius: 12px 12px 12px 12px; width: calc(100%); resize: none; margin-top: 5px; " 
+                    class="form-control negative_prompt_tb"  
+                    v-bind:class="{ 'disabled' : !stable_diffusion.is_input_avail}"
+                    :rows="1"></textarea>
 
             <div v-if="stable_diffusion.is_input_avail" class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
                 <div class="l_button button_medium button_colored" style="float:right ; " @click="generate_img2img" >Generate</div>
-
-                <div style="float:right; margin-top: -5px;" >
-                        <b-dropdown id="dropdown-form" variant="link" ref="dropdown" toggle-class="text-decoration-none" no-caret >
-                        
-                            <template #button-content>
-                                <div class="l_button"  style="" >Options</div>
-                            </template>
-
-                            <b-dropdown-form style="min-width: 240px ; ">
-
-                                <b-form-group inline  label="" style="margin-bottom: 6px;" >
-                                    <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Input Strength: </label>
-                                    <b-form-select
-                                    v-model="inp_img_strength"
-                                    :options="[ 0.1 , 0.2 , 0.3 , 0.4 , 0.5 , 0.6 , 0.7 , 0.8 , 0.9 ]"
-                                    required
-                                    ></b-form-select>
-                                </b-form-group>
-                                
-                                <b-form-group inline  label="" style="margin-bottom: 6px;" >
-                                    <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Num Images: </label>
-                                    <b-form-select
-                                    v-model="num_imgs"
-                                    :options="[1,2,3,4,5,6,7,8,9,10,11,12,13,14, 15 , 20 , 30 , 50 , 100]"
-                                    required
-                                    ></b-form-select>
-                                </b-form-group>
-
-                                <b-form-group inline label=""  style="margin-bottom: 6px;">
-                                <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Steps: </label>
-                                <b-form-select
-                                    v-model="dif_steps"
-                                    :options="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49 , 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75]"
-                                    required
-                                ></b-form-select>
-                                </b-form-group>
-
-                                <b-form-group inline  label="" style="margin-bottom: 6px;" >
-                                <label class="mr-sm-2" style="margin-right: 8px ;" for="inline-form-custom-select-pref">Seed: </label>
-                    
-                                <b-form-input onkeypress="return event.keyCode != 13;"  size="sm" class="mr-sm-2"  v-model="seed" style="max-width: 40px; float: right; margin-right: 30px;" ></b-form-input>
-
-                                </b-form-group>
-
-                            </b-dropdown-form>
-                        </b-dropdown>
-                    </div>
-
-
+                <SDOptionsDropdown :options_model_values="this_object" :elements_hidden="['img_h' , 'img_w' ]"> </SDOptionsDropdown>
             </div>
             <div v-else-if="stable_diffusion.generated_by=='img2img'"  class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
                 <div v-if="is_stopping" class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stopping ...</div>
@@ -130,6 +90,7 @@ import ImageCanvas from '../components_bare/ImageCanvas.vue'
 
 import LoaderModal from '../components_bare/LoaderModal.vue'
 import Vue from 'vue'
+import SDOptionsDropdown from '../components_bare/SDOptionsDropdown.vue'
 
 export default {
     name: 'Img2Img',
@@ -137,13 +98,16 @@ export default {
         app_state : Object   , 
         stable_diffusion : Object,
     },
-    components: {LoaderModal, ImageItem , ImageCanvas},
+    components: { LoaderModal, ImageItem, ImageCanvas, SDOptionsDropdown },
     mounted() {
 
     },
     computed:{
         is_sd_active(){
             return this.stable_diffusion.is_input_avail;
+        },
+        this_object(){
+            return this;
         }
     },
     watch: {
@@ -170,6 +134,10 @@ export default {
             img_h : 512 , 
             img_w : 512 , 
             is_inpaint : false,
+            guidence_scale : 7.5 , 
+
+            is_negative_prompt_avail : false, 
+            negative_prompt : "",
         };
     },
     methods: {
@@ -216,6 +184,10 @@ export default {
             }
             if(this.is_inpaint)
                 params['mask_image'] = mask_img;
+
+            if(this.is_negative_prompt_avail)
+                params['negative_prompt'] = this.negative_prompt;
+
             let that = this;
             this.backend_error = "";
             Vue.set(this,'generated_images' ,[]);
@@ -227,11 +199,18 @@ export default {
                 on_img(img_path){
                     that.generated_images.push(img_path);
 
-                    if(!(that.app_state.history[history_key]))
-                        Vue.set(that.app_state.history, history_key , {
+                
+                    let p = {
                             "prompt":that.prompt , "seed": seed, "key":history_key , "imgs" : [] , "inp_img": input_image_with_mask,
-                            "dif_steps" : that.dif_steps , "inp_img_strength" : that.inp_img_strength, "model_version": that.stable_diffusion.model_version
-                        });
+                            "dif_steps" : that.dif_steps , "inp_img_strength" : that.inp_img_strength, "model_version": that.stable_diffusion.model_version , "guidence_scale" : that.guidence_scale , 
+                        }
+                    if(that.stable_diffusion.model_version)
+                        p['model_version'] = that.stable_diffusion.model_version;
+                    if(that.is_negative_prompt_avail)
+                        p['negative_prompt'] = that.negative_prompt;
+
+                    if(!(that.app_state.history[history_key]))
+                        Vue.set(that.app_state.history, history_key , p );
                     
                     that.app_state.history[history_key].imgs.push(img_path)
 
