@@ -6,6 +6,8 @@
             <div class="l_button"  v-if="is_stage_modified && stable_diffusion.is_input_avail"   style="float:right "  @click="save_image"> Save Image </div>
             <div v-if="undo_history.length > 0 && stable_diffusion.is_input_avail " class="l_button"  style="float:right " @click="do_undo" > Undo </div>
             <div class="l_button" v-if="stable_diffusion.is_input_avail"  style="float:right "  @click="add_ext_img"> Add Image</div>
+            <div class="l_button" v-if="stable_diffusion.is_input_avail && is_stage_modified"  style="float:right "  @click="is_eraser_enabled=!is_eraser_enabled"> {{is_eraser_enabled?'Stop':'Start'}} Erasing</div>
+            
         </div>
        
         <div id="outpainting_container" style="  ">
@@ -84,12 +86,24 @@ export default {
             is_stopping : false,
             backend_error : "",
             done_percentage : -1,
+
+            is_earasing: false, 
+            is_eraser_enabled: false,
         };
     },
     watch: {
         'stable_diffusion.is_input_avail': {
-            handler: function(v) {
-                if(v)
+            handler: function() {
+                if(this.stable_diffusion.is_input_avail && (!this.is_eraser_enabled))
+                    this.box.draggable(true)
+                else
+                    this.box.draggable(false)
+            },
+            deep: true
+        } , 
+        'is_eraser_enabled' : {
+            handler: function() {
+                if(this.stable_diffusion.is_input_avail && (!this.is_eraser_enabled))
                     this.box.draggable(true)
                 else
                     this.box.draggable(false)
@@ -100,16 +114,16 @@ export default {
 
     methods: {
         init_state(){
-
+            let that = this;
             this.stage_h = this.stage_w / (window.innerWidth  / ( window.innerHeight - 200 ));
 
             this.prompt = ""
 
-            let canvas_bg_color = "#F2F2F2"
+            this.canvas_bg_color = "#F2F2F2"
             let box_color = '#4070f7'
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 // dark mode
-                canvas_bg_color = "#1c1c1c"
+                this.canvas_bg_color = "#1c1c1c"
             }
 
             this.freeze_last_resizable_img()
@@ -140,7 +154,11 @@ export default {
 
             // add cursor styling
             box.on('mouseover', function () {
-                document.body.style.cursor = 'move';
+                if(!that.is_eraser_enabled)
+                    document.body.style.cursor = 'move';
+                else 
+                    document.body.style.cursor = 'default';
+
             });
             box.on('mouseout', function () {
                 document.body.style.cursor = 'default';
@@ -162,14 +180,12 @@ export default {
             this.images_layer = new Konva.Layer({opacity:1});
             this.stage.add(this.images_layer);
 
-            
-
             bg = new Konva.Rect({
                                 x: 0,
                                 y: 0,
                                 width: this.stage.width(),
                                 height: this.stage.height(),
-                                fill : canvas_bg_color,
+                                fill : this.canvas_bg_color,
                             });
             this.images_layer.add(bg);
 
@@ -185,6 +201,73 @@ export default {
 
             window.addEventListener('resize', this.resize_stage);
             onVisible(document.querySelector("#outpainting_container") , this.resize_stage )
+
+            this.init_eraser()
+        },
+
+        init_eraser(){
+            let that = this;
+            this.stage.on('mousedown touchstart', function () {
+                if(!that.is_eraser_enabled)
+                    return;
+                that.is_earasing = true;
+                let pos = that.stage.getPointerPosition();
+                let sx = that.stage.scale().x
+                let sy = that.stage.scale().y
+                
+                that.lastLine = new Konva.Line({
+                    stroke: that.canvas_bg_color,
+                    strokeWidth: 15,
+                    globalCompositeOperation: 'source-over',
+                    // round cap for smoother lines
+                    lineCap: 'round',
+                    lineJoin: 'round',
+                    // add point twice, so we have some drawings even on a simple click
+                    points:[pos.x/sx, pos.y/sy, pos.x/sx, pos.y/sy],
+                });
+
+                
+
+                that.lastLine_alpha = new Konva.Line({
+                    stroke: 'white',
+                    strokeWidth: 20,
+                    globalCompositeOperation: 'source-over',
+                    
+                    // round cap for smoother lines
+                    lineCap: 'round',
+                    lineJoin: 'round',
+                    // add point twice, so we have some drawings even on a simple click
+                    points: [pos.x/sx, pos.y/sy, pos.x/sx, pos.y/sy],
+                });
+
+                that.undo_history.push({alpha : that.lastLine_alpha  , img : that.lastLine })
+
+
+                that.images_layer.add(that.lastLine);
+                that.alpha_layer.add(that.lastLine_alpha)
+            });
+
+
+            this.stage.on('mouseup touchend', function () {
+                that.is_earasing  = false;
+                that.is_eraser_enabled = false;
+            });
+
+            this.stage.on('mousemove touchmove', function () {
+                if (! that.is_earasing  ) {
+                    return;
+                }
+                if(!that.is_eraser_enabled)
+                    return;
+
+                let sx = that.stage.scale().x
+                let sy = that.stage.scale().y
+                const pos = that.stage.getPointerPosition();
+                let newPoints = that.lastLine.points().concat([pos.x/sx, pos.y/sy]);
+                that.lastLine.points(newPoints);
+                that.lastLine_alpha.points(newPoints);
+            });
+
         },
 
         freeze_last_resizable_img(){
@@ -232,10 +315,10 @@ export default {
                 that.images_layer.add(imgg);
 
                 let box = new Konva.Rect({
-                                x: imgg.x(),
-                                y: imgg.y(),
-                                width: imgg.width(),
-                                height: imgg.height(),
+                                x: imgg.x()+2,
+                                y: imgg.y()+2,
+                                width: imgg.width()-4/scale,
+                                height: imgg.height()-4/scale,
                                 scaleX: scale,
                                 scaleY: scale ,
                                 fill : "black",
@@ -255,21 +338,21 @@ export default {
                     that.last_resizable_img = { img: imgg, tr:tr }
 
                     imgg.on('transformend',     function () {
-                        box.height(imgg.height())
-                        box.width(imgg.width())
-                        box.x(imgg.x())
-                        box.y(imgg.y())
-                        box.scaleY(imgg.scaleY())
-                        box.scaleX(imgg.scaleX())
+                        box.height(imgg.height() - 4/imgg.scaleY())
+                        box.width(imgg.width() - 4/imgg.scaleX())
+                        box.x(imgg.x() + 2)
+                        box.y(imgg.y() + 2)
+                        box.scaleY(imgg.scaleY() )
+                        box.scaleX(imgg.scaleX() )
                     });
 
                     imgg.on('dragmove',     function () {
-                        box.height(imgg.height())
-                        box.width(imgg.width())
-                        box.x(imgg.x())
-                        box.y(imgg.y())
-                        box.scaleY(imgg.scaleY())
-                        box.scaleX(imgg.scaleX())
+                        box.height(imgg.height() - 4/imgg.scaleY())
+                        box.width(imgg.width() - 4/imgg.scaleX())
+                        box.x(imgg.x() + 2)
+                        box.y(imgg.y() + 2)
+                        box.scaleY(imgg.scaleY() )
+                        box.scaleX(imgg.scaleX() )
                     });
 
 
