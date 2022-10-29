@@ -6,6 +6,10 @@ This documentation is written for version 1.4.2. Parts of it may be unapplicable
 
 On first launch, DiffusionBee will download and install additional data for image generation.
 
+### Updates
+
+DiffusionBee occasionally recieves updates to add new features and improve performance. When prompted on startup, re-download the application from the site, and replace the new file in the location of the old one. Your history and models will be saved.
+
 ## Generating images
 
 Depending on settings and available computing power it may take a few seconds to a few minutes to generate an image. Image generation may be aborted by pressing the stop button. Use the "save image" link to save the image to a location of your choice.
