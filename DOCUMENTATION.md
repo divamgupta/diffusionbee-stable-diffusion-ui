@@ -50,7 +50,6 @@ The inpainting function is used to replace/repaint parts of an image, for exampl
 
 To use the inpainting functions, add an image and scribble in the image to mask the are you wish DiffusionBee to re-paint for you. You will usually get a better result if you maska significantly larger area than the part you actually want to change.
 
-**Note that options in *image to image* also affect inpainting.** Using a low input strength (0.3 or below), use many steps (50 or more) may give better results.
 
 ### Outpainting
 
@@ -58,7 +57,6 @@ The outpainting function is used to expand an image to a larger area.
 
 To use the outpainting functions, add an image and move the 512×512 frame to a place where you want to expand the image, and provide a text prompt. The process may be repeated to expand the image several times and in different directions.
 
-**Note that options in *image to image* also affect outpainting.** Using a high input strength (0.7 or above) may give better results.
 
 ## History
 
