@@ -15,6 +15,15 @@ https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download
 
 <br>
 
+Install using Homebrew:
+```
+brew install --cask diffusionbee
+```
+
+Update using Homebrew:
+```
+brew upgrade diffusionbee
+```
 For prompt ideas visit https://arthub.ai
 
 Join discord server : https://discord.gg/t6rC5RaJQn
