@@ -52,7 +52,7 @@ Click on the left pane to upload a sketch starting image (only png supported). A
 
 The inpainting function is used to replace/repaint parts of an image, for example to add a bow tie to a cat or removing a car from a photo of a street.
 
-To use the inpainting functions, add an image and scribble in the image to mask the are you wish DiffusionBee to re-paint for you. You will usually get a better result if you maska significantly larger area than the part you actually want to change.
+To use the inpainting functions, add an image and scribble in the image to mask the are you wish DiffusionBee to re-paint for you. You will usually get a better result if you maska significantly larger area than the part you actually want to change. Right now, the inpainting model works with a max height of width size of 512 pixels, so any images bigger than that will be scalled down proportionally to fit the model.
 
 
 ### Outpainting
@@ -79,7 +79,7 @@ Sharing images uploads images along with prompt and settings to arthub.ai. Befor
 * Image generation requires a substantial amount of system memory. Close other applications for a faster generation.
 * You can save time while tuning your prompts by lowering the *steps* setting, then turning it back up once you found a good prompt.
 * When tuning prompts, make sure that you enter a seed to make it possible to recreate images. If you generate more than one image per seed (via either the Num Images or Batch setting) there will not be a way to tie any of the images generated after the first one to the same seed. For example, if I have Num Images set to 3 and Seed set to 1000, the first of my three generated images will correspond to the seed of 1000, but I won't know the seed for the other two images.
-* When _num images_ is set to more than 1, `1234` is added to the seed for each image following the first one. This can be used to recreate number 4 in a string of images without having to recreate all the previous ones.
+* When _num images_ is set to more than 1, `1234` is added to the seed for each image following the first one. Therefore, the formula to calculate the seed of the $n^{th}$ image in a batch is the following: $seed(n) = seed + (n\times{1234})$. This can be used to recreate any number in a string of images without having to recreate all the previous ones.
 * All created images are stored at `~/.diffusionbee/images/` in your file system. There is no interface in DiffusionBee for deleting images, but they can be deleted manually from this hidden directory.
 * The model is stored at `~/.diffusionbee/downloads`. If you already have the model available and don't want to re-download it, move, copy or symlink it to that directory.
 * The _Show logs_ menu option shows logs that are mostly useful for developers or for tracking errors. You exit the log by clicking one of the tabs.
