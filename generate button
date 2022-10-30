@@ -1,0 +1,23 @@
+/*a clickable generate button*/
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.button {
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoartion: none;
+    display: inline-block;
+    font-size: 18px;
+    margin: 4px 2px;
+    cursor: pointer;
+    }
+    
+    .button {background-color : #4CAF50;} /*Green*/
+    
+    <button class = "button
+    button">Green</button>
+    </body> 
+    </html>
