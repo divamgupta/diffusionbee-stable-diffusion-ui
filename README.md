@@ -1,10 +1,10 @@
-# Diffusion Bee - Stable Diffusion GUI App for M1 Mac
+# Diffusion Bee - Stable Diffusion GUI App for MacOS
 [![Twitter](https://img.shields.io/twitter/url.svg?label=Follow%20%40divamgupta&style=social&url=https%3A%2F%2Ftwitter.com%2Fdivamgupta)](https://twitter.com/divamgupta)
 
 
-### Diffusion Bee is the easiest way to run Stable Diffusion locally on your M1 Mac. Comes with a one-click installer. No dependencies or technical knowledge needed.
+### Diffusion Bee is the easiest way to run Stable Diffusion locally on your Intel / M1 Mac. Comes with a one-click installer. No dependencies or technical knowledge needed.
 
-* Runs locally on your computer no data is sent to the cloud ( other than request to download the weights and checking for software updates ).
+* Runs locally on your computer no data is sent to the cloud ( other than request to download the weights or unless you chose to upload an image ).
 *  *If you like Diffusion Bee, consider checking https://Liner.ai , a one-click tool to train machine learning models*
 
 <br>
@@ -21,7 +21,7 @@ Join discord server : https://discord.gg/t6rC5RaJQn
 
 
 ## Features
-* Full data privacy - nothing is sent to the cloud ( unless you chose to upload in image )
+* Full data privacy - nothing is sent to the cloud ( unless you chose to upload an image )
 * Clean and easy to use UI with one-click installer
 * Image to image
 * In-painting
