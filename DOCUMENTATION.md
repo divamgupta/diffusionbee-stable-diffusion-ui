@@ -56,7 +56,7 @@ Click on the left pane to upload a sketch starting image (only png supported). A
 
 The inpainting function is used to replace/repaint parts of an image, for example to add a bow tie to a cat or removing a car from a photo of a street.
 
-To use the inpainting functions, add an image and scribble in the image to mask the are you wish DiffusionBee to re-paint for you. You will usually get a better result if you maska significantly larger area than the part you actually want to change. Right now, the inpainting model works with a max height of width size of 512 pixels, so any images bigger than that will be scalled down proportionally to fit the model.
+To use the inpainting functions, add an image and scribble on it to mask the area you wish DiffusionBee to re-paint for you. You will usually get a better result if you mask a significantly larger area than the part you actually want to change. Right now, the inpainting model works with a max height of 512 pixels, so any images bigger than that will be scaled down proportionally to fit the model.
 
 
 ### Outpainting
@@ -93,4 +93,4 @@ Sharing images uploads images along with prompt and settings to arthub.ai. Befor
 
 ## Join the discussion
 
-Join the DiffusionBee discord at https://discord.gg/t6rC5RaJQn
+Join the [DiffusionBee Discord Server](https://discord.gg/t6rC5RaJQn) to chat with the community.
