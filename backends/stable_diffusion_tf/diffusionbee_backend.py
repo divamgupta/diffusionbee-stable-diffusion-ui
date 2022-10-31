@@ -132,7 +132,8 @@ def main():
 
     print("sdbk mltl Loading Model")
 
-    for _ in range(5):
+    is_downloaded = False
+    for _ in range(10):
         try:
             p1 = ProgressBarDownloader(title="Downloading Model 1/8").download(
                         url="https://huggingface.co/fchollet/stable-diffusion/resolve/main/diffusion_model.h5",
@@ -192,14 +193,15 @@ def main():
                         extract_zip=False,
                     )
 
-
+            is_downloaded = True
             break
         except Exception as e:
             pass
 
-        time.sleep(4)
+        time.sleep(10)
 
-    
+    if not is_downloaded:
+        raise ValueError("Unable to download the model weights. Please try again and make sure you have free space and a working internet connection.")
 
             
 
