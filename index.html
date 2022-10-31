@@ -24,7 +24,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <title>DiffusionBee - Stable Diffusion GUI App</title>
-
+<link rel="icon" 
+      type="image/png" 
+      href="/favicon.png">
 
 
 <meta content="DiffusionBee is the easiest way to run Stable Diffusion locally on your M1 Mac. Comes with a one-click installer." name="description" />
@@ -42,6 +44,7 @@
 
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -242,7 +245,17 @@ a {
     line-height: 1.5rem;
     margin-bottom: 2.5rem;
   }
+
+
 }
+
+@media only screen and (min-width: 840px) {
+   .liner_link{
+    max-width: 75%; float : right; margin-right: 40px;
+  }
+
+}
+
 
 @media only screen and (max-width: 600px) {
   .overlay {
@@ -295,32 +308,76 @@ a {
                     <div class="overlay__inner" style="max-width:none;">
                         <!-- Title -->
                         <h1 class="overlay__title">
-                            <span class="text-gradient">DiffusionBee</span> - Stable Diffusion GUI App for M1 Mac
+                            <span class="text-gradient">DiffusionBee</span> - Stable Diffusion App for MacOS
                         </h1>
                         <!-- Description -->
                         <p class="overlay__description">
-                            DiffusionBee is the easiest way to run Stable Diffusion locally on your M1 Mac. Comes with a one-click installer.
+                            DiffusionBee is the easiest way to generate AI art on your computer with Stable Diffusion. Comes with a one-click installer.
                             <strong> No dependencies or technical knowledge needed.</strong>
                         </p>
                         <!-- Buttons -->
                         <div class="overlay__btns">
                             
-                            <a href="https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download/1.3.1/DiffusionBee-1.3.1-arm64.dmg" class="overlay__btn overlay__btn--colors">
+                           <!--  <a href="https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download/1.3.1/DiffusionBee-1.3.1-arm64.dmg" class="overlay__btn overlay__btn--colors">
                                 <span><img src="b.png" style="width:90%; margin-left: 5%; max-height: 95%;"></span>
-                            </a>
+                            </a> -->
+
+                            <div class="dropdown">
+                  <!--             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                Dropdown button
+                              </button>
+ -->
+                                <button style="background: black;" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown"   class="overlay__btn overlay__btn--colors  ">
+                                    <span><img src="b.png" style="width:90%; margin-left: 5%; max-height: 95%;"></span>
+                                </button>
+
+
+                              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style=" ">
+
+                                <li><a class="dropdown-item" href="https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download/1.4.3/DiffusionBee-1.4.3-intel_MPS_SD1.5_FP16.dmg">
+                                    <b> Intel 64 Bit</b> <br>
+                                    <p style="zoom:0.9"> Good with any intel based Mac. </p>
+                                </a></li>
+                                <hr style="margin-top:0">
+                               <!--   <li><a class="dropdown-item" href="#">
+                                    <b> Apple Silicon - HQ Version</b> <br>
+                                    <p style="  zoom:0.9"> Runs slower but produces better images.  <br> Recommended for powerful M1 Pro / Max /  <br> Ultra based machines.  </p>
+                                </a></li> -->
+                                
+                                <li><a class="dropdown-item" href="https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download/1.4.3/DiffusionBee-1.4.3-arm64_MPS_SD1.5_FP16.dmg">
+                                    <b> Apple Silicon</b> <br>
+                                    <p style="zoom:0.9"> Good with M1 / M2 etc. processors. </p>
+                                </a></li>
+
+                                <hr style="margin-top:0">
+
+                                 <li><a class="dropdown-item" href="https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download/1.4.3/DiffusionBee-1.4.3-arm64_TF_SD1.4_FP32.dmg">
+                                    <!-- <p style=" "> Apple Silicon Legacy Version</p> -->
+                                    <p style="zoom:0.9">M1 Legacy Version - Runs slower but <br> produces little better images. </p>
+                                </a></li>
+
+                               
+
+                              </ul>
+                            </div>
+
+
                         </div>
                         <br><br>
                         <h2 class="overlay__title2">
                             Features:
                         </h2>
                         <p class="overlay__description">
-                            1) Full data privacy - nothing is sent to the cloud<br>
+                            1) Runs locally on your computer<br>
                             2) Clean and easy to use UI <br>
                             3) One click installer<br>
-                            4) No dependencies needed<br>
-                            5) Multiple image sizes<br>
-                            6) Optimized for M1/M2 Chips<br>
-                            7) Runs locally on your computer<br>
+                            4) Image to image<br>
+                            5) In-painting<br>
+                            6) Out-painting<br>
+                            7) Upscaling images<br>
+                            8) Negative prompts and advanced prompt options<br>
+                            9) Data privacy - nothing is sent to the cloud ( unless you chose to share an image ) <br>
+                            10) One-click install
                         </p>
                     </div>
 
@@ -342,7 +399,9 @@ a {
 
                     <img  src="sc.png" style="width:100%">
 
-                    <p> If you like Diffusion Bee, consider checking <a style="display:inline; color: blue;" href="https://Liner.ai">Liner.ai</a> , a one-click tool to train machine learning models.</p>
+                    <div class="liner_link">
+                      <p> If you like Diffusion Bee, consider checking <a style="display:inline; color: blue;" href="https://Liner.ai">Liner.ai</a> , a one-click tool to train machine learning models.</p>
+                    </div>
 
                 </div>
             </div>
