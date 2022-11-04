@@ -75,7 +75,7 @@ Outpainting:
 
 ![image](https://user-images.githubusercontent.com/1890549/198916091-62872915-af1d-4553-b657-934c1c8c7aca.png)
 
-Histiory:
+History:
 
 ![image](https://user-images.githubusercontent.com/1890549/198916678-9061829c-69da-4eee-b28d-1989e01c11e0.png)
 
