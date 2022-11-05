@@ -1,4 +1,5 @@
 from stable_diffusion_tf.stable_diffusion import StableDiffusion
+from stable_diffusion_tf.stdin_input import is_avail, get_input
 import argparse
 from PIL import Image
 import json
@@ -223,7 +224,7 @@ def main():
     while True:
         print("sdbk inrd") # input ready
 
-        inp_str = input()
+        inp_str = get_input()
 
         if inp_str.strip() == "":
             continue

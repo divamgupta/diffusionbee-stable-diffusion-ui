@@ -115,7 +115,7 @@ export default {
     methods: {
         init_state(){
             let that = this;
-            this.stage_h = this.stage_w / (window.innerWidth  / ( window.innerHeight - 200 ));
+            this.stage_h = this.stage_w / (window.innerWidth  / ( window.innerHeight - 210 ));
 
             this.prompt = ""
 
