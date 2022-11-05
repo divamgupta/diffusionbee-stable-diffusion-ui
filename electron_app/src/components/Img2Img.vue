@@ -40,7 +40,7 @@
 
             <div v-if="stable_diffusion.is_input_avail" class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
                 <div class="l_button button_medium button_colored" style="float:right ; " @click="generate_img2img" >Generate</div>
-                <SDOptionsDropdown :options_model_values="this_object" :elements_hidden="['img_h' , 'img_w' ]"> </SDOptionsDropdown>
+                <SDOptionsDropdown :options_model_values="this_object" :elements_hidden="['img_h' , 'img_w' , 'batch_size']"> </SDOptionsDropdown>
             </div>
             <div v-else-if="stable_diffusion.generated_by=='img2img'"  class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
                 <div v-if="is_stopping" class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stopping ...</div>
