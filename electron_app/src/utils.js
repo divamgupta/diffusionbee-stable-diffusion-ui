@@ -97,7 +97,12 @@ function open_popup( img_url , text ){
     
     let uri = "data:text/html," + encodeURIComponent(html);
     uri;
-    window.open(escapeHtml(uri), '_blank', 'top=100,left=100,nodeIntegration=no,frame=false'); // 
+    let if_frame= '';
+    if(navigator.platform.toUpperCase().indexOf('MAC')>=0 ){
+        if_frame = ",frame=false"
+    }
+
+    window.open(escapeHtml(uri), '_blank', 'top=100,left=100,nodeIntegration=no'+if_frame); // 
     
 
 }

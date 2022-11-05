@@ -9,7 +9,7 @@
                     </div>
                 </template>
                 <b-dropdown-item-button   @click="save_image(path)"  >Save Image</b-dropdown-item-button>
-                <b-dropdown-item-button @click="upsclae" >Upscale Image</b-dropdown-item-button>
+                <b-dropdown-item-button v-if="is_mac" @click="upsclae" >Upscale Image</b-dropdown-item-button>
                 <b-dropdown-item-button @click="send_img2img" >Send to Img2Img</b-dropdown-item-button>
                 <b-dropdown-item-button @click="send_inpaint" >Send to Inpaint</b-dropdown-item-button>
                 
@@ -39,6 +39,11 @@ export default {
     components: {},
     mounted() {
 
+    },
+    computed : {
+        is_mac(){
+            return (navigator.platform.toUpperCase().indexOf('MAC')>=0 )
+        },
     },
     data() {
         return {};
