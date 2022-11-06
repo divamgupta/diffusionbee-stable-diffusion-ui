@@ -7,11 +7,11 @@
             <img class="gal_img" style="width: 90%;" src="https://colormadehappy.com/wp-content/uploads/2022/02/How-to-draw-a-cute-dog-6.jpg"/> 
          -->
 
-            <div v-if="inp_img" class="image_area" :class="{ crosshair_cur  : is_inpaint }"  style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
+            <div v-if="inp_img" @drop.prevent="onDragFile" @dragover.prevent class="image_area" :class="{ crosshair_cur  : is_inpaint }"  style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
                 <ImageCanvas ref="inp_img_canvas" :is_inpaint="is_inpaint" :image_source="inp_img"  :is_disabled="!stable_diffusion.is_input_avail" canvas_id="img2imgcan" canvas_d_id="img2imgcand" ></ImageCanvas>
             </div>
-            <div v-else @click="open_input_image" class="image_area" :class="{ pointer_cursor  : is_sd_active }" style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
-                <center>
+                <div v-else @drop.prevent="onDragFile" @dragover.prevent @click="open_input_image" class="image_area" :class="{ pointer_cursor  : is_sd_active }" style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
+                    <center>
                     <p style="margin-top: calc( 50vh - 180px); opacity: 70%;" >Click to add input image</p>
                 </center>
             </div>
@@ -40,7 +40,7 @@
 
             <div v-if="stable_diffusion.is_input_avail" class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
                 <div class="l_button button_medium button_colored" style="float:right ; " @click="generate_img2img" >Generate</div>
-                <SDOptionsDropdown :options_model_values="this_object" :elements_hidden="['img_h' , 'img_w' , 'batch_size']"> </SDOptionsDropdown>
+                <SDOptionsDropdown :options_model_values="this_object" :elements_hidden="['img_h' , 'img_w' ]"> </SDOptionsDropdown>
             </div>
             <div v-else-if="stable_diffusion.generated_by=='img2img'"  class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
                 <div v-if="is_stopping" class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stopping ...</div>
@@ -240,8 +240,18 @@ export default {
             if(img_path && img_path != 'NULL'){
                 this.inp_img = img_path;
                 this.is_inpaint = false;
-            }
-                
+            }      
+        },
+        onDragFile(e){
+            if( !this.stable_diffusion.is_input_avail)
+                return;
+            if(!e.dataTransfer.files[0].type.startsWith('image/'))
+                return;
+            let img_path = e.dataTransfer.files[0].path;
+            if(img_path && img_path != 'NULL'){
+                this.inp_img = img_path;
+                this.is_inpaint = false;
+            }      
         },
 
         stop_generation(){

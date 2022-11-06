@@ -19,7 +19,7 @@
 
         </div>
 
-        <div class="inapint_container"   >
+        <div class="inapint_container" @drop.prevent="onDragFile" @dragover.prevent>
             <ImageCanvas style="cursor: crosshair;"  v-if="inp_img"  ref="inp_img_canvas" :is_inpaint="true" :image_source="inp_img"  :is_disabled="!stable_diffusion.is_input_avail" id="inpaint"  canvas_id="inpaintcan" canvas_d_id="inpaintcand" :stroke_size_no="stroke_size_no" ></ImageCanvas>
             <div v-else @click="open_input_image" style=" "  :class="{ pointer_cursor  : is_sd_active }" >
                 <center>
@@ -191,6 +191,15 @@ export default {
             if(img_path && img_path != 'NULL'){
                this.set_inp_image(img_path)
             }
+        },
+
+        onDragFile(e) {
+            if (!this.stable_diffusion.is_input_avail)
+                return;
+            if (!e.dataTransfer.files[0].type.startsWith('image/'))
+                return;
+            let img_path = e.dataTransfer.files[0].path;
+            this.set_inp_image(img_path)
         },
 
         do_undo(){

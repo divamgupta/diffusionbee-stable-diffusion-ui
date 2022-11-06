@@ -10,7 +10,7 @@
             
         </div>
        
-        <div id="outpainting_container" style="  ">
+        <div id="outpainting_container" @drop.prevent="onDragFile" @dragover.prevent style="  ">
         </div>
         <textarea 
                     v-model="prompt" 
@@ -407,6 +407,15 @@ export default {
 
 
         },
+
+        onDragFile(e) {
+           if (!this.stable_diffusion.is_input_avail)
+               return;
+           if (!e.dataTransfer.files[0].type.startsWith('image/'))
+               return;
+           let img_path = e.dataTransfer.files[0].path;
+           this.add_img_to_stage(img_path, true)
+       },
 
 
 
