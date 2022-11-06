@@ -6,16 +6,17 @@
                 <div class="l_button" style="">Options</div>
             </template>
 
-            <b-dropdown-form style="min-width: 350px;max-height: calc(100vh - 250px);overflow-y: scroll;">
+            <b-dropdown-form style="min-width: 350px;max-height: calc(100vh - 300px); overflow-y: scroll;">
+                <br>
                 <div style="display: flex;flex-wrap: wrap;justify-content: center;gap: 15px;">
                     <span v-if="!elements_hidden.includes('inp_img_strength')">
                         <div style="display: flex;flex-direction: column;width: 300px;">
                             <div class="options_title_box">
                                 <span>Input Strength</span>
-                                <span class="options_desc">How closely to follow your prompt (lower
-                                    numbers give the AI more creativity, in percent)</span>
+                                <span class="options_desc">How  closely to stick to the input image.  (lower
+                                    numbers makes the AI do more change)</span>
                             </div>
-                            <input type="range" min="10" max="90" value="75" step='0.01' class="slider"
+                            <input type="range" min="10" max="90"  :value="options_model_values.inp_img_strength*100"   step='0.01' class="slider"
                                 @input="SetStrength" list='tickmarks'>
                             <div id="tickmarks">
                                 <p>10</p>
@@ -173,7 +174,7 @@
                                 <span class="options_desc">How closely to follow your prompt (lower
                                     numbers give the AI more creativity)</span>
                             </div>
-                            <input type="range" min="0" max="20" value="7.5" step='0.01' class="slider"
+                            <input type="range" min="0" max="20" v-model="options_model_values.guidence_scale" step='0.01' class="slider"
                                 @input="SetGuidenceScale" list='tickmarks'>
                             <div id="tickmarks">
                                 <p>0</p>
@@ -247,12 +248,12 @@ export default {
         SetStrength(e) {
             var value = (e.target.value - e.target.min) / (e.target.max - e.target.min) * 100
             e.target.style.background = 'linear-gradient(to right, var(--slider-progress) 0%, var(--slider-progress) ' + value + '%, var(--slider-progress_end) ' + value + '%, var(--slider-progress_end) 100%)'
-            this.options_model_values.strength = Number(e.target.value / 100);
+            this.options_model_values.inp_img_strength = Number(e.target.value / 100);
         },
         SetGuidenceScale(e) {
             var value = (e.target.value - e.target.min) / (e.target.max - e.target.min) * 100
             e.target.style.background = 'linear-gradient(to right, var(--slider-progress) 0%, var(--slider-progress) ' + value + '%, var(--slider-progress_end) ' + value + '%, var(--slider-progress_end) 100%)'
-            this.options_model_values.guidance_scale = Number(e.target.value)
+            // this.options_model_values.guidence_scale = Number(e.target.value)
         }
     },
 }
