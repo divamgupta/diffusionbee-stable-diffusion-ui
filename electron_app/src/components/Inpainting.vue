@@ -1,10 +1,8 @@
 <template>
     <div  class="animatable_content_box ">
         <div class="content_toolbox" style="margin-bottom: -13px; ">
-
             
-
-            <div v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" style="float:right " @click="clear" > Clear</div>
+            <div v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" style="float:right " @click="clear" > Reset</div>
             <div v-if="undo_history.length > 0  && stable_diffusion.is_input_avail" class="l_button" style="float:right " @click="do_undo" > Undo</div>
             <div v-if="inp_img " class="l_button" style="float:right " @click="save_img" > Save Image</div>
             <div v-if="retry_params  && stable_diffusion.is_input_avail" class="l_button" style="float:right "   @click="generate(true)"> Retry</div>
