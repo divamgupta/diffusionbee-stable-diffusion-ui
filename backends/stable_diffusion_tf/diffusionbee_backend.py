@@ -94,10 +94,11 @@ def process_opt(d, generator):
 
 cur_model_id = -1
 cur_model = None
-def get_sd_model(model_id):
+cur_cust_model_path = None
+def get_sd_model(model_id, cust_model_path=None):
     global p1 , p2 , p3 , p4 , p1_15 , p2_15 , p3_15 , p4_15 
-    global cur_model_id , cur_model
-    if cur_model_id != model_id:
+    global cur_model_id , cur_model, cur_cust_model_path
+    if cur_model_id != model_id or ( model_id == -1 and cur_cust_model_path != cust_model_path ):
         
         if cur_model is not None:
             cur_model = None
@@ -111,6 +112,18 @@ def get_sd_model(model_id):
             cur_model.decoder.load_weights(p3) 
             cur_model.encoder.load_weights(p4) 
             print("sdbk mdvr 1.4tf")
+
+        elif model_id == -1:
+
+            print("sdbk gnms  Loading SD Model"  )
+            assert cust_model_path is not None
+            cur_model = StableDiffusion(img_height=512, img_width=512, jit_compile=False, download_weights=False, is_sd_15_inpaint=False)
+           
+            print("sdbk mdvr custom_" + cust_model_path.split(os.sep)[-1].split(".")[0])
+
+            cur_model.load_from_tdict(cust_model_path)
+            cur_cust_model_path = cust_model_path
+
         elif model_id == 1:
             print("sdbk mdvr 1.5tf_inp")
             print("sdbk gnms  Loading SD Inpainting Model"  )
@@ -216,7 +229,7 @@ def main():
 
     default_d = { "W" : 512 , "H" : 512, "num_imgs":1 , "ddim_steps" : 25 ,
      "scale" : 7.5, "batch_size":1 , "input_image" : None, "img_strength": 0.5
-     , "negative_prompt" : "" ,  "mask_image" : None, "model_id": 0 }
+     , "negative_prompt" : "" ,  "mask_image" : None, "model_id": 0 , "custom_model_path":None}
 
 
     print("sdbk mdld")
@@ -238,7 +251,7 @@ def main():
             d.update(d_)
             print("sdbk inwk") # working on the input
             generator = None
-            generator = get_sd_model(d['model_id'])
+            generator = get_sd_model(d['model_id'], d['custom_model_path'])
                 
             process_opt(d, generator)
         except Exception as e:
