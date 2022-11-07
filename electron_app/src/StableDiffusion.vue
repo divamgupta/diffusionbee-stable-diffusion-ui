@@ -5,6 +5,7 @@
 
 import { send_to_py } from "./py_vue_bridge.js"
 import {get_tokens} from './clip_tokeniser/clip_encoder.js'
+const nsfwjs = require('nsfwjs');
 
 function remove_non_ascii(str) {
   
@@ -27,6 +28,7 @@ export default {
         return {
             is_backend_loaded : false,
             is_input_avail : false,
+            nsfw_filter: true,
             model_loading_msg : "",
             model_loading_title : "",
             loading_percentage : -1 , 
@@ -50,11 +52,35 @@ export default {
             }
             if(msg_code == "nwim"){
                 let impath = msg.substring(5).trim()
-                if(this.attached_cbs){
-                    if(this.attached_cbs.on_img)
-                        this.attached_cbs.on_img(impath);
-                }
 
+                const img = new Image();
+                img.src = "file://" + impath;
+
+                img.attached_cbs = this.attached_cbs;
+
+
+                img.onload = () => {
+                    if (this.nsfw_filter == false) {
+                        if (img.attached_cbs) {
+                            if (img.attached_cbs.on_img)
+                                img.attached_cbs.on_img(impath);
+                        }
+                    }
+                    nsfwjs.load()
+                        .then(model => model.classify(img))
+                        .then(predictions => {
+                            switch (predictions[0].className) {
+                                case 'Hentai':
+                                case 'Porn':
+                                case 'Sexy':
+                                    impath = "nsfw";
+                            }
+                            if (img.attached_cbs) {
+                                if (img.attached_cbs.on_img)
+                                    img.attached_cbs.on_img(impath);
+                            }
+                        });
+                }
             }
 
             if(msg_code == "mdvr"){

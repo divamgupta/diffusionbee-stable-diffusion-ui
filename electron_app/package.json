@@ -32,6 +32,7 @@
     "electron-notarize": "^1.2.1",
     "electron-settings": "^4.0.2",
     "javascript-time-ago": "^2.3.13",
+    "nsfwjs": "^2.4.2",
     "konva": "^8.3.13",
     "v-click-outside": "^3.1.2",
     "vue": "^2.6.11",
