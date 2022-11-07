@@ -58,7 +58,7 @@ export default {
 
                 img.attached_cbs = this.attached_cbs;
 
-
+                // check for nsfw content
                 img.onload = () => {
                     if (this.nsfw_filter == false) {
                         if (img.attached_cbs) {
@@ -72,7 +72,6 @@ export default {
                             switch (predictions[0].className) {
                                 case 'Hentai':
                                 case 'Porn':
-                                case 'Sexy':
                                     impath = "nsfw";
                             }
                             if (img.attached_cbs) {
