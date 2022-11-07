@@ -1,6 +1,18 @@
 @import '../assets/css/theme.css';
 <template>
     <div  class="animatable_content_box ">
+
+        <b-form-input
+            onkeypress="return event.keyCode != 13;"
+            size="sm"
+            placeholder="Search by prompt text"
+            v-model="searchText"
+            autofocus
+            debounce="200"
+            style="max-width: 240px; float: left; margin-right: 30px;"
+            id="searchText"
+        />
+
         <div @click="toggle_order()" style="float:right; margin-bottom: 20px;" class="l_button">
           {{this.app_state.show_history_in_oldest_first ? "Oldest": "Newest"}} First
         </div>
@@ -56,6 +68,7 @@ import ImageItem from '../components/ImageItem.vue'
 import {share_on_arthub} from '../utils.js'
 
 import Vue from 'vue'
+import Fuse from 'fuse.js'
 
 export default {
     name: 'History',
@@ -69,7 +82,9 @@ export default {
 
     },
     data() {
-        return {};
+        return {
+            searchText: ''
+        };
     },
     methods: {
         delete_hist(k){
@@ -78,7 +93,20 @@ export default {
 
         get_history() {
           let history = Object.values(this.app_state.app_data.history);
-          return this.app_state.show_history_in_oldest_first ? history : history.reverse();
+          const that = this;
+          const list = this.app_state.show_history_in_oldest_first ? history : history.reverse();
+
+          if (that.searchText.trim() === '') {
+            return list;
+          }
+          
+          const fuse = new Fuse(list, {
+            keys: ['prompt'],
+            useExtendedSearch: true,
+          });
+          
+          return fuse.search(that.searchText).map(r => r.item);
+
         },
 
         toggle_order() {
