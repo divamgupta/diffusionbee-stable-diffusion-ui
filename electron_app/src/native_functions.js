@@ -61,6 +61,11 @@ ipcMain.on('file_dialog', (event, arg) => {
         properties = ['openFile' ]
         options = { filters :[ {name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'bmp']}] , properties: properties } ;
     }
+    else if(arg == 'ckpt_file') // single image file 
+    {
+        properties = ['openFile' ]
+        options = { filters :[ {name: 'Checkpoints', extensions: ['ckpt']}] , properties: properties } ;
+    }
     else if(arg == 'img_files') // multi image files
     {
         properties = ['multiSelections' , 'openFile' ]
@@ -387,7 +392,12 @@ ipcMain.on('load_data', (event, arg) => {
     let data_path = path.join(homedir , ".diffusionbee" , "data.json");
 
     if (fs.existsSync(data_path)){
-        event.returnValue = JSON.parse(fs.readFileSync( data_path ));
+        let json_str = fs.readFileSync( data_path );
+        try {
+            event.returnValue = JSON.parse(json_str);
+          } catch (error) {
+            event.returnValue = {} ;
+          }
     }
     else{
         event.returnValue = {} ;
@@ -395,6 +405,19 @@ ipcMain.on('load_data', (event, arg) => {
 
 })
 
+
+ipcMain.on('delete_file', (event, fpath) => {
+    const fs = require('fs');
+    try{
+        fs.unlinkSync(fpath);
+        console.log("deleted")
+        event.returnValue = true;
+    } catch {
+        console.log("err in deleting")
+        event.returnValue = false;
+    }
+    
+})
 
 
 function run_realesrgan(input_path , cb ){
@@ -426,6 +449,57 @@ function run_realesrgan(input_path , cb ){
     });
 }
 
+
+
+function add_custom_pytorch_models(pytorch_model_path, model_name, cb ){
+    
+    const path = require('path');
+    const fs = require('fs');
+    const homedir = require('os').homedir();
+    let models_path = path.join(homedir , ".diffusionbee" , "custom_models");
+
+    if (!fs.existsSync(models_path)){
+        fs.mkdirSync(models_path, { recursive: true });
+    }
+
+    let out_path =  path.join(homedir , ".diffusionbee" , "custom_models" , model_name+".tdict" );
+    let bin_path =  process.env.CONVERT_MODEL_BIN || path.join(path.dirname(__dirname), 'core' , 'convert_model' );
+    
+
+    let proc = require('child_process').spawn( bin_path  , [pytorch_model_path , out_path ]);
+    let errors = ""
+
+    proc.stderr.on('data', (data) => {
+        console.error(`sr stderr: ${data}`);
+        errors += data
+    });
+
+    proc.stdout.on('data', (data) => {
+        console.error(`sr sdtout: ${data}`);
+    });
+
+    proc.on('close', (code) => {
+        if(code != 0){
+            cb({success:false , error:errors  })
+            try{
+                fs.unlinkSync(out_path);
+            } catch {}
+        }
+        else{
+            cb({success:true, model_path:out_path })
+        }
+       
+    });
+}
+
+
+ipcMain.handle('add_custom_pytorch_models', async (event, pytorch_model_path, model_name ) => {
+    const result = await new Promise(resolve => add_custom_pytorch_models( pytorch_model_path, model_name  , resolve));
+    return result
+})
+
+
+
 ipcMain.handle('run_realesrgan', async (event, arg) => {
     const result = await new Promise(resolve => run_realesrgan( arg , resolve));
     return result
@@ -434,6 +508,23 @@ ipcMain.handle('run_realesrgan', async (event, arg) => {
 // ipcRenderer.invoke('run_realesrgan', '/Users/divamgupta/Downloads/333.png' ).then((result) => {
 //     alert(result)
 //   })
+
+
+
+ipcMain.on('list_custom_models', (event, arg) => {
+    const path = require('path');
+    const fs = require('fs');
+    const homedir = require('os').homedir();
+    let models_path = path.join(homedir , ".diffusionbee" , "custom_models");
+
+    if (!fs.existsSync(models_path)){
+        fs.mkdirSync(models_path, { recursive: true });
+    }
+
+    event.returnValue = fs.readdirSync(models_path, {withFileTypes: true}).filter(item => !item.isDirectory()).map(item => item.name).filter(item => item.endsWith('.tdict'))
+
+})
+
 
 
 console.log("native functions imported")

@@ -4,7 +4,7 @@
         <div @click="toggle_order()" style="float:right; margin-bottom: 20px;" class="l_button">
           {{this.app_state.show_history_in_oldest_first ? "Oldest": "Newest"}} First
         </div>
-        <div v-if="Object.values(app_state.history).length > 0">
+        <div v-if="Object.values(app_state.app_data.history).length > 0">
             <div v-for="history_box in get_history()" :key="history_box.key" style="clear: both;">
             
                 <div @click="delete_hist(history_box.key)" style="float:right; margin-top: 10px;"  class="l_button">Delete</div>
@@ -73,11 +73,11 @@ export default {
     },
     methods: {
         delete_hist(k){
-            Vue.delete( this.app_state.history , k );
+            Vue.delete( this.app_state.app_data.history , k );
         },
 
         get_history() {
-          let history = Object.values(this.app_state.history);
+          let history = Object.values(this.app_state.app_data.history);
           return this.app_state.show_history_in_oldest_first ? history : history.reverse();
         },
 

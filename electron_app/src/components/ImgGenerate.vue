@@ -72,7 +72,7 @@
 
             <div v-if="generated_images.length == 1" >
                 <center>
-                    <ImageItem :app_state="app_state"  :path="generated_images[0]" :style_obj="{ 'width': 'calc(100vh - 380px )' , 'margin-top': '60px' }"></ImageItem>
+                    <ImageItem :app_state="app_state"  :path="generated_images[0]" :style_obj="{ 'width': 'calc(100vh - 390px )' , 'margin-top': '60px' }"></ImageItem>
                 </center>
             </div>
             
@@ -152,6 +152,7 @@ export default {
             modifiers : require("../modifiers.json"),
             is_negative_prompt_avail : false, 
             negative_prompt : "",
+            selected_model : 'Default'
         };
         
     },
@@ -179,8 +180,12 @@ export default {
                 scale : this.guidence_scale , 
                 ddim_steps : this.dif_steps, 
                 num_imgs : this.num_imgs , 
-                batch_size : this.batch_size , 
+                batch_size : this.batch_size 
+            }
 
+            if(this.selected_model && this.selected_model != "Default" && this.app_state.app_data.custom_models[this.selected_model] ){
+                params.model_id = -1;
+                params.custom_model_path =  this.app_state.app_data.custom_models[this.selected_model].path;
             }
 
             if(this.is_negative_prompt_avail)
@@ -201,23 +206,23 @@ export default {
                 on_img(img_path){
                     that.generated_images.push(img_path);
 
-                    if(!(that.app_state.history[history_key])){
+                    if(!(that.app_state.app_data.history[history_key])){
                         let p = {
                             "prompt":that.prompt , "seed": seed, "img_w":that.img_w , "img_h":that.img_h ,  "key":history_key , "imgs" : [],
-                            "guidence_scale" : that.guidence_scale , "dif_steps" : that.dif_steps  
+                            "guidence_scale" : that.guidence_scale , "dif_steps" : that.dif_steps 
                         }
                         if(that.stable_diffusion.model_version)
                             p['model_version'] = that.stable_diffusion.model_version;
                         if(that.is_negative_prompt_avail)
                             p['negative_prompt'] = that.negative_prompt;
-                        Vue.set(that.app_state.history, history_key , p);
+                        Vue.set(that.app_state.app_data.history, history_key , p);
                     }
                         
 
                     
-                    that.app_state.history[history_key].imgs.push(img_path)
+                    that.app_state.app_data.history[history_key].imgs.push(img_path)
 
-                    console.log(that.app_state.history)
+                    console.log(that.app_state.app_data.history)
 
                 },
                 on_progress(p ){

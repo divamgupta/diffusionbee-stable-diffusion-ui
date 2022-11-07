@@ -138,6 +138,7 @@ export default {
 
             is_negative_prompt_avail : false, 
             negative_prompt : "",
+            selected_model : 'Default'
         };
     },
     methods: {
@@ -180,8 +181,15 @@ export default {
                 batch_size : this.batch_size , 
                 img_strength : this.inp_img_strength,
                 input_image : input_image,
-                is_inpaint : this.is_inpaint,
+                is_inpaint : this.is_inpaint                
             }
+
+            if(this.selected_model && this.selected_model != "Default" && this.app_state.app_data.custom_models[this.selected_model] ){
+                params.model_id = -1;
+                params.custom_model_path =  this.app_state.app_data.custom_models[this.selected_model].path;
+            }
+
+            
             if(this.is_inpaint)
                 params['mask_image'] = mask_img;
 
@@ -199,7 +207,6 @@ export default {
                 on_img(img_path){
                     that.generated_images.push(img_path);
 
-                
                     let p = {
                             "prompt":that.prompt , "seed": seed, "key":history_key , "imgs" : [] , "inp_img": input_image_with_mask,
                             "dif_steps" : that.dif_steps , "inp_img_strength" : that.inp_img_strength, "model_version": that.stable_diffusion.model_version , "guidence_scale" : that.guidence_scale , 
@@ -209,12 +216,12 @@ export default {
                     if(that.is_negative_prompt_avail)
                         p['negative_prompt'] = that.negative_prompt;
 
-                    if(!(that.app_state.history[history_key]))
-                        Vue.set(that.app_state.history, history_key , p );
+                    if(!(that.app_state.app_data.history[history_key]))
+                        Vue.set(that.app_state.app_data.history, history_key , p );
                     
-                    that.app_state.history[history_key].imgs.push(img_path)
+                    that.app_state.app_data.history[history_key].imgs.push(img_path)
 
-                    console.log(that.app_state.history)
+                    console.log(that.app_state.app_data.history)
 
                 },
                 on_progress(p){

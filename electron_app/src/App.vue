@@ -76,6 +76,10 @@
                 <History :app_state="app_state"></History>
             </template>
 
+            <template v-slot:settings>
+                <Settings :app_state="app_state"></Settings>
+            </template>
+
             <template v-slot:logs>
                 <div class="animatable_content_box ">
                     <p>Logs : </p>
@@ -111,6 +115,8 @@ import Outpainting from './components/Outpainting.vue'
 import UpscaleImage from './components/UpscaleImage.vue'
 import Inpainting from "./components/Inpainting.vue"
 import History from './components/History.vue'
+import Settings from './components/Settings.vue'
+
 
 import LoaderModal from './components_bare/LoaderModal.vue'
 import Vue from "vue"
@@ -131,7 +137,8 @@ export default
         Img2Img,
         Outpainting,
         UpscaleImage, 
-        Inpainting
+        Inpainting,
+        Settings
     },
 
     mounted() {
@@ -157,8 +164,19 @@ export default
 
 
         let data = window.ipcRenderer.sendSync('load_data');
-        if( data.history)
-            Vue.set(this.app_state , 'history' , data.history)
+        if(!data.history){
+            data.history = {}
+        }
+        if(!data.settings){
+            data.settings = {}
+        }
+        if(!data.custom_models){
+            data.custom_models = {}
+        }
+        if( data ){
+            Vue.set(this.app_state , 'app_data' , data)
+        }
+            
      
     },
 
@@ -183,10 +201,10 @@ export default
             deep: true
         } , 
 
-        'app_state.history': {
+        'app_state.app_data': {
 
             handler: function(new_value) {
-                window.ipcRenderer.sendSync('save_data', {"history": new_value });
+                window.ipcRenderer.sendSync('save_data', new_value );
             },
             deep: true
         } , 
@@ -293,7 +311,7 @@ export default
             show_splash_screen : true , // is showing the loading splash screen
             logs : "",
             global_loader_modal_msg : "",
-            history : {},
+            app_data: {history : {}},
         };
 
         return {

@@ -10,6 +10,7 @@
                                 <font-awesome-icon icon="bars" />
                             </div>
                         </template>
+                        
                         <b-dropdown-item-button @click="$emit('menu_item_click_help',{})">Help</b-dropdown-item-button>
                         <b-dropdown-item-button @click="$emit('menu_item_click_discord',{})">Start Discord Chat</b-dropdown-item-button>
                         <b-dropdown-item-button @click="selectTab('logs')">Show Logs</b-dropdown-item-button>
@@ -18,6 +19,8 @@
                         <b-dropdown-item-button @click="$emit('menu_item_click_oss_license',{})">Open-source Licences</b-dropdown-item-button>
 
                         <b-dropdown-item-button @click="$emit('menu_item_click_about',{})">About</b-dropdown-item-button>
+
+                        <b-dropdown-item-button @click="selectTab('settings')">Settings</b-dropdown-item-button>
 
                         <b-dropdown-item-button @click="$emit('menu_item_click_close',{})">Close</b-dropdown-item-button>
                         <!-- #TODO set these menu items via python -->
@@ -65,12 +68,18 @@
                     <slot name="outpainting"></slot>
                 </div>
 
+                <div style="display:none"  :class="{ bl_display : selected_tab === 'settings'  }" >
+                    <slot name="settings"></slot>
+                </div>
+
+
 
 
                 <div  v-if="selected_tab === 'logs' " style="display:none"  :class="{ bl_display : selected_tab === 'logs'  }" >
                     <slot name="logs"></slot>
                 </div>
 
+                
                 
 
 

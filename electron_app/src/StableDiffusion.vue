@@ -131,8 +131,7 @@ export default {
 
             if(prompt_params.negative_prompt){
                 prompt_params.negative_prompt = remove_non_ascii(prompt_params.negative_prompt)
-            }
-                
+            }                
 
             this.last_iter_t = Date.now()
             this.generated_by = generated_by;

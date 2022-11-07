@@ -211,14 +211,58 @@
                         </div>
                     </div>
 
-                    <div v-if="(!options_model_values.is_negative_prompt_avail) && !elements_hidden.includes('nagative_prompt')"
-                        class="l_button"
-                        @click="options_model_values.is_negative_prompt_avail = !options_model_values.is_negative_prompt_avail">
-                        Enable Negative Prompt</div>
-                    <div v-else class="l_button"
-                        @click="options_model_values.is_negative_prompt_avail = !options_model_values.is_negative_prompt_avail">
-                        Disable Negative Prompt</div>
+
+                    <div class="options_title">
+                        <div class="options_title_box" style="width: 165px;">
+                            <span>Custom Model</span>
+                            <span class="options_desc">You can use a custom stable diffusion models. Open settings to add a ckpt model.</span>
+                        </div>
+                        <div class="options_input" style="width: 115px;">
+                            <svg width="18" height="19" viewBox="0 0 18 19" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 5.5H12.01" stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path
+                                    d="M14 1.5H4C2.34315 1.5 1 2.84315 1 4.5V14.5C1 16.1569 2.34315 17.5 4 17.5H14C15.6569 17.5 17 16.1569 17 14.5V4.5C17 2.84315 15.6569 1.5 14 1.5Z"
+                                    stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path
+                                    d="M1 12.5L5 8.50001C5.45606 8.06117 5.97339 7.83014 6.5 7.83014C7.02661 7.83014 7.54394 8.06117 8 8.50001L13 13.5"
+                                    stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path
+                                    d="M11 11.5L12 10.5C12.4561 10.0612 12.9734 9.83014 13.5 9.83014C14.0266 9.83014 14.5439 10.0612 15 10.5L17 12.5"
+                                    stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+
+                            <b-form-select v-model="options_model_values.selected_model"
+                                :options="['Default'].concat(Object.keys(options_model_values.app_state.app_data.custom_models))"
+                                required></b-form-select>
+                        </div>
+                    </div>
+
+                    <div class="options_title">
+                        <div class="options_title_box" style="width: 205px;">
+                            <span>Negative Prompt</span>
+                            <span class="options_desc">Negative prompt allows adding things to avoid in the image,</span>
+                        </div>
+                        <div class="options_input" style="width: 75px;">
+                            <div v-if="(!options_model_values.is_negative_prompt_avail) && !elements_hidden.includes('nagative_prompt')"
+                                class="l_button"
+                                @click="options_model_values.is_negative_prompt_avail = !options_model_values.is_negative_prompt_avail">
+                                Enable </div>
+                            <div v-else class="l_button"
+                                @click="options_model_values.is_negative_prompt_avail = !options_model_values.is_negative_prompt_avail">
+                                Disable</div>
+                        </div>
+                    </div>
+
+
+
+                    
                 </div>
+                <br>
             </b-dropdown-form>
         </b-dropdown>
     </div>

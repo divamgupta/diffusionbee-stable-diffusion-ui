@@ -12,9 +12,9 @@
 
 @media (prefers-color-scheme: light) {
      :root {
-        --slider-progress: #D0A3FD;
+        --slider-progress: #8cb8f2;
         --slider-progress_end: #F1F4FA;
-        --slider-circle: #9131F1;
+        --slider-circle: #3174f1;
         --slider-border: white;
     }
     body {
@@ -136,9 +136,9 @@
 
 @media (prefers-color-scheme: dark) {
      :root {
-        --slider-progress: #5304a3;
+        --slider-progress: #0444a3;
         --slider-progress_end: #303030;
-        --slider-circle: #3a076d;
+        --slider-circle: #07296d;
         --slider-border: #222222;
     }
     body {
