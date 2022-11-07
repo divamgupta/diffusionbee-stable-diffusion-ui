@@ -143,7 +143,8 @@ async function temp_upload_img(img_path) {
 async function share_on_arthub(imgs , params,  prompt ) {
     let urls = [];
     for(let im of imgs)
-        urls.push( await temp_upload_img(im))
+        if(im != 'nsfw')
+            urls.push( await temp_upload_img(im))
 
     console.log(urls.join(','))
 

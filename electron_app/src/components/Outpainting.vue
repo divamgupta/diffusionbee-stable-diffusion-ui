@@ -6,7 +6,7 @@
             <div class="l_button"  v-if="is_stage_modified && stable_diffusion.is_input_avail"   style="float:right "  @click="save_image"> Save Image </div>
             <div v-if="undo_history.length > 0 && stable_diffusion.is_input_avail " class="l_button"  style="float:right " @click="do_undo" > Undo </div>
             <div class="l_button" v-if="stable_diffusion.is_input_avail"  style="float:right "  @click="add_ext_img"> Add Image</div>
-            <div class="l_button" v-if="stable_diffusion.is_input_avail && is_stage_modified"  style="float:right "  @click="is_eraser_enabled=!is_eraser_enabled"> {{is_eraser_enabled?'Stop':'Start'}} Erasing</div>
+            <div class="l_button" v-if="stable_diffusion.is_input_avail && is_stage_modified"  style="float:right "  @click="is_eraser_enabled=!is_eraser_enabled; freeze_last_resizable_img()"> {{is_eraser_enabled?'Stop':'Start'}} Erasing</div>
             
         </div>
        
