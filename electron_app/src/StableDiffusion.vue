@@ -5,7 +5,7 @@
 
 import { send_to_py } from "./py_vue_bridge.js"
 import {get_tokens} from './clip_tokeniser/clip_encoder.js'
-import * as nsfwjs from 'nsfwjs'
+const nsfwjs = require('nsfwjs');
 
 function remove_non_ascii(str) {
   
