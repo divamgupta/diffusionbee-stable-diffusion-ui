@@ -68,6 +68,7 @@
 </template>
 <script>
 import ImageItem from '../components/ImageItem.vue'
+import {native_confirm} from "../native_functions_vue_bridge.js";
 import {share_on_arthub} from '../utils.js'
 
 import Vue from 'vue'
@@ -135,8 +136,10 @@ export default {
             return r;
         },
 
-        clear_history(){
-            Vue.set( this.app_state.app_data, "history", {});
+         clear_history(){
+            if (native_confirm("Are you sure you want to clear history?")){
+                Vue.set( this.app_state.app_data, "history", {});
+            }
         },
 
         share_on_arthub(box){
