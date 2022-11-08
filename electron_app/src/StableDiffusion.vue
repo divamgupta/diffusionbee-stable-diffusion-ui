@@ -5,7 +5,7 @@
 
 import { send_to_py } from "./py_vue_bridge.js"
 import {get_tokens} from './clip_tokeniser/clip_encoder.js'
-const nsfwjs = require('nsfwjs');
+
 
 function remove_non_ascii(str) {
   
@@ -49,39 +49,48 @@ export default {
             if(msg_code == "inwk"){
                 this.is_input_avail = false;
             }
+
+            // removing the nsfw thing as it does not run in m1 build
+            // if(msg_code == "nwim"){
+            //     let impath = msg.substring(5).trim()
+
+            //     const img = new Image();
+            //     img.src = "file://" + impath;
+
+            //     img.attached_cbs = this.attached_cbs;
+
+            //     // check for nsfw content
+            //     img.onload = () => {
+            //         if (this.$parent.app_state.app_data.settings.nsfw_filter == true) {
+            //             if (img.attached_cbs) {
+            //                 if (img.attached_cbs.on_img)
+            //                     img.attached_cbs.on_img(impath);
+            //             }
+            //         }
+            //         else {
+            //             const nsfwjs = require('nsfwjs');
+            //             nsfwjs.load()
+            //                 .then(model => model.classify(img))
+            //                 .catch(() => {
+            //                     console.log("cant run nsfw")
+            //                 })
+            //                 .then(predictions => {
+            //                     if (predictions && (predictions[0].className ==  'Hentai' || predictions[0].className ==  'Porn')) {
+            //                             impath = "nsfw_" + Math.random();
+            //                     }
+            //                     if (img.attached_cbs) {
+            //                         if (img.attached_cbs.on_img)
+            //                             img.attached_cbs.on_img(impath);
+            //                     }
+            //                 });
+            //         }
+            //     }
+            // }
             if(msg_code == "nwim"){
                 let impath = msg.substring(5).trim()
-
-                const img = new Image();
-                img.src = "file://" + impath;
-
-                img.attached_cbs = this.attached_cbs;
-
-                // check for nsfw content
-                img.onload = () => {
-                    if (this.$parent.app_state.app_data.settings.nsfw_filter == true) {
-                        if (img.attached_cbs) {
-                            if (img.attached_cbs.on_img)
-                                img.attached_cbs.on_img(impath);
-                        }
-                    }
-                    else {
-                        
-                        nsfwjs.load()
-                            .then(model => model.classify(img))
-                            .catch(() => {
-                                console.log("cant run nsfw")
-                            })
-                            .then(predictions => {
-                                if (predictions && (predictions[0].className ==  'Hentai' || predictions[0].className ==  'Porn')) {
-                                        impath = "nsfw_" + Math.random();
-                                }
-                                if (img.attached_cbs) {
-                                    if (img.attached_cbs.on_img)
-                                        img.attached_cbs.on_img(impath);
-                                }
-                            });
-                    }
+                if(this.attached_cbs){
+                    if(this.attached_cbs.on_img)
+                        this.attached_cbs.on_img(impath);
                 }
             }
 
