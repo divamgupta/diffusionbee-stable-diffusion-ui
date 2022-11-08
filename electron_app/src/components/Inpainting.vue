@@ -88,13 +88,14 @@ export default {
         return {
             prompt: "",
             inp_img : "",
-
+            input_img_orig : "", // the first input image after reset
             backend_error : "",
             done_percentage : -1,
             is_stopping : false,
             undo_history : [],
             retry_params: undefined,
             stroke_size_no : "30",
+            "history_key" : "",
         };
     },
     methods: {
@@ -165,6 +166,18 @@ export default {
                 on_img(img_path){
                     that.inp_img = img_path
                     that.$refs.inp_img_canvas.clear_inpaint()
+
+                    if(that.history_key ){
+                        let p = {
+                            "prompt": "Inpainting: " +  that.prompt , "key":that.history_key , "imgs" : [img_path] , "inp_img": that.input_img_orig,
+                            "model_version": that.stable_diffusion.model_version , "guidence_scale" : that.guidence_scale , 
+                        }                
+                        Vue.set(that.app_state.app_data.history, that.history_key , p );
+                    }
+                    
+                    
+
+                    
                 },
                 on_progress(p){
                     that.done_percentage = p;
@@ -185,6 +198,8 @@ export default {
         set_inp_image(img_path){
             this.inp_img = img_path;
             this.undo_history = []
+            this.input_img_orig = img_path
+            this.history_key = Math.random()+"inp"
 
             if(this.$refs.inp_img_canvas){
                 this.$refs.inp_img_canvas.clear_inpaint()
@@ -239,6 +254,8 @@ export default {
             this.inp_img = ""
             this.undo_history = []
             this.prompt = ""
+            this.input_img_orig = ""
+            this.history_key = ""
             this.retry_params  = undefined
         },
 

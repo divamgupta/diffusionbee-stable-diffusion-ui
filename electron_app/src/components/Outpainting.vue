@@ -43,6 +43,7 @@
             <LoaderModal :loading_percentage="done_percentage" loading_title="Generating" :loading_desc="stable_diffusion.generation_state_msg"></LoaderModal>
         </div>
 
+        <p style="opacity:0.5; zoom:0.8"> Please describe image you want to draw in the box. </p>
 
      </div>
 </template>
@@ -418,54 +419,7 @@ export default {
            this.add_img_to_stage(img_path, true)
        },
 
-
-
-        // get_mask_of_box(){
-        //     let s = this.stage.scale().x
-        //     let data_uri = this.images_layer.toDataURL({ 
-        //         pixelRatio: 3 , 
-        //         x:  this.box.x() * s  , 
-        //         y: this.box.y()  * s   , 
-        //         width: this.box.width() * s , 
-        //         height: this.box.height() * s } );
-
-        //     let canvas = document.createElement('canvas');
-        //     canvas.width = this.box.width() * s * 3
-        //     canvas.height = this.box.height() * s *3
-
-        //     let ctx =  canvas.getContext("2d");
-
-        //     ctx.filter = ' grayscale(1) brightness(10000) contrast(10000)'; // blur('+filt_w+'px)
-        //     ctx.fillStyle = "black";
-        //     ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-        //     let myImage = new Image();
-        //     myImage.src = data_uri;
-
-        //     myImage.onload = function() {
-        //         ctx.drawImage(myImage , 0, 0);
-        //         data_uri = canvas.toDataURL();
-        //         let img_url = window.ipcRenderer.sendSync('save_b64_image',  data_uri , true );
-        //         console.log(img_url)
-        //     };
-        // },
-
         do_undo(){
-            // if(! this.prev_canvas_b64)
-            //     return;
-            // let myImage = new Image();
-            // myImage.src = this.prev_canvas_b64 ;
-            // let that = this;
-            // myImage.onload = function() {
-            //     var kimg = new Konva.Image({
-            //         x: 0,
-            //         y: 0,
-            //         image: myImage,
-            //         width: 300,
-            //          height: 300,
-            //     });
-            //     that.images_layer.add(kimg)
-            // }
             this.freeze_last_resizable_img()
             let im = this.undo_history.pop()
             im.img.destroy()
