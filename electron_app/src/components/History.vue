@@ -16,6 +16,9 @@
         <div @click="toggle_order()" style="float:right; margin-bottom: 20px;" class="l_button">
           {{this.app_state.show_history_in_oldest_first ? "Oldest": "Newest"}} First
         </div>
+        <div @click="clear_history()" style="float:right; margin-bottom: 20px;" class="l_button">
+          Clear History
+        </div>
         <div v-if="Object.values(app_state.app_data.history).length > 0">
             <div v-for="history_box in get_history()" :key="history_box.key" style="clear: both;">
             
@@ -130,6 +133,10 @@ export default {
             if(r.charAt(r.length - 1) == "|")
                 r = r.slice(0, -1);
             return r;
+        },
+
+        clear_history(){
+            Vue.set( this.app_state.app_data, "history", {});
         },
 
         share_on_arthub(box){
