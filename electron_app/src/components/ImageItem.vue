@@ -18,7 +18,7 @@
         </div>
         
         
-        <img v-if="path != 'nsfw'" @click="open_image_popup( path )"  class="gal_img" :src="'file://' + path " style="max-height: 100% ; max-width: 100%;" >
+        <img v-if="!path.startsWith('nsfw_')" @click="open_image_popup( path )"  class="gal_img" :src="'file://' + path " style="max-height: 100% ; max-width: 100%;" >
         <img v-else @click="open_image_popup( path )"  class="gal_img" :src="require('@/assets/nsfw.png')" style="max-height: 100% ; max-width: 100%;" >
         <br>
         <div v-if="!hide_extra_save_button" @click="save_image(path)" class="l_button">Save Image</div>
@@ -51,6 +51,8 @@ export default {
     },
     methods: {
         open_image_popup(img){
+            if(img.startsWith('nsfw_'))
+                return;
             open_popup("file://"+img , undefined);
         },
 

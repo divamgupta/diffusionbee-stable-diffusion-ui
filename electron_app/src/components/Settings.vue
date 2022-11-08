@@ -8,8 +8,8 @@
             <br>
             <div class="setting_box">
             <div class="settings_left">
-            <h2>Block Adult Content</h2>
-            <p>Prevents image generation considered NSFW</p>
+            <h2>Allow NSFW Content</h2>
+            <p>Allows image generation considered NSFW</p>
             </div>
             <hr>
             <div style="float:right;margin-right: 9px;align-self: center;" >

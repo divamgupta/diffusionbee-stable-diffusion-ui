@@ -59,25 +59,29 @@ export default {
 
                 // check for nsfw content
                 img.onload = () => {
-                    if (this.$parent.app_state.app_data.settings.nsfw_filter == false) {
+                    if (this.$parent.app_state.app_data.settings.nsfw_filter == true) {
                         if (img.attached_cbs) {
                             if (img.attached_cbs.on_img)
                                 img.attached_cbs.on_img(impath);
                         }
                     }
-                    nsfwjs.load()
-                        .then(model => model.classify(img))
-                        .then(predictions => {
-                            switch (predictions[0].className) {
-                                case 'Hentai':
-                                case 'Porn':
-                                    impath = "nsfw";
-                            }
-                            if (img.attached_cbs) {
-                                if (img.attached_cbs.on_img)
-                                    img.attached_cbs.on_img(impath);
-                            }
-                        });
+                    else {
+                        
+                        nsfwjs.load()
+                            .then(model => model.classify(img))
+                            .catch(() => {
+                                console.log("cant run nsfw")
+                            })
+                            .then(predictions => {
+                                if (predictions && (predictions[0].className ==  'Hentai' || predictions[0].className ==  'Porn')) {
+                                        impath = "nsfw_" + Math.random();
+                                }
+                                if (img.attached_cbs) {
+                                    if (img.attached_cbs.on_img)
+                                        img.attached_cbs.on_img(impath);
+                                }
+                            });
+                    }
                 }
             }
 
