@@ -28,7 +28,6 @@ export default {
         return {
             is_backend_loaded : false,
             is_input_avail : false,
-            nsfw_filter: true,
             model_loading_msg : "",
             model_loading_title : "",
             loading_percentage : -1 , 
@@ -60,7 +59,7 @@ export default {
 
                 // check for nsfw content
                 img.onload = () => {
-                    if (this.nsfw_filter == false) {
+                    if (this.$parent.app_state.app_data.settings.nsfw_filter == false) {
                         if (img.attached_cbs) {
                             if (img.attached_cbs.on_img)
                                 img.attached_cbs.on_img(impath);
