@@ -193,8 +193,11 @@ export default {
 
             let that = this;
 
-            if(this.prompt.trim() == "")
+            if(this.prompt.trim() == ""){
+                Vue.$toast.default('You need to enter a prompt to generate an image')
                 return;
+            }
+                
 
             this.backend_error = "";
             Vue.set(this,'generated_images' ,[]);

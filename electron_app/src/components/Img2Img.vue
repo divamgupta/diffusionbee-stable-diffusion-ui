@@ -151,11 +151,17 @@ export default {
             else
                 seed = Math.floor(Math.random() * 100000);
 
-            if(this.prompt.trim() == "")
+            if(this.prompt.trim() == ""){
+                Vue.$toast.default('You need to enter a prompt')
                 return;
+            }
+                
 
-            if(!this.inp_img)
+            if(!this.inp_img){
+                Vue.$toast.default('You need to add an input image')
                 return;
+            }
+                
 
             let input_image = window.ipcRenderer.sendSync('save_b64_image',  this.$refs.inp_img_canvas.get_img_b64()  );
             let input_image_with_mask;
@@ -189,7 +195,7 @@ export default {
                 params.custom_model_path =  this.app_state.app_data.custom_models[this.selected_model].path;
             }
 
-            
+
             if(this.is_inpaint)
                 params['mask_image'] = mask_img;
 

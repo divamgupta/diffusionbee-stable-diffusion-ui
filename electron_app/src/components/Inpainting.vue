@@ -66,7 +66,7 @@
 
 import ImageCanvas from '../components_bare/ImageCanvas.vue'
 import LoaderModal from '../components_bare/LoaderModal.vue'
-// import Vue from 'vue'
+import Vue from 'vue'
 
 
 export default {
@@ -117,14 +117,23 @@ export default {
                 mask_img = this.retry_params.mask_img;
             }
             else{
-                if(this.prompt.trim() == "")
-                return;
-
-                if(!this.inp_img)
+                if(this.prompt.trim() == ""){
+                    Vue.$toast.default('You need to enter a prompt')
                     return;
+                }
+                
 
-                if(!this.$refs.inp_img_canvas.is_something_drawn)
+                if(!this.inp_img){
+                    Vue.$toast.default('You need to add an input image')
                     return;
+                }
+                    
+
+                if(!this.$refs.inp_img_canvas.is_something_drawn){
+                    Vue.$toast.default('You need to draw a mask')
+                    return;
+                }
+                   
 
                 prompt = this.prompt;
 

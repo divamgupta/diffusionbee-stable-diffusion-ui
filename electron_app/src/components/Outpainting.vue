@@ -49,6 +49,7 @@
 <script>
 import Konva from 'konva';
 import LoaderModal from '../components_bare/LoaderModal.vue'
+import Vue from 'vue'
 
 function onVisible(element, callback) {
   new IntersectionObserver((entries, observer) => {
@@ -476,8 +477,11 @@ export default {
 
             
 
-            if(this.prompt == "")
+            if(this.prompt == ""){
+                Vue.$toast.default('You need to enter a prompt')
                 return; 
+            }
+                
 
             if(this.last_resizable_img){
                 this.freeze_last_resizable_img()

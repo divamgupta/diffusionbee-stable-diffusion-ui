@@ -55,11 +55,11 @@ import vClickOutside from 'v-click-outside'
 Vue.use(vClickOutside)
 
 
-// // vue toast notification
-// import VueToast from 'vue-toast-notification';
-// import 'vue-toast-notification/dist/theme-sugar.css';
+import VueToast from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
 
-// Vue.use(VueToast);
+Vue.use(VueToast);
+
 
 
 export {}

@@ -33,8 +33,8 @@
     "electron-settings": "^4.0.2",
     "fuse.js": "^6.6.2",
     "javascript-time-ago": "^2.3.13",
-    "nsfwjs": "^2.4.2",
     "konva": "^8.3.13",
+    "nsfwjs": "^2.4.2",
     "v-click-outside": "^3.1.2",
     "vue": "^2.6.11",
     "vue-apexcharts": "^1.6.2",
@@ -42,6 +42,7 @@
     "vue-click-outside": "^1.1.0",
     "vue-inline-svg": "^2.1.0",
     "vue-spinner": "^1.0.4",
+    "vue-toast-notification": "^0.6.3",
     "vue-unicons": "^3.3.1",
     "vue-web-cam": "^1.9.0"
   },
