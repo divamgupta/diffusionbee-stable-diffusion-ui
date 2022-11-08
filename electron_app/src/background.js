@@ -26,8 +26,8 @@ protocol.registerSchemesAsPrivileged([
 ])
 
 
-import {menu_template} from "./menu_template"
-Menu.setApplicationMenu(Menu.buildFromTemplate(menu_template))
+// import {menu_template} from "./menu_template"
+// Menu.setApplicationMenu(Menu.buildFromTemplate(menu_template))
 
 start_bridge();
 

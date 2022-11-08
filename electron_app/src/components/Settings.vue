@@ -4,7 +4,7 @@
         <div  v-if="!is_custom_model_loading">
             <h1>Settings</h1>
             <br>
-            <h2>General Settings</h2>
+            <!-- <h2>General Settings</h2>
             <br>
             <div class="setting_box">
             <div class="settings_left">
@@ -19,7 +19,7 @@
             </label>
             </div>
             </div>
-            <hr>
+            <hr> -->
             <div class="l_button button_colored" style="float:right" @click="add_model"  >Add New Model</div>
             <h2>Custom Models</h2>
             

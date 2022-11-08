@@ -1,0 +1,1 @@
+pyinstaller  convert_model.py  --onefile  --noconfirm --clean
