@@ -20,10 +20,10 @@
           Clear History
         </div>
         <div v-if="Object.values(app_state.app_data.history).length > 0">
-                <div v-if="Object.values(app_state.app_data.history).length > 30">
+                <div v-if="get_history().length > 30">
                     <b-pagination
                         v-model="currentPage"
-                        :total-rows="Object.values(app_state.app_data.history).length"
+                        :total-rows="get_history().length"
                         :per-page="30"
                     />
                 </div>
