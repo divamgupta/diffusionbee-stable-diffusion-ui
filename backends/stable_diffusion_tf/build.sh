@@ -3,4 +3,4 @@ cp stable_diffusion_tf/clip_tokenizer/bpe_simple_vocab_16e6.txt.gz ./dist/diffus
 
 cp -r ../realesrgan_ncnn/models  ./dist/diffusionbee_backend/models 
 cp  ../realesrgan_ncnn/realesrgan_ncnn_macos  ./dist/diffusionbee_backend/realesrgan_ncnn_macos 
-cp  ../model_converter/convert_sd_model_bin  ./dist/diffusionbee_backend/convert_model 
+cp -r ../model_converter/convert_sd_model_bin/m1  ./dist/diffusionbee_backend/convert_model

@@ -463,7 +463,7 @@ function add_custom_pytorch_models(pytorch_model_path, model_name, cb ){
     }
 
     let out_path =  path.join(homedir , ".diffusionbee" , "custom_models" , model_name+".tdict" );
-    let bin_path =  process.env.CONVERT_MODEL_BIN || path.join(path.dirname(__dirname), 'core' , 'convert_model' );
+    let bin_path =  process.env.CONVERT_MODEL_BIN || path.join(path.dirname(__dirname), 'core' , 'convert_model' , 'convert_model' );
     
 
     let proc = require('child_process').spawn( bin_path  , [pytorch_model_path , out_path ]);
