@@ -1,6 +1,7 @@
 import pickle
 import numpy as np
 import math
+import zipfile
 
 def prod(x):
     return math.prod(x)
@@ -52,13 +53,17 @@ def my_unpickle(fb0):
   return MyPickle(fb0).load(), key_prelookup
 
 def fake_torch_load_zipped(fb0, load_weights=True):
-  import zipfile
+  
   with zipfile.ZipFile(fb0, 'r') as myzip:
-    with myzip.open('archive/data.pkl') as myfile:
+    folder_name = [a for a in myzip.namelist() if a.endswith("/data.pkl")]
+    if len(folder_name)== 0:
+      raise ValueError("Looke like the checkpoints file is in the wrong format")
+    folder_name = folder_name[0].replace("/data.pkl" , "").replace("\\data.pkl" , "")
+    with myzip.open(folder_name+'/data.pkl') as myfile:
       ret = my_unpickle(myfile)
     if load_weights:
       for k,v in ret[1].items():
-        with myzip.open(f'archive/data/{k}') as myfile:
+        with myzip.open(folder_name + f'/data/{k}') as myfile:
           if v[2].dtype == "object":
             print(f"issue assigning object on {k}")
             continue
