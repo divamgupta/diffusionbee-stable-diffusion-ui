@@ -3,6 +3,7 @@
     <div  class="animatable_content_box ">
 
         <b-form-input
+            @input="currentPage=1"
             onkeypress="return event.keyCode != 13;"
             size="sm"
             placeholder="Search by prompt text"
@@ -16,8 +17,19 @@
         <div @click="toggle_order()" style="float:right; margin-bottom: 20px;" class="l_button">
           {{this.app_state.show_history_in_oldest_first ? "Oldest": "Newest"}} First
         </div>
+        <div @click="clear_history()" style="float:right; margin-bottom: 20px;" class="l_button">
+          Clear History
+        </div>
         <div v-if="Object.values(app_state.app_data.history).length > 0">
-            <div v-for="history_box in get_history()" :key="history_box.key" style="clear: both;">
+                <div v-if="get_history().length > 30">
+                    <b-pagination
+                        v-model="currentPage"
+                        :total-rows="get_history().length"
+                        :per-page="30"
+                    />
+                </div>
+                <div v-for="history_box in get_history().slice((currentPage - 1) * 30, currentPage * 30)" :key="history_box.key" style="clear: both;">
+
             
                 <div @click="delete_hist(history_box.key)" style="float:right; margin-top: 10px;"  class="l_button">Delete</div>
                 <!-- <div @click="share_on_arthub(history_box)" style="float:right; margin-top: 10px;"  class="l_button">Share</div> -->
@@ -65,6 +77,7 @@
 </template>
 <script>
 import ImageItem from '../components/ImageItem.vue'
+import {native_confirm} from "../native_functions_vue_bridge.js";
 import {share_on_arthub} from '../utils.js'
 
 import Vue from 'vue'
@@ -83,7 +96,8 @@ export default {
     },
     data() {
         return {
-            searchText: ''
+            searchText: '',
+            currentPage: 1,
         };
     },
     methods: {
@@ -95,7 +109,6 @@ export default {
           let history = Object.values(this.app_state.app_data.history);
           const that = this;
           const list = this.app_state.show_history_in_oldest_first ? history : history.reverse();
-
           if (that.searchText.trim() === '') {
             return list;
           }
@@ -104,7 +117,7 @@ export default {
             keys: ['prompt'],
             useExtendedSearch: true,
           });
-          
+
           return fuse.search(that.searchText).map(r => r.item);
 
         },
@@ -132,6 +145,12 @@ export default {
             return r;
         },
 
+         clear_history(){
+            if (native_confirm("Are you sure you want to clear history?")){
+                Vue.set( this.app_state.app_data, "history", {});
+            }
+        },
+
         share_on_arthub(box){
             this.app_state.global_loader_modal_msg = "Uploading";
             let params = this.get_box_params_dict(box);
@@ -147,6 +166,24 @@ export default {
 }
 </script>
 <style>
+.page-item .page-link{
+    outline: none !important;
+   box-shadow: none;
+}
+.page-item .page-link{
+    font-size: 13px;
+}
+@media (prefers-color-scheme: dark) {
+    .page-item .page-link, .page-item.disabled .page-link{
+        background-color:#303030;
+        border-color: #303030;
+        color:rgba(255, 255, 255, 0.5);
+    }
+    .page-item.active .page-link{
+        background-color:#606060;
+        border-color: #606060;
+    }
+}
 </style>
 <style scoped>
 .history_box_info {
