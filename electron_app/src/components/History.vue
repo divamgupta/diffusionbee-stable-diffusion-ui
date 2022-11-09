@@ -20,7 +20,15 @@
           Clear History
         </div>
         <div v-if="Object.values(app_state.app_data.history).length > 0">
-            <div v-for="history_box in get_history()" :key="history_box.key" style="clear: both;">
+                <div v-if="Object.values(app_state.app_data.history).length > 30">
+                    <b-pagination
+                        v-model="currentPage"
+                        :total-rows="Object.values(app_state.app_data.history).length"
+                        :per-page="30"
+                    />
+                </div>
+                <div v-for="history_box in get_history().slice((currentPage - 1) * 30, currentPage * 30)" :key="history_box.key" style="clear: both;">
+
             
                 <div @click="delete_hist(history_box.key)" style="float:right; margin-top: 10px;"  class="l_button">Delete</div>
                 <!-- <div @click="share_on_arthub(history_box)" style="float:right; margin-top: 10px;"  class="l_button">Share</div> -->
@@ -87,7 +95,8 @@ export default {
     },
     data() {
         return {
-            searchText: ''
+            searchText: '',
+            currentPage: 1,
         };
     },
     methods: {
@@ -157,6 +166,24 @@ export default {
 }
 </script>
 <style>
+.page-item .page-link{
+    outline: none !important;
+   box-shadow: none;
+}
+.page-item .page-link{
+    font-size: 13px;
+}
+@media (prefers-color-scheme: dark) {
+    .page-item .page-link, .page-item.disabled .page-link{
+        background-color:#303030;
+        border-color: #303030;
+        color:rgba(255, 255, 255, 0.5);
+    }
+    .page-item.active .page-link{
+        background-color:#606060;
+        border-color: #606060;
+    }
+}
 </style>
 <style scoped>
 .history_box_info {
