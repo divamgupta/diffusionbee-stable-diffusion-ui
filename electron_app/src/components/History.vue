@@ -3,6 +3,7 @@
     <div  class="animatable_content_box ">
 
         <b-form-input
+            @input="currentPage=1"
             onkeypress="return event.keyCode != 13;"
             size="sm"
             placeholder="Search by prompt text"
@@ -108,7 +109,6 @@ export default {
           let history = Object.values(this.app_state.app_data.history);
           const that = this;
           const list = this.app_state.show_history_in_oldest_first ? history : history.reverse();
-
           if (that.searchText.trim() === '') {
             return list;
           }
@@ -117,7 +117,7 @@ export default {
             keys: ['prompt'],
             useExtendedSearch: true,
           });
-          
+
           return fuse.search(that.searchText).map(r => r.item);
 
         },
