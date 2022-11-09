@@ -3,6 +3,8 @@ optimized_stable_diffusion/
 
 convert_sd_model_bin
 ./convert_sd_model_bin
+convert_sd_model_bin/
+./convert_sd_model_bin/
 
 HF_weights/
 outputs/

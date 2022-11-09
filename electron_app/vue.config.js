@@ -31,7 +31,7 @@ module.exports = {
                     "target": {
                         "target": "dmg",
                         "arch": [
-                            'arm64' , 'x64'
+                            process.env.BUILD_ARCH  //'arm64' , 'x64'
                         ]
                     }
                 },

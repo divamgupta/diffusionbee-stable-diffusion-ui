@@ -297,7 +297,7 @@ export default {
         SetGuidenceScale(e) {
             var value = (e.target.value - e.target.min) / (e.target.max - e.target.min) * 100
             e.target.style.background = 'linear-gradient(to right, var(--slider-progress) 0%, var(--slider-progress) ' + value + '%, var(--slider-progress_end) ' + value + '%, var(--slider-progress_end) 100%)'
-            // this.options_model_values.guidence_scale = Number(e.target.value)
+            this.options_model_values.guidence_scale = Number(e.target.value)
         }
     },
 }

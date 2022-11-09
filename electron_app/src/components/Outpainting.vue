@@ -20,6 +20,9 @@
                     v-bind:class="{ 'disabled' : !stable_diffusion.is_input_avail}"
                     :rows="2">
         </textarea>
+
+       
+        
         
         <div v-if="stable_diffusion.is_input_avail" style="margin-top: 20px">
             
@@ -43,7 +46,7 @@
             <LoaderModal :loading_percentage="done_percentage" loading_title="Generating" :loading_desc="stable_diffusion.generation_state_msg"></LoaderModal>
         </div>
 
-        <p style="opacity:0.5; zoom:0.8"> Please describe image you want to draw in the box. </p>
+        <p style="opacity:0.5; zoom:0.8; float:left; max-width: calc(100vw - 200px); margin-bottom: 0; "> Please describe image you want to draw in the box. </p>
 
      </div>
 </template>
@@ -117,7 +120,7 @@ export default {
     methods: {
         init_state(){
             let that = this;
-            this.stage_h = this.stage_w / (window.innerWidth  / ( window.innerHeight - 210 ));
+            this.stage_h = this.stage_w / (window.innerWidth  / ( window.innerHeight - 230 ));
 
             this.prompt = ""
 

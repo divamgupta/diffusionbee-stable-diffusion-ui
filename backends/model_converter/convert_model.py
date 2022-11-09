@@ -33,14 +33,17 @@ torch_weights['state_dict']['alphas_cumprod'] = np.array(_ALPHAS_CUMPROD).astype
 extra_keys = ['temb_coefficients_fp32' , 'causal_mask' , 'aux_output_conv.weight' , 'aux_output_conv.bias', 'alphas_cumprod']
 
 for k in torch_weights['state_dict']:
-    if k not in extra_keys:
-        assert k in SD_SHAPES , k 
+    if k not in SD_SHAPES:
+        continue
     np_arr = torch_weights['state_dict'][k]
     key_bytes = np_arr.tobytes()
     shape = list(np_arr.shape)
     if k not in extra_keys:
-        assert tuple(shape) == SD_SHAPES[k], (k , shape , SD_SHAPES[k] )
+        assert tuple(shape) == SD_SHAPES[k], ( "shape mismatch at" ,  k , shape , SD_SHAPES[k] )
     dtype = str(np_arr.dtype)
+    if dtype == 'int64':
+        np_arr = np_arr.astype('float32')
+        dtype = 'float32'
     assert dtype in ['float16' , 'float32']
     e = s + len(key_bytes)
     out_file.write(key_bytes)
