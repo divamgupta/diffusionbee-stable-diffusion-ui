@@ -33,7 +33,7 @@ torch_weights['state_dict']['alphas_cumprod'] = np.array(_ALPHAS_CUMPROD).astype
 extra_keys = ['temb_coefficients_fp32' , 'causal_mask' , 'aux_output_conv.weight' , 'aux_output_conv.bias', 'alphas_cumprod']
 
 for k in torch_weights['state_dict']:
-    if k not in SD_SHAPES:
+    if k not in SD_SHAPES and k not in extra_keys:
         continue
     np_arr = torch_weights['state_dict'][k]
     key_bytes = np_arr.tobytes()

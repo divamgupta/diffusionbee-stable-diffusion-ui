@@ -152,11 +152,13 @@ export default {
             if(!this.is_input_avail)
                 return;
             let tokens = [49406].concat((get_tokens(prompt_params.prompt))).concat([49407])
+            tokens.filter(n => n != null && n != undefined)
             prompt_params.prompt_tokens = tokens;
 
             if(prompt_params.negative_prompt)
             {
                 let tokens2 = [49406].concat((get_tokens(prompt_params.negative_prompt))).concat([49407])
+                tokens2.filter(n => n != null && n != undefined)
                 prompt_params.negative_prompt_tokens = tokens2
             }
 
