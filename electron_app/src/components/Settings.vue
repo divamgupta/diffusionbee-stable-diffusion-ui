@@ -4,8 +4,23 @@
         <div  v-if="!is_custom_model_loading">
             <h1>Settings</h1>
             <br>
-            <!-- <h2>General Settings</h2>
+           <h2>General Settings</h2>
             <br>
+            <div class="setting_box">
+            <div class="settings_left">
+            <h2>Notification sound</h2>
+            <p>Allows to start a sound when the generation of an image is completed</p>
+            </div>
+            <hr>
+            <div style="float:right;margin-right: 9px;align-self: center;" >
+                <label class="switch">
+            <input type="checkbox" v-model="app_state.app_data.settings.notification_sound" checked>
+            <span class="toggle round"></span>
+            </label>
+            </div>
+            </div>
+            <hr>
+             <!-- 
             <div class="setting_box">
             <div class="settings_left">
             <h2>Allow NSFW Content</h2>

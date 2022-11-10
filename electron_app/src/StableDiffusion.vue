@@ -6,6 +6,7 @@
 import { send_to_py } from "./py_vue_bridge.js"
 import {get_tokens} from './clip_tokeniser/clip_encoder.js'
 
+let notification_sound = new Audio(require('@/assets/notification.mp3'))
 
 function remove_non_ascii(str) {
   
@@ -87,6 +88,9 @@ export default {
             //     }
             // }
             if(msg_code == "nwim"){
+                if (this.$parent.app_state.app_data.settings.notification_sound == true) {
+                    notification_sound.play();
+                }
                 let impath = msg.substring(5).trim()
                 if(this.attached_cbs){
                     if(this.attached_cbs.on_img)
