@@ -21,14 +21,14 @@
           Clear History
         </div>
         <div v-if="Object.values(app_state.app_data.history).length > 0">
-                <div v-if="get_history().length > 30">
-                    <b-pagination
-                        v-model="currentPage"
-                        :total-rows="get_history().length"
-                        :per-page="30"
-                    />
-                </div>
-                <div v-for="history_box in get_history().slice((currentPage - 1) * 30, currentPage * 30)" :key="history_box.key" style="clear: both;">
+            <div v-if="get_history.length > 30">
+                <b-pagination
+                    v-model="currentPage"
+                    :total-rows="get_history.length"
+                    :per-page="30"
+                />
+            </div>
+            <div v-for="history_box in get_history.slice((currentPage - 1) * 30, currentPage * 30)" :key="history_box.key" style="clear: both;">
 
             
                 <div @click="delete_hist(history_box.key)" style="float:right; margin-top: 10px;"  class="l_button">Delete</div>
@@ -66,7 +66,18 @@
                 </div>
                 
                 <hr>
+
+
             </div>
+
+            <div v-if="get_history.length > 30">
+                <b-pagination
+                    v-model="currentPage"
+                    :total-rows="get_history.length"
+                    :per-page="30"
+                />
+            </div>
+
         </div>
         <div v-else>
             <div class="center">
@@ -100,12 +111,9 @@ export default {
             currentPage: 1,
         };
     },
-    methods: {
-        delete_hist(k){
-            Vue.delete( this.app_state.app_data.history , k );
-        },
 
-        get_history() {
+    computed: {
+      get_history() {
           let history = Object.values(this.app_state.app_data.history);
           const that = this;
           const list = this.app_state.show_history_in_oldest_first ? history : history.reverse();
@@ -120,7 +128,15 @@ export default {
 
           return fuse.search(that.searchText).map(r => r.item);
 
+       },
+    },
+
+    methods: {
+        delete_hist(k){
+            Vue.delete( this.app_state.app_data.history , k );
         },
+
+        
 
         toggle_order() {
            Vue.set( this.app_state, "show_history_in_oldest_first", !this.app_state.show_history_in_oldest_first);

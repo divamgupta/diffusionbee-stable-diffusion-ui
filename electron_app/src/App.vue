@@ -170,6 +170,9 @@ export default
         if(!data.settings){
             data.settings = {}
         }
+        if(data.settings.notification_sound == undefined)
+            data.settings.notification_sound = true
+
         if(!data.custom_models){
             data.custom_models = {}
         }

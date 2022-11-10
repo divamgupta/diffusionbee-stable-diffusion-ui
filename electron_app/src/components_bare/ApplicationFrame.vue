@@ -291,7 +291,6 @@ h3 {
     align-items: center;
     letter-spacing: -0.08px;
 
-    color: rgba(0, 0, 0, 0.9);
 }
 
 

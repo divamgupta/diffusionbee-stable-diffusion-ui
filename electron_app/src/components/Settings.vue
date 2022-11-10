@@ -8,15 +8,15 @@
             <br>
             <div class="setting_box">
             <div class="settings_left">
-            <h2>Notification sound</h2>
-            <p>Allows to start a sound when the generation of an image is completed</p>
+            <h3>Notification sound</h3>
+            <p>To play a notification sound when generation of an image is completed</p>
             </div>
             <hr>
             <div style="float:right;margin-right: 9px;align-self: center;" >
                 <label class="switch">
-            <input type="checkbox" v-model="app_state.app_data.settings.notification_sound" checked>
-            <span class="toggle round"></span>
-            </label>
+                    <input type="checkbox" v-model="app_state.app_data.settings.notification_sound" checked>
+                    <span class="toggle round"></span>
+                </label>
             </div>
             </div>
             <hr>
