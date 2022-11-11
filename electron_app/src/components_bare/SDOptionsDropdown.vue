@@ -215,7 +215,7 @@
                     <div class="options_title">
                         <div class="options_title_box" style="width: 165px;">
                             <span>Custom Model</span>
-                            <span class="options_desc">You can use a custom stable diffusion models. Open settings to add a ckpt model.</span>
+                            <span class="options_desc">You can use a custom stable diffusion model. Open settings to add a ckpt model.</span>
                         </div>
                         <div class="options_input" style="width: 115px;">
                             <svg width="18" height="19" viewBox="0 0 18 19" fill="none"
