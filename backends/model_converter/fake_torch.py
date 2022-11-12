@@ -30,7 +30,10 @@ def my_unpickle(fb0):
 
   class MyPickle(pickle.Unpickler):
     def find_class(self, module, name):
-      print(module, name)
+      #making the following available will expose a vulnerability from 2011:
+      #globals, getattr, dict, apply
+
+      #print(module, name)
       if name == 'FloatStorage':
         return np.float32
       if name == 'IntStorage':
