@@ -35,6 +35,8 @@ extra_keys = ['temb_coefficients_fp32' , 'causal_mask' , 'aux_output_conv.weight
 for k in torch_weights['state_dict']:
     if k not in SD_SHAPES and k not in extra_keys:
         continue
+    if 'model_ema' in k:
+        continue
     np_arr = torch_weights['state_dict'][k]
     key_bytes = np_arr.tobytes()
     shape = list(np_arr.shape)
@@ -44,7 +46,7 @@ for k in torch_weights['state_dict']:
     if dtype == 'int64':
         np_arr = np_arr.astype('float32')
         dtype = 'float32'
-    assert dtype in ['float16' , 'float32']
+    assert dtype in ['float16' , 'float32'] , (dtype, k)
     e = s + len(key_bytes)
     out_file.write(key_bytes)
     keys_info[k] = {"start": s , "end" : e , "shape": shape , "dtype" : dtype }
