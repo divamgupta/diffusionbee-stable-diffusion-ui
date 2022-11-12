@@ -2,6 +2,7 @@ import pickle
 import numpy as np
 import math
 import zipfile
+from collections import OrderedDict
 
 def prod(x):
     return math.prod(x)
@@ -29,9 +30,11 @@ def my_unpickle(fb0):
 
   class MyPickle(pickle.Unpickler):
     def find_class(self, module, name):
-      #print(module, name)
+      print(module, name)
       if name == 'FloatStorage':
         return np.float32
+      if name == 'IntStorage':
+        return np.int32
       if name == 'LongStorage':
         return np.int64
       if name == 'HalfStorage':
@@ -41,11 +44,11 @@ def my_unpickle(fb0):
           return HackTensor
         elif name == "_rebuild_parameter":
           return HackParameter
+      if module == "collections" and name == "OrderedDict":
+          return OrderedDict
       else:
-        try:
-          return pickle.Unpickler.find_class(self, module, name)
-        except Exception:
-          return Dummy
+          #return Dummy
+          raise pickle.UnpicklingError("'%s.%s' is forbidden" % (module, name))
 
     def persistent_load(self, pid):
       return pid
