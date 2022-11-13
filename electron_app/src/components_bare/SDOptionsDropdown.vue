@@ -141,9 +141,8 @@
                         </div>
                     </span>
 
-
+                    <span v-if="!elements_hidden.includes('batch_size')">
                     <b-form-group inline label="" style="margin-bottom: 6px;">
-                        <span v-if="!elements_hidden.includes('batch_size')">
                             <div class="options_title">
                                 <div class="options_title_box" style="width: 205px;">
                                     <span>Steps</span>
@@ -162,11 +161,10 @@
                                         required></b-form-select>
                                 </div>
                             </div>
-
-                        </span>
-
                     </b-form-group>
+                    </span>
 
+                    <span v-if="!elements_hidden.includes('guidence_scale')">
                     <b-form-group inline label="" style="margin-bottom: 6px;">
                         <div style="display: flex;flex-direction: column;width: 300px;">
                             <div class="options_title_box">
@@ -185,7 +183,9 @@
                             </div>
                         </div>
                     </b-form-group>
+                    </span>
 
+                    <span v-if="!elements_hidden.includes('seed')">
                     <div class="options_title">
                         <div class="options_title_box" style="width: 155px;">
                             <span>Seed</span>
@@ -210,8 +210,9 @@
                                 placeholder="-1"></b-form-input>
                         </div>
                     </div>
+                    </span>
 
-
+                    <span v-if="!elements_hidden.includes('custom_model')">
                     <div class="options_title">
                         <div class="options_title_box" style="width: 165px;">
                             <span>Custom Model</span>
@@ -241,6 +242,7 @@
                                 required></b-form-select>
                         </div>
                     </div>
+                    </span>
 
                     <div class="options_title">
                         <div class="options_title_box" style="width: 205px;">

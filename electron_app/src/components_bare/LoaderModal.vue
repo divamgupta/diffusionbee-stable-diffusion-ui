@@ -13,7 +13,9 @@
             <b-progress v-if="loading_percentage >= 0 "  :value="loading_percentage" style="height: 10px;"></b-progress>
 
             <div style="margin-bottom:10px"></div>
-            <p style="font-variant-numeric: tabular-nums;">{{loading_desc}}</p>
+            <p style="font-variant-numeric: tabular-nums;margin-bottom: 0px;">{{loading_desc}}
+            <span v-if="remaining_times"><br>{{remaining_times}}</span>
+            </p>
         </div>
 
     </center>
@@ -24,7 +26,7 @@ import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 
 export default {
     name: 'LoaderModal',
-    props: ['loading_percentage' ,'loading_desc' , 'loading_title'],
+    props: ['loading_percentage' ,'loading_desc' , 'loading_title', 'remaining_times'],
     components: {MoonLoader},
     mounted() {
 

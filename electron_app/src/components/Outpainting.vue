@@ -18,17 +18,24 @@
                     style="border-radius: 12px 12px 12px 12px; width: calc(100%); resize: none; " 
                     class="form-control outpaint_textbox"  
                     v-bind:class="{ 'disabled' : !stable_diffusion.is_input_avail}"
-                    :rows="2">
+                    :rows="is_negative_prompt_avail ? 1:2">
+        </textarea>
+        <textarea 
+                    v-if="is_negative_prompt_avail"
+                    v-model="negative_prompt" 
+                    placeholder="Enter your negative prompt here" 
+                    style="border-radius: 12px 12px 12px 12px; width: calc(100%);font-size:13px; margin-top:14px; resize: none; " 
+                    class="form-control outpaint_textbox"  
+                    v-bind:class="{ 'disabled' : !stable_diffusion.is_input_avail}"
+                    :rows="is_negative_prompt_avail ? 1:2">
         </textarea>
 
        
         
         
-        <div v-if="stable_diffusion.is_input_avail" style="margin-top: 20px">
-            
+        <div v-if="stable_diffusion.is_input_avail" style="margin-top: 15px">
+            <SDOptionsDropdown :style="is_negative_prompt_avail?'margin-top:-43px':''" :options_model_values="this_object"  :elements_hidden="[ 'num_imgs', 'inp_img_strength', 'batch_size', 'guidence_scale', 'img_h', 'custom_model', 'seed']"> </SDOptionsDropdown>
             <div  class="l_button button_medium button_colored" style="float:right ; " @click="generate()" >Generate</div>
-            
-
         </div>
         <span v-else-if="stable_diffusion.generated_by=='outpainting'"   >
             <div v-if="is_stopping" class="l_button button_medium button_colored" style="float:right; float:right ; margin-top: 20px; " @click="stop_generation">Stopping ...</div>
@@ -43,7 +50,7 @@
         </div>
 
         <div v-if="!stable_diffusion.is_input_avail && stable_diffusion.generated_by=='outpainting'">
-            <LoaderModal :loading_percentage="done_percentage" loading_title="Generating" :loading_desc="stable_diffusion.generation_state_msg"></LoaderModal>
+            <LoaderModal :loading_percentage="done_percentage" loading_title="Generating" :loading_desc="stable_diffusion.generation_state_msg" :remaining_times="stable_diffusion.remaining_times"></LoaderModal>
         </div>
 
         <p style="opacity:0.5; zoom:0.8; float:left; max-width: calc(100vw - 200px); margin-bottom: 0; "> Please describe image you want to draw in the box. </p>
@@ -54,6 +61,7 @@
 import Konva from 'konva';
 import LoaderModal from '../components_bare/LoaderModal.vue'
 import Vue from 'vue'
+import SDOptionsDropdown from '../components_bare/SDOptionsDropdown.vue'
 
 function onVisible(element, callback) {
   new IntersectionObserver((entries, observer) => {
@@ -74,7 +82,7 @@ export default {
         app_state : Object   , 
         stable_diffusion : Object,
     },
-    components: {LoaderModal},
+    components: {LoaderModal, SDOptionsDropdown},
     mounted() {
            this.init_state();
            this.resize_stage()
@@ -94,6 +102,9 @@ export default {
 
             is_earasing: false, 
             is_eraser_enabled: false,
+            is_negative_prompt_avail : false,
+            negative_prompt : "",
+            selected_model : 'Default'
         };
     },
     watch: {
@@ -116,7 +127,11 @@ export default {
             deep: true
         } , 
     },
-
+    computed:{
+        this_object(){
+            return this;
+        }
+    },
     methods: {
         init_state(){
             let that = this;
@@ -200,6 +215,19 @@ export default {
             this.box_layer = new Konva.Layer();
             this.stage.add(this.box_layer);
             this.box_layer.add(box);
+
+            let tr = new Konva.Transformer({keepRatio : true , rotateEnabled:false , flipEnabled:false  });
+            this.box_layer.add(tr);
+            tr.nodes([box]);
+            
+            box.on('transform', function () {
+                box.setAttrs({
+                    width: Math.round(box.width() * box.scaleX()),
+                    height: Math.round(box.height() * box.scaleY()),
+                    scaleX: 1,
+                    scaleY: 1
+                });
+            });
             
             this.resize_stage()
             
@@ -304,7 +332,7 @@ export default {
         add_img_to_stage(img_path, is_resizable  ){
             
             let that = this;
-            let scale =  that.box.width() / 512  // IMP rn i am assuming that the returned image will be 512x512 
+            let scale =  that.box.scaleX()
 
             this.freeze_last_resizable_img()
 
@@ -314,8 +342,8 @@ export default {
                 imgg.setAttrs({
                     x: that.box.x(),
                     y: that.box.y(),
-                    scaleX: scale,
-                    scaleY: scale ,
+                    width: that.box.width(),
+                    height: that.box.height(),
                     });
                 that.images_layer.add(imgg);
 
@@ -474,6 +502,9 @@ export default {
             this.done_percentage = -1;
             this.is_stopping = false;
 
+            if(this.is_negative_prompt_avail)
+                params['negative_prompt'] = this.negative_prompt;
+
             let that = this;
 
             let callbacks = {
@@ -488,6 +519,9 @@ export default {
                     that.backend_error = err;
                 },
             }
+
+            if(this.is_negative_prompt_avail)
+                params['negative_prompt'] = this.negative_prompt;
 
             if(this.stable_diffusion)
                 this.stable_diffusion.text_to_img(params, callbacks, 'outpainting');

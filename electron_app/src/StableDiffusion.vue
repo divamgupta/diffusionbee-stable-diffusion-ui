@@ -33,8 +33,12 @@ export default {
             model_loading_title : "",
             loading_percentage : -1 , 
             generation_state_msg : "",
+            remaining_times: "",
             attached_cbs : undefined,
             model_version : "",
+            nb_its: 0,
+            times: [],
+            generation_loop: undefined
         };
     },
     methods: {
@@ -136,8 +140,36 @@ export default {
                 this.last_iter_t  = Date.now();
                 if(this.attached_cbs){
                     if(this.attached_cbs.on_progress){
-                        if(p >= 0 )
+                        if(p >= 0 ){
                             this.generation_state_msg = iter_time/1000 + " s/it";
+                            this.times.push(iter_time);
+                            let median = this.times.sort((a, b) => a - b)[Math.floor(this.times.length / 2)];
+                            
+                            let time_remaining = Math.floor(median*((100-p)*this.nb_its/100) / 1000);
+                            
+                            let minutes = Math.floor(time_remaining / 60);
+                            let seconds = time_remaining - minutes * 60;
+
+                            if(time_remaining > 1){                                
+                            this.remaining_times = `(${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} left)`;
+                            if (this.generation_loop) {
+                                clearInterval(this.generation_loop);
+                            }
+                            this.generation_loop = setInterval(() => {
+                                    seconds--;
+                                    if (seconds < 0) {
+                                        seconds = 59;
+                                        minutes--;
+                                    }
+                                    if (minutes == 0 && seconds == 0) {
+                                        clearInterval(this.generation_loop);
+                                        this.remaining_times = "";
+                                    } else{
+                                    this.remaining_times = `(${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} left)`;
+                                    }
+                                }, 1000);
+                            }
+                        }
                         this.attached_cbs.on_progress(p, iter_time);
                     }
                         
@@ -180,6 +212,8 @@ export default {
             this.generated_by = generated_by;
             this.attached_cbs = callbacks;
             this.generation_state_msg = ""
+            this.remaining_times = ""
+            this.nb_its = prompt_params.ddim_steps||25
             send_to_py("t2im " + JSON.stringify(prompt_params)) 
         }
 
