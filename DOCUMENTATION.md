@@ -1,6 +1,6 @@
 ## How to use DiffusionBee
 
-This documentation is written for version 1.4.2. Parts of it may be unapplicable for other versions.
+This documentation is written for version 1.5.1. Parts of it may be unapplicable for other versions.
 
 ### Installation
 
@@ -76,6 +76,27 @@ The **History** tab show previously generated images along with prompts and sett
 <img width="500" alt="Image of sharing images" src="https://user-images.githubusercontent.com/105890749/198900052-25632642-c46c-4163-9dee-9758ec6fa06a.png">
 
 Sharing images uploads images along with prompt and settings to arthub.ai. Before uploading you may select which of the images in a batch to upload. You are required to create an account to share images.
+
+## Custom models
+
+Diffusion Bee supports the ability to add and use custom models. Custom models are trained with specific images in order to create a certain style or type of image output. The best place to find custom models for DiffusionBee is [Hugging Face](https://huggingface.co/models?other=stable-diffusion). If using a model from Hugging Face, visit the model page and click the 'files and versions' tab. Then find and download the relevant .ckpt file.
+
+<img width="500" alt="Image of Hugging Face model page" src="https://user-images.githubusercontent.com/105890749/201486549-1bc6d01c-c39f-4dc2-b216-3e42903315b8.png">
+
+
+### Importing custom models
+Once you have found and downloaded the .ckpt file of the model you wish to use, you need to import it into DiffusionBee. To do so, open DiffusionBee and click on the menu icon located on the top right. Click settings from the dropdown list, and click 'add new model'. Navigate to the model file, click on it, and click open. 
+
+<img width="500" alt="Image of importing custom model" src="https://user-images.githubusercontent.com/105890749/201486009-1e63899a-e471-4f4d-aed5-31945bed6088.png">
+
+### Using custom models
+Once you have imported a custom model, you will be able to use it when generating images. First, click options and scroll down to the custom model section. Clicking on the icon will display a dropdown of all the available models. Choose the model you wish to use.
+
+<img width="500" alt="Image of selcting custom model" src="https://user-images.githubusercontent.com/105890749/201485348-f746ae01-2ced-4dbd-9eff-2db28fc13d82.png">
+
+When generating images with a custom model, make sure to use the custom token in order to get the desired result. The required prompt/ other important information is most likely disclosed on the info page of the model.
+
+<img width="500" alt="Image of using custom model" src="https://user-images.githubusercontent.com/105890749/201485626-b2d4112a-91ba-431c-94c1-4bcc01c936de.png">
 
 ## Extra tips
 
