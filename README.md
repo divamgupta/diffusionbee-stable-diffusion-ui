@@ -86,27 +86,6 @@ History:
 * Mac with Intel or M1/M2 CPU
 * MacOS 12.3.1 or later
 
-## Removing DiffusionBee
-
-### Removing the application itself
-Drag and drop the DiffusionBee.app application to the Trash.
-
-### Removing leftover files
-DiffusionBee saves your generated images and soem information related to the custom models you might have imported in your home folder, in the .diffusionbee/ folder. If you want to fully uninstall the application, you can safely remove the whole folder. There are two ways to do it:
-
-#### From the Terminal
-Open the Terminal.app application (located in /Applications/Utilities/), and enter the command:
-
-```
-rm -r ~/.diffusionbee/
-```
-
-This will remove all traces of the DiffusionBee application (cache, generated images, imported models...).
-
-#### From the Finder
-Open your Home folder, and press the cmd + shift + . (command + shift + period) keys. This will show the hidden files and directories. You can safely drag and drop the .diffusionbee folder in the Trash.
-
-
 License : Stable Diffusion is released under the CreativeML OpenRAIL M license : https://github.com/CompVis/stable-diffusion/blob/main/LICENSE
 Diffusion Bee is just a GUI wrapper on top of Stable Diffusion, so all the term of Stable Diffusion are applied on the outputs. 
 
