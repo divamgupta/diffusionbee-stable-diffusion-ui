@@ -6,6 +6,26 @@ This documentation is written for version 1.5.1. Parts of it may be unapplicable
 
 On first launch, DiffusionBee will download and install additional data for image generation.
 
+### Removing DiffusionBee
+
+#### Removing the application itself
+Drag and drop the DiffusionBee.app application to the Trash.
+
+#### Removing leftover files
+DiffusionBee saves your generated images and soem information related to the custom models you might have imported in your home folder, in the .diffusionbee/ folder. If you want to fully uninstall the application, you can safely remove the whole folder. There are two ways to do it:
+
+##### From the Terminal
+Open the Terminal.app application (located in /Applications/Utilities/), and enter the command:
+
+```
+rm -r ~/.diffusionbee/
+```
+
+This will remove all traces of the DiffusionBee application (cache, generated images, imported models...).
+
+##### From the Finder
+Open your Home folder, and press the cmd + shift + . (command + shift + period) keys. This will show the hidden files and directories. You can safely drag and drop the .diffusionbee folder in the Trash.
+
 ### Updates
 
 DiffusionBee occasionally receives updates to add new features and improve performance. When prompted on startup, re-download the application from the site, and replace the new file in the location of the old one. Your history and models will be saved.
