@@ -77,8 +77,8 @@ def examine_pickle(fb0):
 
   assign_instructions.integrate(load_instructions)
 
-  #return assign_instructions.integrated_instructions, assign_instructions.special_instructions
-  return assign_instructions.integrated_instructions, {}
+  return assign_instructions.integrated_instructions, assign_instructions.special_instructions
+  #return assign_instructions.integrated_instructions, {}
 
 class AssignInstructions:
   def __init__(self):
