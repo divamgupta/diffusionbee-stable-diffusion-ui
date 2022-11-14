@@ -26,12 +26,12 @@ def extract_weights_from_checkpoint(fb0):
         with myzip.open(folder_name + f'/data/{load_instruction.obj_key}') as myfile:
           if (load_instruction.load_from_file_buffer(myfile)):
             torch_weights['state_dict'][sd_key] = load_instruction.get_data()
-         
   return torch_weights
 
 def examine_pickle(fb0):
 
   decompiled = unparse(Pickled.load(fb0).ast).splitlines()
+
 ## LINES WE CARE ABOUT:
 ## 1: this defines a data file and what kind of data is in it
 ##   _var1 = _rebuild_tensor_v2(UNPICKLER.persistent_load(('storage', HalfStorage, '0', 'cpu', 11520)), 0, (320, 4, 3, 3), (36, 9, 3, 1), False, _var0)
@@ -52,7 +52,7 @@ def examine_pickle(fb0):
   assign_instructions = AssignInstructions()
 
   for line in decompiled:
-    ## see if line matches pattern of var =
+    ## see if line matches patterns of lines we care about: 
     line = line.strip()
     if re_rebuild.match(line):
       variable_name, load_instruction = line.split(' = ', 1)
@@ -69,10 +69,6 @@ def examine_pickle(fb0):
   assign_instructions.integrate(load_instructions)
 
   return assign_instructions.integrated_instructions
-    
-
-  #output = {}
-  #output['state_dict'] = {}
 
 class AssignInstructions:
   def __init__(self):
@@ -122,13 +118,15 @@ class LoadInstruction:
     self.ident = False
     self.storage_type = False
     self.obj_key = False
-    self.location = False
+    self.location = False #unused
     self.obj_size = False
-    self.stride = False #args[3] -- unused, I think
+    self.stride = False #unused
     self.data = False;
     self.parse_instruction(instruction_string)
 
   def parse_instruction(self, instruction_string):
+    ## this function could probably be cleaned up/shortened. 
+    
     ## this is the API def for _rebuild_tensor_v2:
     ## _rebuild_tensor_v2(storage, storage_offset, size, stride, requires_grad, backward_hooks):
     #
@@ -145,7 +143,6 @@ class LoadInstruction:
     # etc = 0, (320, 4, 3, 3), (36, 9, 3, 1), False, _var0)
 
     ## call below maps to: ('storage', HalfStorage, '0', 'cpu', 11520)
-    #      ident, storage_type, obj_key, location, obj_size = args[0][0:5]
     self.ident, self.storage_type, self.obj_key, self.location, self.obj_size = storage.split(', ', 4)
 
     self.ident = self.ident.strip("'")
@@ -165,8 +162,8 @@ class LoadInstruction:
     stride = stride.strip('(,')
     size = size.strip(',')
 
-
     if (size == ''):
+      # rare case where there is an empty tuple. SDv1.4 has two of these.
       self.size_tuple = ()
     else:
       self.size_tuple = tuple(map(int, size.split(', ')))
@@ -194,24 +191,14 @@ class LoadInstruction:
       return np.int32
     raise Exception("Storage type not defined!")
 
-
   def load_from_file_buffer(self, fb):
     if self.data.dtype == "object":
       print(f"issue assigning object on {self.obj_key}")
       return False
     else:
-     #key_prelookup[obj_key] = (storage_type, obj_size, ret, args[2], args[3])
-     #maps to: where v is the right side of the above assignment 
-     #np.copyto(v[2], np.frombuffer(myfile.read(), v[2].dtype).reshape(v[3]))
-     #print(f"np.copyto(self.data, np.frombuffer(fb.read(), {self.data.dtype}).reshape({self.size_tuple}))")
      np.copyto(self.data, np.frombuffer(fb.read(), self.data.dtype).reshape(self.size_tuple))
      return True
     
   def get_data(self):
     return self.data
-
-
-
-#examine_pickle(open('classicanimation.archive/data.pkl', "rb"))
-
 
