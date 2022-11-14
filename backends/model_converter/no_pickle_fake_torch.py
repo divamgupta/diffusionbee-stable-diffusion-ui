@@ -27,8 +27,10 @@ def extract_weights_from_checkpoint(fb0):
         with myzip.open(folder_name + f'/data/{load_instruction.obj_key}') as myfile:
           if (load_instruction.load_from_file_buffer(myfile)):
             torch_weights['state_dict'][sd_key] = load_instruction.get_data()
-      for sd_key,special in special_instructions.items():
-        torch_weights['state_dict'][sd_key] = special
+      if len(special_instructions) > 0:
+        torch_weights['state_dict']['_metadata'] = {}
+        for sd_key,special in special_instructions.items():
+          torch_weights['state_dict']['_metadata'][sd_key] = special
   return torch_weights
 
 def examine_pickle(fb0):
@@ -96,7 +98,7 @@ class AssignInstructions:
     del huge_mess
     assignments[-1] = assignments[-1].strip('}')
     re_var = re.compile('^_var\d+$')
-    assignment_count
+    assignment_count = 0
     for a in assignments:
       if self._add_assignment(a, re_var):
         assignment_count = assignment_count + 1
