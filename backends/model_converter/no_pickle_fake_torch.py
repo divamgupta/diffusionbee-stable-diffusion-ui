@@ -80,7 +80,7 @@ class AssignInstructions:
     # _var2262 = {'model.diffusion_model.input_blocks.0.0.weight': _var1, 'model.diffusion_model.input_blocks.0.0.bias': _var3,\
     #  ...\
     #  'cond_stage_model.transformer.text_model.encoder.layers.3.layer_norm2.weight': _var1999}
-    garbage, huge_mess = line.split(' = {')
+    garbage, huge_mess = line.split(' = {', 1)
     assignments = huge_mess.split(', ')
     del huge_mess
     assignments[-1] = assignments[-1].strip('}')
@@ -105,7 +105,7 @@ class AssignInstructions:
     # 'cond_stage_model.transformer.text_model.encoder.layers.4.self_attn.k_proj.weight': _var2003,\
     # ...\
     #'cond_stage_model.transformer.text_model.final_layer_norm.bias': _var2261})
-    garbage, huge_mess = line.split('({')
+    garbage, huge_mess = line.split('({', 1)
     updates = huge_mess.split(', ')
     del huge_mess
     updates[-1] = updates[-1].strip('})')
