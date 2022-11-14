@@ -5,6 +5,7 @@
 
 import { send_to_py } from "./py_vue_bridge.js"
 import {get_tokens} from './clip_tokeniser/clip_encoder.js'
+const moment = require('moment')
 
 let notification_sound = new Audio(require('@/assets/notification.mp3'))
 
@@ -144,28 +145,27 @@ export default {
                             this.generation_state_msg = iter_time/1000 + " s/it";
                             this.times.push(iter_time);
                             let median = this.times.sort((a, b) => a - b)[Math.floor(this.times.length / 2)];
-                            
-                            let time_remaining = Math.floor(median*((100-p)*this.nb_its/100) / 1000);
-                            
-                            let minutes = Math.floor(time_remaining / 60);
-                            let seconds = time_remaining - minutes * 60;
+                            let time_remaining = moment.duration(median*((100-p)*this.nb_its/100));
 
                             if(time_remaining > 1){                                
-                            this.remaining_times = `(${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} left)`;
+                                if (time_remaining.hours() > 0) {
+                                    this.remaining_times = `(${time_remaining.hours()}h${time_remaining.minutes()}m left)`;
+                                } else {
+                                    this.remaining_times = `(${time_remaining.minutes()}m${time_remaining.seconds()}s left)`;
+                                }
                             if (this.generation_loop) {
                                 clearInterval(this.generation_loop);
                             }
-                            this.generation_loop = setInterval(() => {
-                                    seconds--;
-                                    if (seconds < 0) {
-                                        seconds = 59;
-                                        minutes--;
+                                this.generation_loop = setInterval(() => {
+                                    time_remaining.subtract(1, 'seconds');
+                                    if (time_remaining.hours() > 0) {
+                                        this.remaining_times = `(${time_remaining.hours()}h${time_remaining.minutes()}m left)`;
+                                    } else {
+                                        this.remaining_times = `(${time_remaining.minutes()}m${time_remaining.seconds()}s left)`;
                                     }
-                                    if (minutes == 0 && seconds == 0) {
+                                    if (time_remaining < 1) {
                                         clearInterval(this.generation_loop);
                                         this.remaining_times = "";
-                                    } else{
-                                    this.remaining_times = `(${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} left)`;
                                     }
                                 }, 1000);
                             }
