@@ -64,7 +64,7 @@ def examine_pickle(fb0):
     #else:
     #  print('kicking rocks')
 
-  print(f"Found {len(load_instructions)} load instructions")
+  #print(f"Found {len(load_instructions)} load instructions")
 
   assign_instructions.integrate(load_instructions)
 
@@ -86,7 +86,7 @@ class AssignInstructions:
     assignments[-1] = assignments[-1].strip('}')
     for a in assignments:
       self._add_assignment(a)
-    print(f"Added/merged {len(assignments)} assignments. Total of {len(self.instructions)} assignment instructions")
+    #print(f"Added/merged {len(assignments)} assignments. Total of {len(self.instructions)} assignment instructions")
 
   def _add_assignment(self, assignment):
     sd_key, fickling_var = assignment.split(': ')
@@ -97,7 +97,7 @@ class AssignInstructions:
     for sd_key, fickling_var in self.instructions.items():
       if fickling_var in load_instructions:
         self.integrated_instructions[sd_key] = load_instructions[fickling_var]
-    print(f"Have {len(self.integrated_instructions)} integrated load/assignment instructions")
+    #print(f"Have {len(self.integrated_instructions)} integrated load/assignment instructions")
 
   def parse_update_line(self, line):
     # input looks like:
@@ -111,7 +111,7 @@ class AssignInstructions:
     updates[-1] = updates[-1].strip('})')
     for u in updates:
       self._add_assignment(u)
-    print(f"Added/merged {len(updates)} updates. Total of {len(self.instructions)} assignment instructions")
+    #print(f"Added/merged {len(updates)} updates. Total of {len(self.instructions)} assignment instructions")
 
 class LoadInstruction:
   def __init__(self, instruction_string):
