@@ -2,7 +2,6 @@ import pickle
 import numpy as np
 import math
 import zipfile
-from collections import OrderedDict
 
 def prod(x):
     return math.prod(x)
@@ -30,38 +29,23 @@ def my_unpickle(fb0):
 
   class MyPickle(pickle.Unpickler):
     def find_class(self, module, name):
-      #making all of the following available will expose a vulnerability from 2011, unclear if patched
-      #globals, getattr, dict, apply
-
       #print(module, name)
       if name == 'FloatStorage':
         return np.float32
-      if name == 'IntStorage':
-        return np.int32
       if name == 'LongStorage':
         return np.int64
       if name == 'HalfStorage':
         return np.float16
-      if module == 'numpy.core.multiarray' and name == 'scalar':
-        return np.core.multiarray.scalar
-      if module == 'numpy' and name == 'dtype':
-        return np.dtype
       if module == "torch._utils":
         if name == "_rebuild_tensor_v2":
           return HackTensor
         elif name == "_rebuild_parameter":
           return HackParameter
-      if module == "collections" and name == "OrderedDict":
-          return OrderedDict
-      if module == '_codecs' and name == 'encode':
-        from _codecs import encode
-        return encode
-      if module == "pytorch_lightning.callbacks" and name == 'model_checkpoint':
-        return Dummy
-      if module == "pytorch_lightning.callbacks.model_checkpoint" and name == 'ModelCheckpoint':
-        return Dummy
       else:
-        raise pickle.UnpicklingError("'%s.%s' is forbidden" % (module, name))
+        try:
+          return pickle.Unpickler.find_class(self, module, name)
+        except Exception:
+          return Dummy
 
     def persistent_load(self, pid):
       return pid
