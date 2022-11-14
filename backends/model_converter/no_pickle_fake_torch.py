@@ -11,6 +11,7 @@ if sys.version_info >= (3, 9):
 else:
     from astunparse import unparse
 
+NO_PICKLE_DEBUG = True
 
 def extract_weights_from_checkpoint(fb0):
   torch_weights = {}
@@ -21,11 +22,13 @@ def extract_weights_from_checkpoint(fb0):
       raise ValueError("Looks like the checkpoints file is in the wrong format")
     folder_name = folder_name[0].replace("/data.pkl" , "").replace("\\data.pkl" , "")
     with myzip.open(folder_name+'/data.pkl') as myfile:
-      instructions = examine_pickle(myfile)
-      for sd_key,load_instruction in instructions.items():
+      load_instructions, special_instructions = examine_pickle(myfile)
+      for sd_key,load_instruction in load_instructions.items():
         with myzip.open(folder_name + f'/data/{load_instruction.obj_key}') as myfile:
           if (load_instruction.load_from_file_buffer(myfile)):
             torch_weights['state_dict'][sd_key] = load_instruction.get_data()
+      for sd_key,special in special_instructions.items():
+        torch_weights['state_dict'][sd_key] = special
   return torch_weights
 
 def examine_pickle(fb0):
@@ -47,6 +50,7 @@ def examine_pickle(fb0):
   re_rebuild = re.compile('^_var\d+ = _rebuild_tensor_v2\(UNPICKLER\.persistent_load\(\(.*\)$')
   re_assign = re.compile('^_var\d+ = \{.*\}$')
   re_update = re.compile('^_var\d+\.update\(\{.*\}\)$')
+  re_ordered_dict = re.compile('^_var\d+ = OrderedDict\(\)$')
 
   load_instructions = {}
   assign_instructions = AssignInstructions()
@@ -61,18 +65,25 @@ def examine_pickle(fb0):
       assign_instructions.parse_assign_line(line)
     elif re_update.match(line):
       assign_instructions.parse_update_line(line)
-    #else:
-    #  print('kicking rocks')
+    elif re_ordered_dict.match(line):
+      #do nothing
+      continue
+    else:
+      print(f'unmatched line: {line}')
 
-  #print(f"Found {len(load_instructions)} load instructions")
+
+  if NO_PICKLE_DEBUG:
+    print(f"Found {len(load_instructions)} load instructions")
 
   assign_instructions.integrate(load_instructions)
 
-  return assign_instructions.integrated_instructions
+  #return assign_instructions.integrated_instructions, assign_instructions.special_instructions
+  return assign_instructions.integrated_instructions, {}
 
 class AssignInstructions:
   def __init__(self):
     self.instructions = {}
+    self.special_instructions = {}
     self.integrated_instructions = {}
 
   def parse_assign_line(self, line):
@@ -84,20 +95,53 @@ class AssignInstructions:
     assignments = huge_mess.split(', ')
     del huge_mess
     assignments[-1] = assignments[-1].strip('}')
+    re_var = re.compile('^_var\d+$')
+    assignment_count
     for a in assignments:
-      self._add_assignment(a)
-    #print(f"Added/merged {len(assignments)} assignments. Total of {len(self.instructions)} assignment instructions")
+      if self._add_assignment(a, re_var):
+        assignment_count = assignment_count + 1
+    if NO_PICKLE_DEBUG:
+      print(f"Added/merged {assignment_count} assignments. Total of {len(self.instructions)} assignment instructions")
 
-  def _add_assignment(self, assignment):
-    sd_key, fickling_var = assignment.split(': ')
+  def _add_assignment(self, assignment, re_var):
+    # assignment can look like this:
+    # 'cond_stage_model.transformer.text_model.encoder.layers.3.self_attn.out_proj.weight': _var2009
+    # or assignment can look like this:
+    # 'embedding_manager.embedder.transformer.text_model.encoder.layers.6.mlp.fc1': {'version': 1}
+    sd_key, fickling_var = assignment.split(': ', 1)
     sd_key = sd_key.strip("'")
-    self.instructions[sd_key] = fickling_var
+    if re_var.match(fickling_var):
+      self.instructions[sd_key] = fickling_var
+      return True
+    else:
+      # now convert the string "{'version': 1}" into a dictionary {'version': 1}
+      entries = fickling_var.split(',')
+      special_dict = {}
+      for e in entries:
+        e = e.strip("{}")
+        k, v = e.split(': ')
+        k = k.strip("'")
+        v = v.strip("'")
+        special_dict[k] = v
+      self.special_instructions[sd_key] = special_dict
+      return False
 
   def integrate(self, load_instructions):
+    unfound_keys = {}
     for sd_key, fickling_var in self.instructions.items():
       if fickling_var in load_instructions:
         self.integrated_instructions[sd_key] = load_instructions[fickling_var]
-    #print(f"Have {len(self.integrated_instructions)} integrated load/assignment instructions")
+      if sd_key in self.special_instructions:
+        if NO_PICKLE_DEBUG:
+          print(f"Key found in both load and special instructions: {sd_key}")
+      else:
+        unfound_keys[sd_key] = True;
+    #for sd_key, special in self.special_instructions.items():
+    #  if sd_key in unfound_keys:
+    #    #todo
+
+    if NO_PICKLE_DEBUG:
+      print(f"Have {len(self.integrated_instructions)} integrated load/assignment instructions")
 
   def parse_update_line(self, line):
     # input looks like:
@@ -109,9 +153,13 @@ class AssignInstructions:
     updates = huge_mess.split(', ')
     del huge_mess
     updates[-1] = updates[-1].strip('})')
+    re_var = re.compile('^_var\d+$')
+    update_count = 0
     for u in updates:
-      self._add_assignment(u)
-    #print(f"Added/merged {len(updates)} updates. Total of {len(self.instructions)} assignment instructions")
+      if self._add_assignment(u, re_var):
+        update_count = update_count + 1
+    if NO_PICKLE_DEBUG:
+      print(f"Added/merged {update_count} updates. Total of {len(self.instructions)} assignment instructions")
 
 class LoadInstruction:
   def __init__(self, instruction_string):
