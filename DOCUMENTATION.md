@@ -1,6 +1,6 @@
 ## How to use DiffusionBee
 
-This documentation is written for version 1.4.2. Parts of it may be unapplicable for other versions.
+This documentation is written for version 1.5.1. Parts of it may be unapplicable for other versions.
 
 ### Installation
 
@@ -77,6 +77,49 @@ The **History** tab show previously generated images along with prompts and sett
 
 Sharing images uploads images along with prompt and settings to arthub.ai. Before uploading you may select which of the images in a batch to upload. You are required to create an account to share images.
 
+## Custom models
+
+Diffusion Bee supports the ability to add and use custom models. Custom models are trained with specific images in order to create a certain style or type of image output. The best place to find custom models for DiffusionBee is [Hugging Face](https://huggingface.co/models?other=stable-diffusion). If using a model from Hugging Face, visit the model page and click the 'files and versions' tab. Then find and download the relevant .ckpt file.
+
+<img width="500" alt="Image of Hugging Face model page" src="https://user-images.githubusercontent.com/105890749/201486549-1bc6d01c-c39f-4dc2-b216-3e42903315b8.png">
+
+
+### Importing custom models
+Once you have found and downloaded the .ckpt file of the model you wish to use, you need to import it into DiffusionBee. To do so, open DiffusionBee and click on the menu icon located on the top right. Click settings from the dropdown list, and click 'add new model'. Navigate to the model file, click on it, and click open. 
+
+<img width="500" alt="Image of importing custom model" src="https://user-images.githubusercontent.com/105890749/201486009-1e63899a-e471-4f4d-aed5-31945bed6088.png">
+
+### Using custom models
+Once you have imported a custom model, you will be able to use it when generating images. First, click options and scroll down to the custom model section. Clicking on the icon will display a dropdown of all the available models. Choose the model you wish to use.
+
+<img width="500" alt="Image of selcting custom model" src="https://user-images.githubusercontent.com/105890749/201485348-f746ae01-2ced-4dbd-9eff-2db28fc13d82.png">
+
+When generating images with a custom model, make sure to use the custom token in order to get the desired result. The required prompt/ other important information is most likely disclosed on the info page of the model.
+
+<img width="500" alt="Image of using custom model" src="https://user-images.githubusercontent.com/105890749/201485626-b2d4112a-91ba-431c-94c1-4bcc01c936de.png">
+
+
+## Removing DiffusionBee
+
+#### Removing the application itself
+Drag and drop the DiffusionBee.app application to the Trash.
+
+#### Removing leftover files
+DiffusionBee saves your generated images and soem information related to the custom models you might have imported in your home folder, in the .diffusionbee/ folder. If you want to fully uninstall the application, you can safely remove the whole folder. There are two ways to do it:
+
+##### From the Terminal
+Open the Terminal.app application (located in /Applications/Utilities/), and enter the command:
+
+```
+rm -r ~/.diffusionbee/
+```
+
+This will remove all traces of the DiffusionBee application (cache, generated images, imported models...).
+
+##### From the Finder
+Open your Home folder, and press the cmd + shift + . (command + shift + period) keys. This will show the hidden files and directories. You can safely drag and drop the .diffusionbee folder in the Trash.
+
+
 ## Extra tips
 
 * For prompt ideas and help, check out:
@@ -90,6 +133,8 @@ Sharing images uploads images along with prompt and settings to arthub.ai. Befor
 * All created images are stored at `~/.diffusionbee/images/` in your file system. There is no interface in DiffusionBee for deleting images, but they can be deleted manually from this hidden directory.
 * The model is stored at `~/.diffusionbee/downloads`. If you already have the model available and don't want to re-download it, move, copy or symlink it to that directory.
 * The _Show logs_ menu option shows logs that are mostly useful for developers or for tracking errors. You exit the log by clicking one of the tabs.
+
+
 
 ## Join the discussion
 
