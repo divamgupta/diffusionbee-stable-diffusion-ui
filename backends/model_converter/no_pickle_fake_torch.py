@@ -11,7 +11,7 @@ if sys.version_info >= (3, 9):
 else:
     from astunparse import unparse
 
-NO_PICKLE_DEBUG = True
+NO_PICKLE_DEBUG = False
 
 def extract_weights_from_checkpoint(fb0):
   torch_weights = {}
@@ -22,32 +22,40 @@ def extract_weights_from_checkpoint(fb0):
       raise ValueError("Looks like the checkpoints file is in the wrong format")
     folder_name = folder_name[0].replace("/data.pkl" , "").replace("\\data.pkl" , "")
     with myzip.open(folder_name+'/data.pkl') as myfile:
-      load_instructions, special_instructions = examine_pickle(myfile)
+      load_instructions = examine_pickle(myfile)
       for sd_key,load_instruction in load_instructions.items():
         with myzip.open(folder_name + f'/data/{load_instruction.obj_key}') as myfile:
           if (load_instruction.load_from_file_buffer(myfile)):
             torch_weights['state_dict'][sd_key] = load_instruction.get_data()
-      if len(special_instructions) > 0:
-        torch_weights['state_dict']['_metadata'] = {}
-        for sd_key,special in special_instructions.items():
-          torch_weights['state_dict']['_metadata'][sd_key] = special
+      #if len(special_instructions) > 0:
+      #  torch_weights['state_dict']['_metadata'] = {}
+      #  for sd_key,special in special_instructions.items():
+      #    torch_weights['state_dict']['_metadata'][sd_key] = special
   return torch_weights
 
-def examine_pickle(fb0):
+def examine_pickle(fb0, return_special=False):
+  ## return_special:
+  ## A rabbit hole I chased trying to debug a model that wouldn't import that had 1300 useless metadata statements
+  ## If for some reason it's needed in the future turn it on. It is passed into the class AssignInstructions and 
+  ## if turned on collect_special will be True
+  ## 
 
+  #turn the pickle file into text we can parse
   decompiled = unparse(Pickled.load(fb0).ast).splitlines()
 
-## LINES WE CARE ABOUT:
-## 1: this defines a data file and what kind of data is in it
-##   _var1 = _rebuild_tensor_v2(UNPICKLER.persistent_load(('storage', HalfStorage, '0', 'cpu', 11520)), 0, (320, 4, 3, 3), (36, 9, 3, 1), False, _var0)
-##
-## 2: this massive line assigns the previous data to dictionary entries  
-## _var2262 = {'model.diffusion_model.input_blocks.0.0.weight': _var1, [..... continue for ever]}
-##
-## 3: this massive line also assigns values to keys, but does so differently
-## _var2262.update({ 'cond_stage_model.transformer.text_model.encoder.layers.3.layer_norm2.bias': _var2001, [ .... and on  and on ]})
-##
-## that's it  
+  ## Parsing the decompiled pickle:
+  ## LINES WE CARE ABOUT:
+  ## 1: this defines a data file and what kind of data is in it
+  ##   _var1 = _rebuild_tensor_v2(UNPICKLER.persistent_load(('storage', HalfStorage, '0', 'cpu', 11520)), 0, (320, 4, 3, 3), (36, 9, 3, 1), False, _var0)
+  ##
+  ## 2: this massive line assigns the previous data to dictionary entries  
+  ## _var2262 = {'model.diffusion_model.input_blocks.0.0.weight': _var1, [..... continue for ever]}
+  ##
+  ## 3: this massive line also assigns values to keys, but does so differently
+  ## _var2262.update({ 'cond_stage_model.transformer.text_model.encoder.layers.3.layer_norm2.bias': _var2001, [ .... and on  and on ]})
+  ##
+  ## that's it  
+
   # make some REs to match the above.
   re_rebuild = re.compile('^_var\d+ = _rebuild_tensor_v2\(UNPICKLER\.persistent_load\(\(.*\)$')
   re_assign = re.compile('^_var\d+ = \{.*\}$')
@@ -62,7 +70,7 @@ def examine_pickle(fb0):
     line = line.strip()
     if re_rebuild.match(line):
       variable_name, load_instruction = line.split(' = ', 1)
-      load_instructions[variable_name] = LoadInstruction(line)
+      load_instructions[variable_name] = LoadInstruction(line, variable_name)
     elif re_assign.match(line):
       assign_instructions.parse_assign_line(line)
     elif re_update.match(line):
@@ -70,7 +78,7 @@ def examine_pickle(fb0):
     elif re_ordered_dict.match(line):
       #do nothing
       continue
-    else:
+    elif NO_PICKLE_DEBUG:
       print(f'unmatched line: {line}')
 
 
@@ -79,14 +87,16 @@ def examine_pickle(fb0):
 
   assign_instructions.integrate(load_instructions)
 
-  return assign_instructions.integrated_instructions, assign_instructions.special_instructions
-  #return assign_instructions.integrated_instructions, {}
+  if return_special:
+    return assign_instructions.integrated_instructions, assign_instructions.special_instructions
+  return assign_instructions.integrated_instructions
 
 class AssignInstructions:
-  def __init__(self):
+  def __init__(self, collect_special=False):
     self.instructions = {}
     self.special_instructions = {}
     self.integrated_instructions = {}
+    self.collect_special = collect_special;
 
   def parse_assign_line(self, line):
     # input looks like this:
@@ -115,7 +125,7 @@ class AssignInstructions:
     if re_var.match(fickling_var):
       self.instructions[sd_key] = fickling_var
       return True
-    else:
+    elif self.collect_special:
       # now convert the string "{'version': 1}" into a dictionary {'version': 1}
       entries = fickling_var.split(',')
       special_dict = {}
@@ -133,14 +143,9 @@ class AssignInstructions:
     for sd_key, fickling_var in self.instructions.items():
       if fickling_var in load_instructions:
         self.integrated_instructions[sd_key] = load_instructions[fickling_var]
-      if sd_key in self.special_instructions:
-        if NO_PICKLE_DEBUG:
-          print(f"Key found in both load and special instructions: {sd_key}")
       else:
-        unfound_keys[sd_key] = True;
-    #for sd_key, special in self.special_instructions.items():
-    #  if sd_key in unfound_keys:
-    #    #todo
+        if NO_PICKLE_DEBUG:
+          print(f"no load instruction found for {sd_key}")
 
     if NO_PICKLE_DEBUG:
       print(f"Have {len(self.integrated_instructions)} integrated load/assignment instructions")
@@ -164,14 +169,16 @@ class AssignInstructions:
       print(f"Added/merged {update_count} updates. Total of {len(self.instructions)} assignment instructions")
 
 class LoadInstruction:
-  def __init__(self, instruction_string):
+  def __init__(self, instruction_string, variable_name, extra_debugging = False):
     self.ident = False
     self.storage_type = False
     self.obj_key = False
     self.location = False #unused
     self.obj_size = False
     self.stride = False #unused
-    self.data = False;
+    self.data = False
+    self.variable_name = variable_name
+    self.extra_debugging = extra_debugging
     self.parse_instruction(instruction_string)
 
   def parse_instruction(self, instruction_string):
@@ -185,12 +192,24 @@ class LoadInstruction:
     #
     # the following comments will show the output of each string manipulation as if it started with the above.
 
+    if self.extra_debugging:
+      print(f"input: '{instruction_string}'")
+
     garbage, storage_etc = instruction_string.split('((', 1)
     # storage_etc = 'storage', HalfStorage, '0', 'cpu', 11520)), 0, (320, 4, 3, 3), (36, 9, 3, 1), False, _var0)
+
+    if self.extra_debugging:
+      print("storage_etc, reference: ''storage', HalfStorage, '0', 'cpu', 11520)), 0, (320, 4, 3, 3), (36, 9, 3, 1), False, _var0)'")
+      print(f"storage_etc, actual: '{storage_etc}'\n")
       
     storage, etc = storage_etc.split('))', 1)
     # storage = 'storage', HalfStorage, '0', 'cpu', 11520
-    # etc = 0, (320, 4, 3, 3), (36, 9, 3, 1), False, _var0)
+    # etc = , 0, (320, 4, 3, 3), (36, 9, 3, 1), False, _var0)
+    if self.extra_debugging:
+      print("storage, reference: ''storage', HalfStorage, '0', 'cpu', 11520'")
+      print(f"storage, actual: '{storage}'\n")
+      print("etc, reference: ', 0, (320, 4, 3, 3), (36, 9, 3, 1), False, _var0)'")
+      print(f"etc, actual: '{etc}'\n")
 
     ## call below maps to: ('storage', HalfStorage, '0', 'cpu', 11520)
     self.ident, self.storage_type, self.obj_key, self.location, self.obj_size = storage.split(', ', 4)
@@ -201,10 +220,16 @@ class LoadInstruction:
     self.obj_size = int(self.obj_size)
     self.storage_type = self._torch_to_numpy(self.storage_type)
 
+    if self.extra_debugging:
+      print(f"{self.ident}, {self.obj_key}, {self.location}, {self.obj_size}, {self.storage_type}")
+
     assert (self.ident == 'storage')
 
     garbage, etc = etc.split(', (', 1)
     # etc = 320, 4, 3, 3), (36, 9, 3, 1), False, _var0)
+    if self.extra_debugging:
+      print("etc, reference: '320, 4, 3, 3), (36, 9, 3, 1), False, _var0)'")
+      print(f"etc, actual: '{etc}'\n")
 
     size, stride, garbage = etc.split('), ', 2)
     # size = 320, 4, 3, 3
@@ -223,11 +248,18 @@ class LoadInstruction:
     else:
       self.stride = tuple(map(int, stride.split(', ')))
 
+
+    if self.extra_debugging:
+      print(f"size: {self.size_tuple}, stride: {self.stride}")
+
     prod_size = prod(self.size_tuple)
     assert prod(self.size_tuple) == self.obj_size # does the size in the storage call match the size tuple
 
     # zero out the data
     self.data = np.zeros(self.size_tuple, dtype=self.storage_type)
+
+  def sayHi(self):
+    print(f"Hi, I'm an instance of LoadInstruction that will be used to load datafile {self.obj_key}")
 
   @staticmethod
   def _torch_to_numpy(storage_type):
