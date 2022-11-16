@@ -105,7 +105,7 @@ When generating images with a custom model, make sure to use the custom token in
 Drag and drop the DiffusionBee.app application to the Trash.
 
 #### Removing leftover files
-DiffusionBee saves your generated images and soem information related to the custom models you might have imported in your home folder, in the .diffusionbee/ folder. If you want to fully uninstall the application, you can safely remove the whole folder. There are two ways to do it:
+DiffusionBee saves your generated images and some information related to the custom models you might have imported in your home folder, in the .diffusionbee/ folder. If you want to fully uninstall the application, you can safely remove the whole folder. There are two ways to do it:
 
 ##### From the Terminal
 Open the Terminal.app application (located in /Applications/Utilities/), and enter the command:
