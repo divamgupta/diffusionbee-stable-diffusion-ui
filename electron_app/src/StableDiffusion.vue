@@ -199,6 +199,7 @@ export default {
             this.attached_cbs = callbacks;
             this.generation_state_msg = ""
             this.remaining_times = ""
+            this.times = []
             this.nb_its = prompt_params.ddim_steps||25
             send_to_py("t2im " + JSON.stringify(prompt_params)) 
         }
