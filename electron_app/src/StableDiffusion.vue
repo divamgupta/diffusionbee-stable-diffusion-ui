@@ -5,6 +5,7 @@
 
 import { send_to_py } from "./py_vue_bridge.js"
 import {get_tokens} from './clip_tokeniser/clip_encoder.js'
+import {compute_time_remaining} from "./utils.js"
 const moment = require('moment')
 
 let notification_sound = new Audio(require('@/assets/notification.mp3'))
@@ -146,29 +147,14 @@ export default {
                             this.times.push(iter_time);
                             let median = this.times.sort((a, b) => a - b)[Math.floor(this.times.length / 2)];
                             let time_remaining = moment.duration(median*((100-p)*this.nb_its/100));
-
-                            if(time_remaining > 1){                                
-                                if (time_remaining.hours() > 0) {
-                                    this.remaining_times = `(${time_remaining.hours()}h${time_remaining.minutes()}m left)`;
-                                } else {
-                                    this.remaining_times = `(${time_remaining.minutes()}m${time_remaining.seconds()}s left)`;
-                                }
-                            if (this.generation_loop) {
-                                clearInterval(this.generation_loop);
-                            }
-                                this.generation_loop = setInterval(() => {
-                                    time_remaining.subtract(1, 'seconds');
-                                    if (time_remaining.hours() > 0) {
-                                        this.remaining_times = `(${time_remaining.hours()}h${time_remaining.minutes()}m left)`;
-                                    } else {
-                                        this.remaining_times = `(${time_remaining.minutes()}m${time_remaining.seconds()}s left)`;
-                                    }
-                                    if (time_remaining < 1) {
-                                        clearInterval(this.generation_loop);
-                                        this.remaining_times = "";
-                                    }
-                                }, 1000);
-                            }
+                              
+                            this.remaining_times = compute_time_remaining(time_remaining);
+                            clearInterval(this.generation_loop);
+                            this.generation_loop = setInterval(() => {
+                                time_remaining.subtract(1, 'seconds');
+                                this.remaining_times = compute_time_remaining(time_remaining);
+                            }, 1000);
+    
                         }
                         this.attached_cbs.on_progress(p, iter_time);
                     }
