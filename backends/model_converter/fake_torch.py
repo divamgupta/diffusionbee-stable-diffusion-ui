@@ -15,8 +15,16 @@ def my_unpickle(fb0):
       assert ident == 'storage'
 
       assert prod(args[2]) == obj_size
+
+
       ret = np.zeros(args[2], dtype=storage_type)
-      key_prelookup[obj_key] = (storage_type, obj_size, ret, args[2], args[3])
+      if obj_key not in key_prelookup:
+        key_prelookup[obj_key] = []
+
+      key_prelookup[obj_key].append((storage_type, obj_size, ret, args[2], args[3]))
+
+      #print(f"File: {obj_key}, references: {len(key_prelookup[obj_key])}, size: {args[2]}, storage_type: {storage_type}")
+
       return ret
 
   class HackParameter:
@@ -62,12 +70,17 @@ def fake_torch_load_zipped(fb0, load_weights=True):
     with myzip.open(folder_name+'/data.pkl') as myfile:
       ret = my_unpickle(myfile)
     if load_weights:
-      for k,v in ret[1].items():
+      for k, v_arr in ret[1].items():
         with myzip.open(folder_name + f'/data/{k}') as myfile:
-          if v[2].dtype == "object":
-            print(f"issue assigning object on {k}")
-            continue
-          np.copyto(v[2], np.frombuffer(myfile.read(), v[2].dtype).reshape(v[3]))
+          #print(f"Eating data file {k} now")
+          file_data = myfile.read()
+          for v in v_arr:
+            if v[2].dtype == "object":
+              print(f"issue assigning object on {k}")
+              continue
+            #weight = np.frombuffer(file_data, v[2].dtype).reshape(v[3])
+            #np.copyto(v[2], weight)
+            np.copyto(v[2], np.frombuffer(file_data, v[2].dtype).reshape(v[3]))
   return ret[0]
 
 def fake_torch_load(b0):
