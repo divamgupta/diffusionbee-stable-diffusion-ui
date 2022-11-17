@@ -1,3 +1,3 @@
-# Temporarilly ignoreing these files as linting is currently broken.
+# TODO: Fix & align code linting rules across the .js and .vue files.
 **/*.js
 **/*.vue
