@@ -39,7 +39,7 @@ export default {
             attached_cbs : undefined,
             model_version : "",
             nb_its: 0,
-            times: [],
+            iter_times: [],
             generation_loop: undefined
         };
     },
@@ -144,8 +144,8 @@ export default {
                     if(this.attached_cbs.on_progress){
                         if(p >= 0 ){
                             this.generation_state_msg = iter_time/1000 + " s/it";
-                            this.times.push(iter_time);
-                            let median = this.times.sort((a, b) => a - b)[Math.floor(this.times.length / 2)];
+                            this.iter_times.push(iter_time);
+                            let median = this.iter_times.sort((a, b) => a - b)[Math.floor(this.iter_times.length / 2)];
                             let time_remaining = moment.duration(median*((100-p)*this.nb_its/100));
                               
                             this.remaining_times = compute_time_remaining(time_remaining);
@@ -168,6 +168,7 @@ export default {
 
         interupt(){
             send_to_py("t2im __stop__") 
+            clearInterval(this.generation_loop);
         },
 
         text_to_img(prompt_params, callbacks, generated_by){
@@ -199,7 +200,7 @@ export default {
             this.attached_cbs = callbacks;
             this.generation_state_msg = ""
             this.remaining_times = ""
-            this.times = []
+            this.iter_times = []
             this.nb_its = prompt_params.ddim_steps||25
             send_to_py("t2im " + JSON.stringify(prompt_params)) 
         }
