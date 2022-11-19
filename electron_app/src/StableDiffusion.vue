@@ -151,6 +151,9 @@ export default {
                             this.remaining_times = compute_time_remaining(time_remaining);
                             clearInterval(this.generation_loop);
                             this.generation_loop = setInterval(() => {
+                                if(this.attached_cbs == undefined){
+                                    return clearInterval(this.generation_loop);
+                                }
                                 time_remaining.subtract(1, 'seconds');
                                 this.remaining_times = compute_time_remaining(time_remaining);
                             }, 1000);
@@ -167,8 +170,8 @@ export default {
         } ,
 
         interupt(){
-            send_to_py("t2im __stop__") 
-            clearInterval(this.generation_loop);
+            send_to_py("t2im __stop__")
+            this.attached_cbs = undefined;
         },
 
         text_to_img(prompt_params, callbacks, generated_by){
