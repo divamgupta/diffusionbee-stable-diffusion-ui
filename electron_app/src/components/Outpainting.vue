@@ -342,9 +342,19 @@ export default {
                 imgg.setAttrs({
                     x: that.box.x(),
                     y: that.box.y(),
-                    width: that.box.width(),
-                    height: that.box.height(),
+                    scaleX: scale,
+                    scaleY: scale,
                     });
+
+
+                if (imgg.width() == imgg.height()){
+                    imgg.setAttrs({
+                        width: that.box.width(),
+                        height: that.box.height(),
+                    });
+                }
+                
+                
                 that.images_layer.add(imgg);
 
                 let box = new Konva.Rect({
