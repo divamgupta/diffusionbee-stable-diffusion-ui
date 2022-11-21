@@ -216,7 +216,7 @@ export default {
             this.stage.add(this.box_layer);
             this.box_layer.add(box);
 
-            let tr = new Konva.Transformer({keepRatio : true , rotateEnabled:false , flipEnabled:false  });
+            let tr = new Konva.Transformer({keepRatio : true , rotateEnabled:false , flipEnabled:false, enabledAnchors: ['top-left', 'top-right', 'bottom-left', 'bottom-right']  });
             this.box_layer.add(tr);
             tr.nodes([box]);
             
