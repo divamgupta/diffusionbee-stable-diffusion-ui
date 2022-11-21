@@ -1,15 +1,57 @@
-from fake_torch import fake_torch_load_zipped
 import json
 import numpy as np
 from constants import SD_SHAPES, _ALPHAS_CUMPROD
-import sys 
+import sys, getopt 
 
 # python convert_model.py "/Users/divamgupta/Downloads/hollie-mengert.ckpt"  "/Users/divamgupta/Downloads/hollie-mengert.tdict"
 
 # pyinstaller  convert_model.py  --onefile  --noconfirm --clean # build using intel machine so that its cross platform lol
 
-checkpoint_filename = sys.argv[1]
-out_filename = sys.argv[2]
+unpickle = False
+
+try:
+  optlist, args = getopt.getopt(sys.argv[1:], "hu", ["help", "unpickle"])
+except getopt.GetoptError as err:
+  print(err)
+  #usage()
+  sys.exit(2)
+for o, a in optlist:
+  if o in ("-h", "--help"):
+    usage()
+    sys.exit()
+  elif o in ("-u", "--unpickle"):
+    unpickle = True
+  else:
+      assert False, "unhandled option"
+
+def usage():
+  print("\nConverts .cpkt model files into .tdict model files for Diffusion Bee")
+  print("\npython3 convert_py [--unpickle] input.ckpt output.tdict")
+  print("\tNormal use.")
+  print("\n\t--unpickle")
+  print("\t\tWill use unpickling to extract the model, please use with caution as malicious code")
+  print("\t\tcan be hidden in the .ckpt file, executed by unpickling. Without this option, the pickle")
+  print("\t\tinside the .ckpt will instead be decompiled and the weights extracted from that with")
+  print("\t\tno arbitrary code execution.")
+  print("\n\tPlease report any errors on the Diffusion Bee GitHub project or the official Discord server.")
+  print("\npython3 convert_py --help")
+  print("\tDisplays this message")
+
+if len(args) != 2:
+  print("Incorrect number of arguments")
+  usage()
+  sys.exit(2)
+
+checkpoint_filename = args[0]
+out_filename = args[1]
+
+if unpickle:
+  from fake_torch import fake_torch_load_zipped
+  torch_weights = fake_torch_load_zipped(open(checkpoint_filename, "rb"))
+else:
+  from fake_torch import extract_weights_from_checkpoint
+  torch_weights = extract_weights_from_checkpoint(open(checkpoint_filename, "rb"))
+
 
 #TODO add MD5s
 
@@ -18,7 +60,6 @@ _HEADER_BYTES  = [42, 10 , 8, 42] + [0]*20
 
 s  = 24
 
-torch_weights = fake_torch_load_zipped(open(checkpoint_filename, "rb"))
 keys_info = {}
 out_file = open( out_filename , "wb")
 
