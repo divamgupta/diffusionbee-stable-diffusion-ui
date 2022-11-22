@@ -1,12 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
-
-
-<!-- // source https://codepen.io/georgedoescode/pen/XWNmvro -->
-
+<html lang="en" class="">
 
 <head>
-    
+
     
     <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-0B3VDNCLV3"></script>
@@ -17,398 +13,543 @@
 
   gtag('config', 'G-0B3VDNCLV3');
 </script>
-    
-    
+
+ 
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
-<title>DiffusionBee - Stable Diffusion GUI App</title>
+<title>DiffusionBee - Stable Diffusion App for AI Art</title>
 <link rel="icon" 
       type="image/png" 
       href="/favicon.png">
 
 
-<meta content="DiffusionBee is the easiest way to run Stable Diffusion locally on your M1 Mac. Comes with a one-click installer." name="description" />
-<meta content="DiffusionBee - Stable Diffusion GUI App" property="og:title" />
-<meta content="DiffusionBee is the easiest way to run Stable Diffusion locally on your M1 Mac. Comes with a one-click installer." property="og:description" />
-<meta content="https://diffusionbee.com/diffusionbee_banner.jpg" property="og:image" />
-<meta content="DiffusionBee - Stable Diffusion GUI App" property="twitter:title" />
-<meta content="DiffusionBee is the easiest way to run Stable Diffusion locally on your M1 Mac. Comes with a one-click installer." property="twitter:description" />
-<meta content="https://diffusionbee.com/diffusionbee_banner.jpg" property="twitter:image" />
-<meta property="og:type" content="website" />
-<meta content="summary_large_image" name="twitter:card" />
-<meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="DiffusionBee is the easiest way to generate AI art on your computer with Stable Diffusion. Completely free of charge." name="description" />
+    <meta content="DiffusionBee - Stable Diffusion App for AI Art" property="og:title" />
+    <meta content="DiffusionBee is the easiest way to generate AI art on your computer with Stable Diffusion. Completely free of charge." property="og:description" />
+    <meta content="https://diffusionbee.com/diffusionbee_banner.jpg" property="og:image" />
+    <meta content="DiffusionBee - Stable Diffusion App for AI Art" property="twitter:title" />
+    <meta content="DiffusionBee is the easiest way to generate AI art on your computer with Stable Diffusion. Completely free of charge." property="twitter:description" />
+    <meta content="https://diffusionbee.com/diffusionbee_banner.jpg" property="twitter:image" />
+    <meta property="og:type" content="website" />
+    <meta content="summary_large_image" name="twitter:card" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
 
 
-
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./output.css" rel="stylesheet">
 
     <style type="text/css">
-
-
-
-
-/*// source https://codepen.io/georgedoescode/pen/XWNmvro*/
-
-
-:root {
-  --dark-color: hsl(var(--hue), 100%, 9%);
-  --light-color: hsl(var(--hue), 95%, 98%);
-  --base: hsl(var(--hue), 95%, 50%);
-  --complimentary1: hsl(var(--hue-complimentary1), 95%, 50%);
-  --complimentary2: hsl(var(--hue-complimentary2), 95%, 50%);
-
-  --font-family: "Poppins", system-ui;
-
-  --bg-gradient: linear-gradient(
-    to bottom,
-    hsl(var(--hue), 95%, 99%),
-    hsl(var(--hue), 95%, 84%)
-  );
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  max-width: 1920px;
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 2rem;
-  font-family: var(--font-family);
-  color: var(--dark-color);
-  background: var(--bg-gradient);
-}
-
-.orb-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: -1;
-}
-
-strong {
-  font-weight: 600;
-}
-
-.overlay {
-  width: 100%;
-  /*max-width: 1140px;*/
-  max-height: 640px;
-  padding: 8rem 6rem;
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.375);
-  box-shadow: 0 0.75rem 2rem 0 rgba(0, 0, 0, 0.1);
-  border-radius: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.125);
-   padding-top: 70px;
-}
-
-.overlay__inner {
-  max-width: 36rem;
-}
-
-.overlay__title {
-  font-size: 1.875rem;
-  line-height: 2.75rem;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  margin-bottom: 2rem;
-}
-
-.overlay__title2 {
-  font-size: 1.575rem;
-  line-height: 2.75rem;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  margin-bottom: 2rem;
-}
-
-.text-gradient {
-  background-image: linear-gradient(
-    45deg,
-    var(--base) 25%,
-    var(--complimentary2)
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  -moz-background-clip: text;
-  -moz-text-fill-color: transparent;
-}
-
-.overlay__description {
-  font-size: 1rem;
-  line-height: 1.75rem;
-  margin-bottom: 3rem;
-}
-
-.overlay__btns {
-  width: 100%;
-  max-width: 30rem;
-  display: flex;
-}
-
-.overlay__btn {
-  width: 50%;
-  height: 2.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--light-color);
-  background: var(--dark-color);
-  border: none;
-  border-radius: 0.5rem;
-  transition: transform 150ms ease;
-  outline-color: hsl(var(--hue), 95%, 50%);
-}
-
-.overlay__btn:hover {
-  transform: scale(1.05);
-  cursor: pointer;
-}
-
-.overlay__btn--transparent {
-  background: transparent;
-  color: var(--dark-color);
-  border: 2px solid var(--dark-color);
-  border-width: 2px;
-  margin-right: 0.75rem;
-}
-
-.overlay__btn-emoji {
-  margin-left: 0.375rem;
-}
-
-a {
-  text-decoration: none;
-  color: var(--dark-color);
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Not too many browser support this yet but it's good to add! */
-@media (prefers-contrast: high) {
-  .orb-canvas {
-    display: none;
-  }
-}
-
-@media only screen and (max-width: 1140px) {
-  .overlay {
-    padding: 8rem 4rem;
-  }
-}
-
-@media only screen and (max-width: 840px) {
-  body {
-    padding: 1.5rem;
-  }
-
-  .overlay {
-    padding: 4rem;
-    height: auto;
-  }
-
-  .overlay__title {
-    font-size: 1.25rem;
-    line-height: 2rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .overlay__description {
-    font-size: 0.875rem;
-    line-height: 1.5rem;
-    margin-bottom: 2.5rem;
-  }
-
-
-}
-
-@media only screen and (min-width: 840px) {
-   .liner_link{
-    max-width: 75%; float : right; margin-right: 40px;
-  }
-
-}
-
-
-@media only screen and (max-width: 600px) {
-  .overlay {
-    padding: 1.5rem;
-  }
-
-  .overlay__btns {
-    /*flex-wrap: wrap;*/
-  }
-
-  .overlay__btn {
-    /*width: 100%;*/
-    font-size: 0.75rem;
-    margin-right: 0;
-  }
-
-  .overlay__btn:first-child {
-    margin-bottom: 1rem;
-  }
-}
-      
-      .vertical-center {
-          margin: 0;
+        
+        .orb-canvas {
           position: absolute;
-          top: 50%;
-          -ms-transform: translateY(-50%);
-          transform: translateY(-50%);
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 150%;
+          pointer-events: none;
+          z-index: -1;
         }
 
-@media only screen and (min-width: 1140px) {
-  .fjjff{
-    padding-left:  30px ;
-  }
-}
+        .hero_img{
+            padding-left:120px ; padding-right: 120px; padding-bottom: 100px ; padding-top: 50px;
+        }
+
+       @media (max-width: 576px) {
+          .hero_img{
+             padding-left:22px ; padding-right: 22px; padding-bottom: 50px ; padding-top: 15px;
+          }
+
+        }
+
+
+        .screenshot{
+            -khtml-user-select:none;
+            -ms-user-select:none;
+            -moz-user-select:none;
+            -webkit-user-select:none; 
+            box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px; 
+            border-color: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+
+
+
+       
+
+
+
 
     </style>
 
 </head>
 
 <body>
-    <!-- partial:index.partial.html -->
-    <!-- Canvas -->
-    <canvas class="orb-canvas"></canvas>
-    <!-- Overlay -->
-    <div class="container container-xxl ">
-        <div class="overlay" style="max-width: none; max-height: none; padding-right: 20px;">
-            <div class="row">
-                <div class="col-12 col-lg-3">
-                    <!-- Overlay inner wrapper -->
-                    <div class="overlay__inner" style="max-width:none;">
-                        <!-- Title -->
-                        <h1 class="overlay__title">
-                            <span class="text-gradient">DiffusionBee</span> - Stable Diffusion App for MacOS
-                        </h1>
-                        <!-- Description -->
-                        <p class="overlay__description">
-                            DiffusionBee is the easiest way to generate AI art on your computer with Stable Diffusion. Comes with a one-click installer.
-                            <strong> No dependencies or technical knowledge needed.</strong>
-                        </p>
-                        <!-- Buttons -->
-                        <div class="overlay__btns">
-                            
-                           <!--  <a href="https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download/1.3.1/DiffusionBee-1.3.1-arm64.dmg" class="overlay__btn overlay__btn--colors">
-                                <span><img src="b.png" style="width:90%; margin-left: 5%; max-height: 95%;"></span>
-                            </a> -->
+    <canvas class="orb-canvas hide-sm"></canvas>
 
-                            <div class="dropdown">
-                  <!--             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                Dropdown button
-                              </button>
- -->
-                                <button style="background: black;" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown"   class="overlay__btn overlay__btn--colors  ">
-                                    <span><img src="b.png" style="width:90%; margin-left: 5%; max-height: 95%;"></span>
-                                </button>
+    <header class="sticky top-0 z-50 h-[112px] ">
+        <!-- <div class="backdrop-blur-xl h-[112px]"></div> -->
+        <div class="relative -mt-[112px] border-b border-black/5 bg-white/80 backdrop-blur-xl">
+            <div class="flex justify-between items-center max-w-7xl mx-auto px-4 h-[56px] sm:py-0 sm:px-6 md:justify-start md:space-x-2">
+                <div class="mt-0.5 mr-2 flex content-center">
 
+                  <!--   <span style="box-sizing:border-box;display:inline-block;overflow:hidden;width:initial;height:initial;background:none;opacity:1;border:0;margin:0;padding:0;position:relative;max-width:100%"><span style="box-sizing:border-box;display:block;width:initial;height:initial;background:none;opacity:1;border:0;margin:0;padding:0;max-width:100%"><img style="display:block;max-width:100%;width:initial;height:initial;background:none;opacity:1;border:0;margin:0;padding:0" alt="" aria-hidden="true" src="data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2760%27%20height=%2720%27/%3e"></span><img   src="/imgs/bee_logo.png" decoding="async" data-nimg="intrinsic" class="cursor-pointer" style="position:absolute;top:0;left:0;bottom:0;right:0;box-sizing:border-box;padding:0;border:none;margin:auto;display:block;width:0;height:0;min-width:100%;max-width:100%;min-height:100%;max-height:100%"></span> -->
 
-                              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style=" ">
+                  <a href="/" class="flex items-center">
+                        <img src="imgs/bee_logo.png" class="mr-3 h-8" alt="DiffusionBee Logo">
+                        <span class="self-center font-semibold whitespace-nowrap dark:text-white">DiffusionBee</span>
+                    </a>
 
-                                <li><a class="dropdown-item" href="https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download/1.4.3/DiffusionBee-1.4.3-intel_MPS_SD1.5_FP16.dmg">
-                                    <b> Intel 64 Bit</b> <br>
-                                    <p style="zoom:0.9"> Good with any intel based Mac. </p>
-                                </a></li>
-                                <hr style="margin-top:0">
-                               <!--   <li><a class="dropdown-item" href="#">
-                                    <b> Apple Silicon - HQ Version</b> <br>
-                                    <p style="  zoom:0.9"> Runs slower but produces better images.  <br> Recommended for powerful M1 Pro / Max /  <br> Ultra based machines.  </p>
-                                </a></li> -->
-                                
-                                <li><a class="dropdown-item" href="https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download/1.4.3/DiffusionBee-1.4.3-arm64_MPS_SD1.5_FP16.dmg">
-                                    <b> Apple Silicon</b> <br>
-                                    <p style="zoom:0.9"> Good with M1 / M2 etc. processors. </p>
-                                </a></li>
-
-                                <hr style="margin-top:0">
-
-                                 <li><a class="dropdown-item" href="https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/releases/download/1.4.3/DiffusionBee-1.4.3-arm64_TF_SD1.4_FP32.dmg">
-                                    <b style=" "> HQ Version for Apple Silicon</b>
-                                    <p style="zoom:0.9">Runs 2 times slower but produces <br> better images. </p>
-                                </a></li>
-
-                               
-
-                              </ul>
-                            </div>
-
-
-                        </div>
-                        <br><br>
-                        <h2 class="overlay__title2">
-                            Features:
-                        </h2>
-                        <p class="overlay__description">
-                            1) Runs locally on your computer<br>
-                            2) Clean and easy to use UI <br>
-                            3) One click installer<br>
-                            4) Image to image<br>
-                            5) In-painting<br>
-                            6) Out-painting<br>
-                            7) Upscaling images<br>
-                            8) Negative prompts and advanced prompt options<br>
-                            9) Data privacy - nothing is sent to the cloud ( unless you chose to share an image ) <br>
-                            10) One-click install
-                        </p>
-                    </div>
-
-                    <button class="overlay__btn overlay__btn--transparent">
-                        <a href="https://twitter.com/divamgupta" target="_blank">
-
-                          By Divam Gupta
-                        </a>
-                      </button>
-
-                      <br>
-
-                      <p style="font-size:12px">
-                       License : <a style="display:inline; color: blue;" href="https://github.com/CompVis/stable-diffusion/blob/main/LICENSE">CreativeML Open RAIL-M </a> 
-                      </p>
 
                 </div>
-                <div class="col-12 col-lg-9 fjjff " >
+                <div class="md:hidden"><button class="z-50 bg-white rounded-md my-3 py-2 px-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none" id="headlessui-popover-button-7" type="button" aria-expanded="false"><span class="sr-only">Open menu</span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="h-6 w-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg></button></div>
+                <div class="hidden md:flex-1 md:flex md:items-center md:justify-between">
+                    <nav class="flex space-x-1">
+                        <a href="https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/blob/master/DOCUMENTATION.md" class="text-sm font-medium text-gray-900 hover:text-gray-900 my-2 pl-3 pr-2 py-1.5 hover:bg-slate-500/5 rounded-md">Help</a>
 
-                    <img  src="sc.png" style="width:100%">
+                        <a href="https://www.youtube.com/watch?v=vigY58fdeIE" class="text-sm font-medium text-gray-900 hover:text-gray-900 my-2 pl-3 pr-2 py-1.5 hover:bg-slate-500/5 rounded-md">Tour</a>
 
-                    <div class="liner_link">
-                      <p> If you like Diffusion Bee, consider checking <a style="display:inline; color: blue;" href="https://Liner.ai">Liner.ai</a> , a one-click tool to train machine learning models.</p>
+                         <a href="https://discord.gg/t6rC5RaJQn" class="text-sm font-medium text-gray-900 hover:text-gray-900 my-2 pl-3 pr-2 py-1.5 hover:bg-slate-500/5 rounded-md">Discord</a>
+                      
+                    </nav>
+                    <div class="flex flex-shrink items-center">
+                        <a href="/download" class=" border border-black/10 hover:brightness-95 ctaButtonBackground ml-4 inline-flex items-center justify-center pl-2.5 pr-3 py-1.5 rounded-md shadow-sm font-medium text-[13px] text-white">Download</a>
                     </div>
-
                 </div>
             </div>
         </div>
+    </header>
+    <!-- the first section -->
+    <section class="pt-8 pb-8 sm:pb-12 lg:pb-12  w-full">
+        <div class="-mt-[56px] max-auto max-w-7xl h-96 bg-contain bg-no-repeat bg-top z-0"></div>
+        <div class="-mt-80 sm:-mt-96 overflow-hidden sm:pt-12 lg:relative lg:pt-24  z-10">
+            <div class="mx-auto px-4 sm:px-8 md:px-12 lg:px-16 sm:max-w-3xl lg:max-w-7xl pt-16 pb-16">
+                <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight loose sm:text-5xl text-center" style="line-height:1.05">Create Amazing <br> Images Using AI</h1>
+                <p class="mt-8 mb-8 text-lg sm:text-xl lg:text-2xl text-black/60 text-center max-w-2xl mx-auto">
+                    <p class="mt-8 mb-8 text-lg sm:text-xl lg:text-2xl text-black/60 text-center max-w-2xl mx-auto">DiffusionBee is the easiest way to generate AI art on your computer with Stable Diffusion.  Completely free of charge. <br> <b> Runs offline. No limits. </b> </p>
+                </p>
+                <div class="flex flex-row select-none justify-center cursor-pointer">
+                    <a class=" flex items-center cursor-pointer mt-4 px-8 mr-2 py-3 w-fit rounded-lg ctaButtonBackground text-lg font-bold text-white shadow-lg hover:shadow-xl focus:outline-none" href="/download">
+                    <span>Download for macOS</span> 
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" style="margin-left: 15px; margin-top: -5px; filter: invert(1.0);" id="footer-sample-full" width="0.82em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 315" class="iconify iconify--logos"><path d="M213.803 167.03c.442 47.58 41.74 63.413 42.197 63.615c-.35 1.116-6.599 22.563-21.757 44.716c-13.104 19.153-26.705 38.235-48.13 38.63c-21.05.388-27.82-12.483-51.888-12.483c-24.061 0-31.582 12.088-51.51 12.871c-20.68.783-36.428-20.71-49.64-39.793c-27-39.033-47.633-110.3-19.928-158.406c13.763-23.89 38.36-39.017 65.056-39.405c20.307-.387 39.475 13.662 51.889 13.662c12.406 0 35.699-16.895 60.186-14.414c10.25.427 39.026 4.14 57.503 31.186c-1.49.923-34.335 20.044-33.978 59.822M174.24 50.199c10.98-13.29 18.369-31.79 16.353-50.199c-15.826.636-34.962 10.546-46.314 23.828c-10.173 11.763-19.082 30.589-16.678 48.633c17.64 1.365 35.66-8.964 46.64-22.262"></path></svg>
+
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto items-center px-4 sm:px-10">
+            <div class="relative mx-auto w-full">
+                <div class="relative block w-full overflow-hidden focus:outline-non hero_img" style="">
+                    <div class="w-full border border-slate-700/10 rounded-xl" style="position:relative;overflow:hidden;user-select:none;-khtml-user-select:none;-ms-user-select:none;-moz-user-select:none;-webkit-user-select:none; box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px; border-color: rgba(0,0,0,0.2);" data-rcs="root">
+                        <img src="screen-min.jpg" style="display:block;width:100%;height:100%;max-width:100%;box-sizing:border-box;object-fit:cover;object-position:center; border-color:gray ;  " data-rcs="image">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto items-center px-8 pt-0 md:pt-3 lg:pt-6">
+            <div class="">
+                <p class="text-base md:text-lg lg:text-xl font-medium text-black/50 text-center pb-4 md:pb-8 px-8">As seen in...
+
+</p>
+                <div class="px-4 md:px-8 lg:px-16 h-16   block">
+                    <div class="grid grid-cols-3 gap-8 text-gray-500 sm:gap-12 md:grid-cols-3 lg:grid-cols-6 dark:text-gray-400" style="">
+                        <a href="https://techcrunch.com/2022/09/18/this-mac-app-makes-it-easy-to-create-your-own-ai-images-with-stable-diffusion/" class="flex justify-center items-center ">
+                            <img src="https://scet.berkeley.edu/wp-content/uploads/techcrunch-logo.png" class="grauu">
+                        </a>
+                        <a href="https://www.fastcompany.com/90790075/theres-a-text-to-image-app-for-mac-now-and-it-will-change-everything" class="flex justify-center items-center ">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Fast_Company_logo.svg/1280px-Fast_Company_logo.svg.png" class="grauu">
+                        </a>
+                        <a href="https://www.designboom.com/technology/diffusion-bee-mac-compatible-text-to-image-application-09-19-2022/" class="flex justify-center items-center ">
+                            <img src="https://getvectorlogo.com/wp-content/uploads/2019/08/designboom-vector-logo.png" class="grauu">
+                        </a>
+                        <a href="https://www.digitaltrends.com/computing/how-to-run-stable-diffusion-on-your-mac/" class="flex justify-center items-center ">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Digital_Trends_logo.svg/1200px-Digital_Trends_logo.svg.png" class="grauu">
+                        </a>
+                        <a href="https://appleinsider.com/inside/macos/tips/how-to-generate-ai-art-with-stable-diffusion-on-a-mac" class="flex justify-center items-center ">
+                            <img src="https://cdnp2.stackassets.com/d3e1b92cd9b0e9888c5b943d0cbd83fefa552ad4/store/741826ec587a94dcd05305a28135f5bcec6d6dcf8d4c7300d2afa2a55aa1/33f419308932a67d1256425a18abc51769840877_logo_main_mobile.png" class="grauu">
+                        </a>
+                        <a href="https://osxdaily.com/2022/10/01/try-the-fun-ai-image-generator-on-mac-diffusion-bee/" class="flex justify-center items-center ">
+                            <img src="https://cdn.osxdaily.com/wp-content/themes/osxdaily-left2/img/osxdaily-logo-l.png" class="grauu">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- the first section end  -->
+    <!-- the 2nd features section -->
+    <section class="pb-8 sm:pb-12 lg:pb-12 bg-gradient-to-b from-white to-blue-50 w-full">
+        <div class="  max-auto max-w-7xl h-96   bg-contain bg-no-repeat bg-top z-0"></div>
+
+        <br><br><br>
+        <div class="-mt-80 sm:-mt-96 overflow-hidden sm:pt-12 lg:relative lg:pb-12 z-10">
+            <div class="mx-auto px-4 sm:px-8 md:px-12 lg:px-16 sm:max-w-3xl lg:max-w-7xl   pb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight sm:text-5xl text-left md:text-center px-6">Cutting-edge features to generate AI art.</h2>
+                <p class="mt-8 mb-8 text-lg sm:text-xl lg:text-2xl text-black/60 text-center max-w-2xl mx-auto">
+                    <p class="mt-8 mb-8 text-lg sm:text-xl lg:text-2xl text-black/60 text-center max-w-2xl mx-auto">DiffusionBee comes with all cutting-edge Stable Diffusion tools in one easy-to-use package.</p>
+                </p>
+                <br>
+
+                <dl class="mt-12 space-y-10 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-3 lg:gap-x-8">
+                    <div class="relative"><dt><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="absolute h-6 w-6 text-green-500">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <p class="ml-9 text-lg leading-6 font-medium text-gray-900">Text to image</p>
+                        </dt>
+                        <dd class="mt-2 ml-9 text-base text-gray-500">Generate an image using a text prompt. Generate any image in any style.</dd>
+                    </div>
+                    <div class="relative"><dt><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="absolute h-6 w-6 text-green-500">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <p class="ml-9 text-lg leading-6 font-medium text-gray-900">Image to image</p>
+                        </dt>
+                        <dd class="mt-2 ml-9 text-base text-gray-500">Modify existing images using text prompts. Create a new image based on a starting image</dd>
+                    </div>
+                    <div class="relative"><dt><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="absolute h-6 w-6 text-green-500">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <p class="ml-9 text-lg leading-6 font-medium text-gray-900">In-painting</p>
+                        </dt>
+                        <dd class="mt-2 ml-9 text-base text-gray-500">Add/remove objects in an existing image at a selected region using a text prompt.</dd>
+                    </div>
+                    <div class="relative"><dt><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="absolute h-6 w-6 text-green-500">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <p class="ml-9 text-lg leading-6 font-medium text-gray-900">Out-painting</p>
+                        </dt>
+                        <dd class="mt-2 ml-9 text-base text-gray-500">Expand an image outwards using text prompts. Select a region in the canvas and add objects.</dd>
+                    </div>
+                    <div class="relative"><dt><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="absolute h-6 w-6 text-green-500">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <p class="ml-9 text-lg leading-6 font-medium text-gray-900">Upscaling</p>
+                        </dt>
+                        <dd class="mt-2 ml-9 text-base text-gray-500">Use AI to automatically increase the resolution of the generated image.</dd>
+                    </div>
+                    
+                    <div class="relative"><dt><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="absolute h-6 w-6 text-green-500">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <p class="ml-9 text-lg leading-6 font-medium text-gray-900">Custom models</p>
+                        </dt>
+                        <dd class="mt-2 ml-9 text-base text-gray-500">Use external Stable Diffusion models which are trained on specific styles/objects using DreamBooth. </dd>
+                    </div>
+
+                    <div class="relative"><dt><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="absolute h-6 w-6 text-green-500">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <p class="ml-9 text-lg leading-6 font-medium text-gray-900">Advanced options</p>
+                        </dt>
+                        <dd class="mt-2 ml-9 text-base text-gray-500">Advanced options like negative prompt, diffusion steps, etc. for power users. </dd>
+                    </div>
+
+                    <div class="relative"><dt><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="absolute h-6 w-6 text-green-500">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <p class="ml-9 text-lg leading-6 font-medium text-gray-900">Private</p>
+                        </dt>
+                        <dd class="mt-2 ml-9 text-base text-gray-500">All the generation happens locally and nothing is sent to the cloud. </dd>
+                    </div>
+
+                    <div class="relative"><dt><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true" class="absolute h-6 w-6 text-green-500">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <p class="ml-9 text-lg leading-6 font-medium text-gray-900">Active community</p>
+                        </dt>
+                        <dd class="mt-2 ml-9 text-base text-gray-500">An active community on Discord where you can ask us anything. </dd>
+                    </div>
+                    
+                    
+                     
+                </dl>
+            </div>
+        </div>
+    </section>
+    <!-- the 2nd features section end -->
+    <!-- the two col stuff -->
+    <section class="relative w-full bg-gradient-to-b from-white to-purple-50 pt-4 pb-32 overflow-hidden">
+        <div class="relative">
+            <div class="pb-8 pt-4 lg:pt-16 md:pb-8 lg:pb-24 max-w-2xl mx-auto md:max-w-6xl">
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight sm:text-5xl text-left md:text-center px-6">Create stunning art in seconds.</h2>
+            </div>
+            <div class="lg:mx-auto lg:max-w-7xl md:px-12 lg:px-16">
+                <div class="lg:grid lg:grid-cols-2 lg:grid-flow-col-dense lg:gap-24 md:min-h-[480px]">
+                    <div class="px-6 max-w-2xl mx-auto sm:px-6 lg:py-16 lg:max-w-none lg:mx-0 lg:px-0">
+                        <div class="">
+                            <div class="mt-6">
+                                <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900">Unlock your imagination with a few words</h2>
+                                <p class="mt-4 text-lg text-gray-500">DiffusionBee allows you to unlock your imagination by providing tools to generate AI art in a few seconds. You can use it to edit existing images or create new ones from scratch. It’s easy to use, and the results can be quite stunning.</p>
+                                <p class="mt-3 text-lg text-gray-500">All you need is a text prompt and the AI will generate images based on your instructions. </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class=" pr-4 pt-12 lg:pt-4 ml-0 lg:-ml-4 md: sm:pr-6 md:ml-16 px-4 lg:px-4 lg:m-0 lg:relative lg:h-full lg:min-h-[480px] "><img class="w-full lg:absolute lg:h-full lg:w-auto lg:max-w-none lg:min-h-[480px] object-contain screenshot" src="imgs/sc2.jpg"  ></div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-12">
+            <div class="lg:mx-auto lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-2 lg:grid-flow-col-dense lg:gap-24">
+                <div class="px-6 max-w-2xl mx-auto sm:px-6 lg:py-32 lg:max-w-none lg:mx-0 lg:px-0 lg:col-start-2">
+                    <div>
+                        <div class="mt-6">
+                            <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900">Reimagine and transform your images</h2>
+                            <p class="mt-4 text-lg text-gray-500">DiffusionBee offers easy-to-use tools, powered by AI, to modify your existing images. You can add/remove objects, change the style of the image, or transform the scene using text prompts.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-12 sm:mt-16 lg:mt-0 lg:col-start-1">
+                    <div class="px-6 md:px-12 lg:px-0 lg:m-0 lg:relative lg:h-full"><img class="w-full rounded-xl screenshot  " src="imgs/sc1.jpg" ></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- the 2 col stuff end -->
+    <!-- the tweets -->
+    <section class="relative w-full bg-gradient-to-b from-white to-slate-50 pt-4 pb-16 overflow-hidden">
+        <div class="lg:mx-auto lg:max-w-7xl lg:px-8">
+            <div class="pb-8 pt-4 lg:pt-16 md:pb-8 lg:pb-24 max-w-2xl mx-auto md:max-w-6xl">
+                <h2 class="text-4xl mx-auto max-w-4xl font-bold text-gray-900 tracking-tight text-left md:text-center px-6">Join thousands of people generating AI art with DiffusionBee</h2>
+            </div>
+            <div class="px-6 pt-4 gap-8 grid md:grid-cols-3">
+                <div class="  relative overflow-hidden ">
+                    <blockquote class="twitter-tweet">
+                        <p lang="en" dir="ltr">&quot;photo of cat building electronics with soldering iron and components&quot; <a href="https://twitter.com/hashtag/StableDiffusion?src=hash&amp;ref_src=twsrc%5Etfw">#StableDiffusion</a> <a href="https://twitter.com/hashtag/DiffusionBee?src=hash&amp;ref_src=twsrc%5Etfw">#DiffusionBee</a> <a href="https://t.co/PStxZ6eQT5">pic.twitter.com/PStxZ6eQT5</a></p>&mdash; Tod Kurt (@todbot) <a href="https://twitter.com/todbot/status/1569417762061320193?ref_src=twsrc%5Etfw">September 12, 2022</a>
+                    </blockquote>
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    <div class="pt-2 lg:pt-4"> </div>
+                    <blockquote class="twitter-tweet">
+                        <p lang="en" dir="ltr">Diffusion Bee 1.0: Easy to Install Stable Diffusion for Apple Silicon Macs<a href="https://t.co/wzUqpkIzKf">https://t.co/wzUqpkIzKf</a></p>&mdash; Daring Fireball (@daringfireball) <a href="https://twitter.com/daringfireball/status/1569347609910980608?ref_src=twsrc%5Etfw">September 12, 2022</a>
+                    </blockquote>
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    <div class="pt-2 lg:pt-4"> </div>
+                    <blockquote class="twitter-tweet">
+                        <p lang="en" dir="ltr">tried the Diffusion Bee?🍀<br>- Stable Diffusion GUI App for M1 Mac<br>- optimized for M1/M2, runs locally on your Mac, one-click installer<br>- 16GB RAM preferred<br>It took 10 min for my poor MBA/M1 8GB RAM for this.👇🤦‍♂️ but it&#39;s amazing!<br>Get the mac app 👉<a href="https://t.co/mVFQD0lUsi">https://t.co/mVFQD0lUsi</a> <a href="https://t.co/QtUXQ1Fy96">pic.twitter.com/QtUXQ1Fy96</a></p>&mdash; Yasuhito Nagatomo🍀 (@AtarayoSD) <a href="https://twitter.com/AtarayoSD/status/1569516268956549124?ref_src=twsrc%5Etfw">September 13, 2022</a>
+                    </blockquote>
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                </div>
+                <div class="  relative overflow-hidden hide-sm ">
+                    <blockquote class="twitter-tweet">
+                        <p lang="en" dir="ltr">Because I am truly a monster, the first prompt I fed to Diffusion Bee (<a href="https://t.co/kgTOYSAydz">https://t.co/kgTOYSAydz</a>) was: “The tower of Barad-Dûr, art by Thomas Kinkade”.<br><br>💁🏻‍♂️ Is this <a href="https://twitter.com/hashtag/AIArt?src=hash&amp;ref_src=twsrc%5Etfw">#AIArt</a>? 🦋 <a href="https://t.co/ymZ69wSwYR">pic.twitter.com/ymZ69wSwYR</a></p>&mdash; Chris Krycho (@chriskrycho) <a href="https://twitter.com/chriskrycho/status/1578212118813233152?ref_src=twsrc%5Etfw">October 7, 2022</a>
+                    </blockquote>
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    <div class="pt-2 lg:pt-4"> </div>
+                    <blockquote class="twitter-tweet">
+                        <p lang="en" dir="ltr">“Spirit Guide”<br><br>DiffusionBee + Adobe AE <a href="https://t.co/wgGdQ569nl">pic.twitter.com/wgGdQ569nl</a></p>&mdash; Teodora (@ReodoraPurple) <a href="https://twitter.com/ReodoraPurple/status/1591419351105785857?ref_src=twsrc%5Etfw">November 12, 2022</a>
+                    </blockquote>
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    <div class="pt-2 lg:pt-4"> </div>
+                    <blockquote class="twitter-tweet">
+                        <p lang="en" dir="ltr">Using Diffusion Bee — an easy to use Apple Silicon implementation of Stable Diffusion — I asked for “8-bit ZX-Spectrum computer in steampunk style, detailed keyword, photorealistic” <a href="https://t.co/jm3QpEKOxB">pic.twitter.com/jm3QpEKOxB</a></p>&mdash; @juandesant@astrodon.social🇺🇦 (@juandesant) <a href="https://twitter.com/juandesant/status/1575277461885042689?ref_src=twsrc%5Etfw">September 29, 2022</a>
+                    </blockquote>
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                </div>
+                <div class="  relative overflow-hidden  hide-sm">
+                    <blockquote class="twitter-tweet">
+                        <p lang="en" dir="ltr">Playing around with <a href="https://twitter.com/diffusionbee?ref_src=twsrc%5Etfw">@diffusionbee</a> 🐱 <br><br>Anyone else obsessed with <a href="https://twitter.com/hashtag/AI?src=hash&amp;ref_src=twsrc%5Etfw">#AI</a>? <a href="https://t.co/He5j41sFh9">pic.twitter.com/He5j41sFh9</a></p>&mdash; Meta Mae (@metaversemae) <a href="https://twitter.com/metaversemae/status/1592051976405417984?ref_src=twsrc%5Etfw">November 14, 2022</a>
+                    </blockquote>
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    <div class="pt-2 lg:pt-4"> </div>
+                    <blockquote class="twitter-tweet">
+                        <p lang="en" dir="ltr">“Suzanne Loving Vincent” (2022) <a href="https://twitter.com/hashtag/art?src=hash&amp;ref_src=twsrc%5Etfw">#art</a> <a href="https://twitter.com/hashtag/b3d?src=hash&amp;ref_src=twsrc%5Etfw">#b3d</a> <a href="https://twitter.com/hashtag/geometrynodes?src=hash&amp;ref_src=twsrc%5Etfw">#geometrynodes</a> <a href="https://twitter.com/hashtag/DiffusionBee?src=hash&amp;ref_src=twsrc%5Etfw">#DiffusionBee</a> Infinite Vincent flowers made of Suzanne Head. <a href="https://t.co/FVfiEdTCfy">pic.twitter.com/FVfiEdTCfy</a></p>&mdash; BLENDER SUSHI ULTRA 24/7 - Blend AI Peace 4 All (@jimmygunawanapp) <a href="https://twitter.com/jimmygunawanapp/status/1591671281719865345?ref_src=twsrc%5Etfw">November 13, 2022</a>
+                    </blockquote>
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    <div class="pt-2 lg:pt-4"> </div>
+                    <blockquote class="twitter-tweet">
+                        <p lang="en" dir="ltr">Diffusion Bee generated &quot;Egypt portrait&quot; in Pablo Picasso style <a href="https://t.co/uluk2POxeO">pic.twitter.com/uluk2POxeO</a></p>&mdash; Ahmed(عصام) (@ahmd3ssam) <a href="https://twitter.com/ahmd3ssam/status/1581389355439951874?ref_src=twsrc%5Etfw">October 15, 2022</a>
+                    </blockquote>
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- the tweets end -->
+
+
+    <div class="w-full pb-12 bg-gradient-to-b from-slate-50 to-slate-100">
+       
+        <section class="undefined flex py-12 w-full">
+            <div class="my-auto mx-auto max-w-7x">
+                
+                <div class="flex flex-row select-none justify-center cursor-pointer">
+                    <a class=" flex items-center cursor-pointer mt-4 px-8 mr-2 py-3 w-fit rounded-lg ctaButtonBackground text-lg font-bold text-white shadow-lg hover:shadow-xl focus:outline-none" href="/download">
+                    <span>Download for macOS</span> 
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" style="margin-left: 15px; margin-top: -5px; filter: invert(1.0);" id="footer-sample-full" width="0.82em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 315" class="iconify iconify--logos"><path d="M213.803 167.03c.442 47.58 41.74 63.413 42.197 63.615c-.35 1.116-6.599 22.563-21.757 44.716c-13.104 19.153-26.705 38.235-48.13 38.63c-21.05.388-27.82-12.483-51.888-12.483c-24.061 0-31.582 12.088-51.51 12.871c-20.68.783-36.428-20.71-49.64-39.793c-27-39.033-47.633-110.3-19.928-158.406c13.763-23.89 38.36-39.017 65.056-39.405c20.307-.387 39.475 13.662 51.889 13.662c12.406 0 35.699-16.895 60.186-14.414c10.25.427 39.026 4.14 57.503 31.186c-1.49.923-34.335 20.044-33.978 59.822M174.24 50.199c10.98-13.29 18.369-31.79 16.353-50.199c-15.826.636-34.962 10.546-46.314 23.828c-10.173 11.763-19.082 30.589-16.678 48.633c17.64 1.365 35.66-8.964 46.64-22.262"></path></svg>
+
+                    </a>
+                </div>
+
+
+            </div>
+        </section>
     </div>
-    <!-- partial -->
+    <!-- FAQs -->
+
+    <script type="text/javascript">
+        function toggle_faq(){
+            try {
+              event.srcElement.parentElement.parentElement.querySelector(".ans").style.display = 'block';
+            } catch (error) {
+                 event.srcElement.parentElement.parentElement.parentElement.querySelector(".ans").style.display = 'block';
+            }
+
+          
+         
+
+        }
+
+    </script>
+
+    <section class="bg-white    ">
+        <div class="mx-auto px-4 sm:px-8 md:px-12 lg:px-16 sm:max-w-3xl lg:max-w-5xl pt-16 pb-16">
+            
+            <div class="pb-4 pt-4 lg:pt-14 md:pb-8 max-w-2xl mx-auto md:max-w-6xl" style="padding-bottom: 4rem;">
+                <h2 class="text-4xl mx-auto max-w-4xl font-bold text-gray-900 tracking-tight text-left md:text-center px-6">Frequently asked questions</h2>
+            </div>
+            <div class="mt-8 space-y-8 lg:mt-12">
+                <div class="p-8 bg-gray-100 rounded-lg  ">
+                    <button class="flex items-center justify-between w-full" onclick="toggle_faq()">
+                        <h1 class="font-semibold  text-lg text-gray-700  ">Where are the images generated?</h1>
+                        <span class="text-gray-400 bg-gray-200 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                        </span>
+                    </button>
+                    <p class="ans mt-4 text-lg text-gray-500" style="display:none"> 
+                        Images are generated locally on your computer. Nothing is sent to the cloud.
+                    </p>
+                </div>
+                <div class="p-8 bg-gray-100 rounded-lg  ">
+                    <button class="flex items-center justify-between w-full" onclick="toggle_faq()">
+                        <h1 class="font-semibold  text-lg text-gray-700  ">How much time does it take to generate an image?</h1>
+                        <span class="text-gray-400 bg-gray-200 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                        </span>
+                    </button>
+                    <p class="ans mt-4 text-lg text-gray-500" style="display:none"> 
+                        On 8GB M1 MacBook Air, DiffusionBee takes around 30 seconds to generate an image. The speeds are much higher on computers with higher specs. 
+                    </p>
+                </div>
+                <div class="p-8 bg-gray-100 rounded-lg  ">
+                    <button class="flex items-center justify-between w-full" onclick="toggle_faq()">
+                        <h1 class="font-semibold  text-lg text-gray-700  ">Can I freely use the generated images?</h1>
+                        <span class="text-gray-400 bg-gray-200 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                        </span>
+                    </button>
+                    <p class="ans mt-4 text-lg text-gray-500" style="display:none"> 
+                        Yes, you can freely use the generated images as long as you comply with the CreativeML Open RAIL-M license. 
+                    </p>
+                </div>
+
+                <div class="p-8 bg-gray-100 rounded-lg  ">
+                    <button class="flex items-center justify-between w-full" onclick="toggle_faq()">
+                        <h1 class="font-semibold  text-lg text-gray-700  ">What are the minimum system requirements for DiffusionBee?</h1>
+                        <span class="text-gray-400 bg-gray-200 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                        </span>
+                    </button>
+                    <p class="ans mt-4 text-lg text-gray-500" style="display:none"> 
+                        DiffusionBee needs macOS 12.5.1 on higher. Machines with Apple silicon are recommended. 
+                    </p>
+                </div>
+
+                <div class="p-8 bg-gray-100 rounded-lg  ">
+                    <button class="flex items-center justify-between w-full" onclick="toggle_faq()">
+                        <h1 class="font-semibold  text-lg text-gray-700  ">Does DiffusionBee work with Intel based machines?</h1>
+                        <span class="text-gray-400 bg-gray-200 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                        </span>
+                    </button>
+                    <p class="ans mt-4 text-lg text-gray-500" style="display:none"> 
+                        Yes, DiffusionBee works with Intel based machines. Although it is very slow compared to M1 machines if you don't have a dedicated graphics chip. 
+                    </p>
+                </div>
+               
+            
+            </div>
+        </div>
+    </section>
+    <!-- FAQs end -->
+    <footer class="p-4 bg-gray-50 sm:p-6 dark:bg-gray-800">
+        <br>
+        <div class="mx-auto max-w-screen-xl">
+            <div class="md:flex md:justify-between">
+                <div class="mb-6 md:mb-0">
+                    <a href="/" class="flex items-center">
+                        <img src="imgs/bee_logo.png" class="mr-3 h-8" alt="DiffusionBee Logo" />
+                        <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">DiffusionBee</span>
+                    </a>
+                    <br> 
+                    <p style="opacity:0.5">By <a style="color:blue" href="https://twitter.com/divamgupta"> Divam Gupta</a></p>
+                </div>
+                <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Resources</h2>
+                        <ul class="text-gray-600 dark:text-gray-400">
+                            <li class="mb-4">
+                                <a href="https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/blob/master/DOCUMENTATION.md" class="hover:underline">Documentation</a>
+                            </li>
+
+                            <li class="mb-4">
+                                <a href="https://www.youtube.com/watch?v=vigY58fdeIE" class="hover:underline">Video Tour</a>
+                            </li>
+                           
+                        </ul>
+                    </div>
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Follow us</h2>
+                        <ul class="text-gray-600 dark:text-gray-400">
+                            <li class="mb-4">
+                                <a href="https://github.com/divamgupta/diffusionbee-stable-diffusion-ui" class="hover:underline ">Github</a>
+                            </li>
+                             <li class="mb-4">
+                                <a href="https://twitter.com/divamgupta" class="hover:underline ">Twitter</a>
+                            </li>
+                            <li>
+                                <a href="https://discord.gg/t6rC5RaJQn" class="hover:underline">Discord</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Legal</h2>
+                        <ul class="text-gray-600 dark:text-gray-400">
+                            <li class="mb-4">
+                                <a href="/MODEL_LICENSE.txt" class="hover:underline">Model License</a>
+                            </li>
+                            <li>
+                                <a href="/OPEN_SOURCE_LICENSES.txt" class="hover:underline">Open-source Licenses</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+            <div class="sm:flex sm:items-center sm:justify-between">
+                <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2022 <a href="https://diffusionbee.com" class="hover:underline">DiffusionBee</a>. All Rights Reserved.
+                </span>
+               
+            </div>
+        </div>
+    </footer>
+    <script src="https://unpkg.com/flowbite@1.4.7/dist/flowbite.js"></script>
     <script type="module" src="./script.js"></script>
+
 </body>
+
 
 </html>

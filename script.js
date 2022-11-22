@@ -29,7 +29,8 @@ class ColorPalette {
 
   setColors() {
     // pick a random hue somewhere between 220 and 360
-    this.hue = ~~random(220, 310);
+    this.hue = ~~random(230, 250);
+    console.log(this.hue + " huee")
     this.complimentaryHue1 = this.hue + 30;
     this.complimentaryHue2 = this.hue + 60;
     // define a fixed saturation and lightness
@@ -89,7 +90,7 @@ class Orb {
     this.bounds = this.setBounds();
     // initialise the orb's { x, y } values to a random point within it's bounds
     this.x = random(this.bounds["x"].min, this.bounds["x"].max);
-    this.y = random(this.bounds["y"].min, this.bounds["y"].max);
+    this.y = random(this.bounds["y"].min, this.bounds["y"].max) ;
 
     // how large the orb is vs it's original radius (this will modulate over time)
     this.scale = 1;
@@ -151,7 +152,7 @@ class Orb {
 
     // map the xNoise/yNoise values (between -1 and 1) to a point within the orb's bounds
     this.x = map(xNoise, -1, 1, this.bounds["x"].min, this.bounds["x"].max);
-    this.y = map(yNoise, -1, 1, this.bounds["y"].min, this.bounds["y"].max);
+    this.y = map(yNoise + 0.6 , -1, 1, this.bounds["y"].min, this.bounds["y"].max/2 );
     // map scaleNoise (between -1 and 1) to a scale value somewhere between half of the orb's original size, and 100% of it's original size
     this.scale = map(scaleNoise, -1, 1, 0.5, 1);
 
@@ -218,6 +219,9 @@ if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     orb.render();
   });
 }
+
+
+
 
 // document
 //   // .querySelector(".overlay__btn--colors")
