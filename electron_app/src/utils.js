@@ -8,7 +8,11 @@ function compute_n_cols() {
     return n_col;
 }
 
-
+function compute_time_remaining(time_remaining) {
+    if (time_remaining.asSeconds() < 1) return "";
+    if (time_remaining.hours() > 0) return `(${time_remaining.hours()}h${time_remaining.minutes()}m left)`;
+    else return `(${time_remaining.minutes()}m${time_remaining.seconds()}s left)`;
+}
 
 function simple_hash( strr ) {
     var hash = 0;
@@ -164,4 +168,4 @@ async function share_on_arthub(imgs , params,  prompt ) {
 
 
 
-export { compute_n_cols ,resolve_asset_illustration , simple_hash , open_popup, share_on_arthub}
+export { compute_n_cols , compute_time_remaining , resolve_asset_illustration , simple_hash , open_popup, share_on_arthub}

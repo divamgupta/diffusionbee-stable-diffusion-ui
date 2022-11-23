@@ -53,7 +53,7 @@
         </div>
 
         <div v-if="!stable_diffusion.is_input_avail && stable_diffusion.generated_by=='inpainting'">
-            <LoaderModal :loading_percentage="done_percentage" loading_title="Generating" :loading_desc="stable_diffusion.generation_state_msg"></LoaderModal>
+            <LoaderModal :loading_percentage="done_percentage" loading_title="Generating" :loading_desc="stable_diffusion.generation_state_msg" :remaining_times="stable_diffusion.remaining_times"></LoaderModal>
         </div>
 
 

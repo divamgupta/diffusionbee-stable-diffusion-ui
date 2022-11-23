@@ -5,6 +5,8 @@
 
 import { send_to_py } from "./py_vue_bridge.js"
 import {get_tokens} from './clip_tokeniser/clip_encoder.js'
+import {compute_time_remaining} from "./utils.js"
+const moment = require('moment')
 
 let notification_sound = new Audio(require('@/assets/notification.mp3'))
 
@@ -33,8 +35,12 @@ export default {
             model_loading_title : "",
             loading_percentage : -1 , 
             generation_state_msg : "",
+            remaining_times: "",
             attached_cbs : undefined,
             model_version : "",
+            nb_its: 0,
+            iter_times: [],
+            generation_loop: undefined
         };
     },
     methods: {
@@ -136,8 +142,23 @@ export default {
                 this.last_iter_t  = Date.now();
                 if(this.attached_cbs){
                     if(this.attached_cbs.on_progress){
-                        if(p >= 0 )
+                        if(p >= 0 ){
                             this.generation_state_msg = iter_time/1000 + " s/it";
+                            this.iter_times.push(iter_time);
+                            let median = this.iter_times.sort((a, b) => a - b)[Math.floor(this.iter_times.length / 2)];
+                            let time_remaining = moment.duration(median*((100-p)*this.nb_its/100));
+                              
+                            this.remaining_times = compute_time_remaining(time_remaining);
+                            clearInterval(this.generation_loop);
+                            this.generation_loop = setInterval(() => {
+                                if(this.attached_cbs == undefined){
+                                    return clearInterval(this.generation_loop);
+                                }
+                                time_remaining.subtract(1, 'seconds');
+                                this.remaining_times = compute_time_remaining(time_remaining);
+                            }, 1000);
+    
+                        }
                         this.attached_cbs.on_progress(p, iter_time);
                     }
                         
@@ -149,7 +170,8 @@ export default {
         } ,
 
         interupt(){
-            send_to_py("t2im __stop__") 
+            send_to_py("t2im __stop__")
+            this.attached_cbs = undefined;
         },
 
         text_to_img(prompt_params, callbacks, generated_by){
@@ -180,6 +202,9 @@ export default {
             this.generated_by = generated_by;
             this.attached_cbs = callbacks;
             this.generation_state_msg = ""
+            this.remaining_times = ""
+            this.iter_times = []
+            this.nb_its = prompt_params.ddim_steps||25
             send_to_py("t2im " + JSON.stringify(prompt_params)) 
         }
 
