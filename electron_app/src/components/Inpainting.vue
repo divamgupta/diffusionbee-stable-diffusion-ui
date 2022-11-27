@@ -5,6 +5,7 @@
             <div v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" style="float:right " @click="clear" > Reset</div>
             <div v-if="undo_history.length > 0  && stable_diffusion.is_input_avail" class="l_button" style="float:right " @click="do_undo" > Undo</div>
             <div v-if="inp_img " class="l_button" style="float:right " @click="save_img" > Save Image</div>
+            <div v-if="inp_img " class="l_button" style="float:right " @click="is_invert = !is_invert" > Invert Mask</div>
             <div v-if="retry_params  && stable_diffusion.is_input_avail" class="l_button" style="float:right "   @click="generate(true)"> Retry</div>
             
             
@@ -18,7 +19,7 @@
         </div>
 
         <div class="inapint_container" @drop.prevent="onDragFile" @dragover.prevent>
-            <ImageCanvas style="cursor: crosshair;"  v-if="inp_img"  ref="inp_img_canvas" :is_inpaint="true" :image_source="inp_img"  :is_disabled="!stable_diffusion.is_input_avail" id="inpaint"  canvas_id="inpaintcan" canvas_d_id="inpaintcand" :stroke_size_no="stroke_size_no" ></ImageCanvas>
+            <ImageCanvas style="cursor: crosshair;"  v-if="inp_img"  ref="inp_img_canvas" :is_inpaint="true" :is_invert="is_invert" :image_source="inp_img"  :is_disabled="!stable_diffusion.is_input_avail" id="inpaint"  canvas_id="inpaintcan" canvas_d_id="inpaintcand" :stroke_size_no="stroke_size_no" ></ImageCanvas>
             <div v-else @click="open_input_image" style=" "  :class="{ pointer_cursor  : is_sd_active }" >
                 <center>
                     <p style="padding-top: calc( 50vh - 115px);padding-bottom: calc( 50vh - 155px);  opacity: 70%;" >Click to add input image and draw a mask</p>
@@ -95,6 +96,7 @@ export default {
             undo_history : [],
             retry_params: undefined,
             stroke_size_no : "30",
+            is_invert: false,
             "history_key" : "",
         };
     },

@@ -27,6 +27,7 @@ export default {
         canvas_d_id : String, 
         canvas_id: String,
         stroke_size_no : String,
+        is_invert: Boolean,
     },
     components: {},
     computed: {
@@ -192,6 +193,19 @@ export default {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             this.is_something_drawn = false 
         },
+        invert_inpaint(){
+            let canvas = document.getElementById(this.canvas_id);
+            let ctx = canvas.getContext("2d");
+
+            let prevCompositionState = ctx.globalCompositeOperation
+            try {
+                ctx.globalCompositeOperation = 'xor'
+                ctx.fillStyle = this.stroke_color;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            } finally {
+                ctx.globalCompositeOperation = prevCompositionState
+            }
+        },
         on_img_change(){
             let that = this;
             addImageProcess('file://'+this.image_source).then(function(img_tag){
@@ -261,7 +275,14 @@ export default {
                 }
             },
             deep: true
-        } , 
+        }, 
+
+        'is_invert': {
+            handler: function() {
+                this.invert_inpaint();
+            },
+            deep: true
+        }
     }
 }
 </script>
