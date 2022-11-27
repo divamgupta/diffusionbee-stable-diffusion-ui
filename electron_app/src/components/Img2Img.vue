@@ -8,7 +8,7 @@
          -->
 
             <div v-if="inp_img" @drop.prevent="onDragFile" @dragover.prevent class="image_area" :class="{ crosshair_cur  : is_inpaint }"  style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
-                <ImageCanvas ref="inp_img_canvas" :is_inpaint="is_inpaint" :image_source="inp_img"  :is_disabled="!stable_diffusion.is_input_avail" canvas_id="img2imgcan" canvas_d_id="img2imgcand" ></ImageCanvas>
+                <ImageCanvas ref="inp_img_canvas" :is_invert="is_invert" :is_inpaint="is_inpaint" :image_source="inp_img"  :is_disabled="!stable_diffusion.is_input_avail" canvas_id="img2imgcan" canvas_d_id="img2imgcand" ></ImageCanvas>
             </div>
                 <div v-else @drop.prevent="onDragFile" @dragover.prevent @click="open_input_image" class="image_area" :class="{ pointer_cursor  : is_sd_active }" style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
                     <center>
@@ -20,6 +20,7 @@
             <div v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" @click="inp_img =''">Clear</div>
             <div v-if="inp_img && stable_diffusion.is_input_avail && !is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Draw Mask</div>
             <div v-if="inp_img && stable_diffusion.is_input_avail && is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Remove Mask</div>
+            <div v-if="inp_img && stable_diffusion.is_input_avail && is_inpaint" class="l_button" @click="is_invert = !is_invert ">Invert Mask</div>
 
             <br> <br> 
             <textarea 
@@ -134,6 +135,7 @@ export default {
             img_h : 512 , 
             img_w : 512 , 
             is_inpaint : false,
+            is_invert : false,
             guidence_scale : 7.5 , 
 
             is_negative_prompt_avail : false, 
