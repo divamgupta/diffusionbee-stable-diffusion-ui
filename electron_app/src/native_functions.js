@@ -142,6 +142,17 @@ ipcMain.on('save_file', (event, arg) => {
     event.returnValue = '';
 })
 
+ipcMain.on('remove_file', (event, arg) => {
+    let p1 = arg.split("||")[0];
+    require('fs').unlinkSync(p1);
+    event.returnValue = '';
+})
+
+ipcMain.on('file_exist', (event, arg) => {
+    let p1 = arg.split("||")[0];
+    let exist = require('fs').existsSync(p1);
+    event.returnValue = exist;
+});
 
 
 

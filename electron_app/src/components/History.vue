@@ -103,7 +103,7 @@ export default {
         ImageItem
     },
     mounted() {
-
+        this.check_imgs_exist(this.app_state.app_data.history);
     },
     data() {
         return {
@@ -126,14 +126,47 @@ export default {
             useExtendedSearch: true,
           });
 
-          return fuse.search(that.searchText).map(r => r.item);
+            return fuse.search(that.searchText).map(r => r.item);
 
-       },
+        },
     },
 
     methods: {
-        delete_hist(k){
-            Vue.delete( this.app_state.app_data.history , k );
+        exist(path) {
+            return window.ipcRenderer.sendSync('file_exist', path);
+        },
+
+        check_imgs_exist(history) {
+            for (let k in history) {
+                let imgs = history[k].imgs;
+                let unique_imgs = [...new Set(imgs)];
+                if (imgs.length != unique_imgs.length) {
+                    this.delete_hist(k);
+                }
+                let new_imgs = [];
+                for (let img of imgs) {
+                    if (this.exist(img)) {
+                        new_imgs.push(img);
+                    } else {
+                        const new_history_box = this.app_state.app_data.history[k];
+                        new_history_box.imgs = new_imgs;
+                    }
+                }
+                if (new_imgs.length == 0) {
+                    this.delete_hist(k);
+                }
+            }
+        },
+
+        delete_hist(k) {
+            let history = this.app_state.app_data.history;
+            let imgs = history[k].imgs;
+            for (let img of imgs) {
+                if (this.exist(img)) {
+                    window.ipcRenderer.sendSync('remove_file', img);
+                }
+            }
+            Vue.delete(this.app_state.app_data.history, k);
         },
 
         
