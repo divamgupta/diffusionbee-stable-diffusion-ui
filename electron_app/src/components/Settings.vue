@@ -19,6 +19,19 @@
                 </label>
             </div>
             </div>
+            <div class="setting_box">
+            <div class="settings_left">
+            <h3>Live render preview</h3>
+            <p>To display a preview of the image as it is being rendered, at each step of the generation process</p>
+            </div>
+            <hr>
+            <div style="float:right;margin-right: 9px;align-self: center;" >
+                <label class="switch">
+                    <input type="checkbox" v-model="app_state.app_data.settings.live_render">
+                    <span class="toggle round"></span>
+                </label>
+            </div>
+            </div>
             <hr>
              <!-- 
             <div class="setting_box">

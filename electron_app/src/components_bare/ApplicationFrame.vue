@@ -91,12 +91,14 @@
     </div>
 </template>
 <script>
+import { send_to_py, send_to_swift } from "../py_vue_bridge.js"
 
 export default {
     name: 'ApplicationFrame',
     components: {},
     props: {
         title: String,
+        app_state: Object,
     },
 
     data: function() {
@@ -116,6 +118,15 @@ export default {
     methods: {
         selectTab(tab) {
             this.selected_tab = tab;
+            if (tab == "inpainting" || tab == "outpainting")
+                return send_to_py("start");
+            
+            if (this.app_state.app_data.selected_model.endsWith(" [CoreML ]")) {
+                send_to_swift("start");
+            }
+            else {
+                send_to_py("start");
+            }
         },
 
         detect_windows_os(){

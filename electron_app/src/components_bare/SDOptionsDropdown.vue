@@ -236,9 +236,9 @@
                                     stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round" />
                             </svg>
-
-                            <b-form-select v-model="options_model_values.selected_model"
-                                :options="['Default'].concat(Object.keys(options_model_values.app_state.app_data.custom_models))"
+                            <b-form-select v-model="options_model_values.app_state.app_data.selected_model"
+                                :options="['Default'].concat(Object.keys(options_model_values.app_state.app_data.custom_models).map((model_name) => model_name))"
+                                @change="setModel"
                                 required></b-form-select>
                         </div>
                     </div>
@@ -270,6 +270,8 @@
     </div>
 </template>
 <script>
+import { send_to_py, send_to_swift } from "../py_vue_bridge.js"
+import Vue from "vue"
 export default {
     name: 'SDOptionsDropdown',
     props: {
@@ -291,6 +293,15 @@ export default {
         return {};
     },
     methods: {
+        setModel(e) {
+            const model = e;
+            if ( model != "Default" && this.options_model_values.app_state.app_data.custom_models[model].is_coreml){
+                send_to_swift("start");
+            } else{
+                send_to_py("start");
+            }
+            Vue.set(this.options_model_values.app_state.app_data, 'selected_model', model);
+        },
         SetStrength(e) {
             var value = (e.target.value - e.target.min) / (e.target.max - e.target.min) * 100
             e.target.style.background = 'linear-gradient(to right, var(--slider-progress) 0%, var(--slider-progress) ' + value + '%, var(--slider-progress_end) ' + value + '%, var(--slider-progress_end) 100%)'
