@@ -142,14 +142,12 @@ ipcMain.on('save_file', (event, arg) => {
     event.returnValue = '';
 })
 
-<<<<<<< Updated upstream
-=======
+
 ipcMain.on('file_exist', (event, arg) => {
     let p1 = arg.split("||")[0];
     let exist = require('fs').existsSync(p1);
     event.returnValue = exist;
 });
->>>>>>> Stashed changes
 
 
 
