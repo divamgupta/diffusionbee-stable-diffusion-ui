@@ -88,7 +88,7 @@ export default {
     },
     methods: {
         delete_model(k){
-            let model_path = this.app_state.app_data.custom_models[k].path;
+            let model_path = this.app_state.app_data.custom_models[k].orig_path;
             window.ipcRenderer.sendSync('delete_file',  model_path );
             Vue.delete( this.app_state.app_data.custom_models , k );
         },
