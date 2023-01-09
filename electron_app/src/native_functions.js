@@ -182,6 +182,18 @@ ipcMain.on('get_instance_id', (event, arg) => {
 
 })
 
+ipcMain.on('get_macos_version', (event, arg) => {
+    let version = -1;
+    if (process.platform == 'darwin') {
+        const os = require('os');
+        const osVersion = os.release();
+        version = parseFloat(osVersion);
+    }
+
+    event.returnValue = version;
+})
+
+
 
 ipcMain.on('unfreeze_win', (event, arg) => {
 

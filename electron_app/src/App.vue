@@ -184,6 +184,10 @@ export default
         }
         
         let custom_models = window.ipcRenderer.sendSync('list_custom_models');
+        Vue.set(this.app_state.app_data , 'custom_models' , {})
+        
+        let macos_version = window.ipcRenderer.sendSync('get_macos_version');
+        console.log("macOS version: " + macos_version);
 
         for (let i = 0; i < custom_models.length; i++) {
             const model_name = custom_models[i].name;
@@ -197,11 +201,14 @@ export default
                 }
             }
             else{
-                if( !data.custom_models[model_name] ){
-                    Vue.set(this.app_state.app_data.custom_models , model_name + " [CoreML ]", {
-                        name : model_name,
-                        orig_path : model_path,
-                        is_coreml : true})
+                // macos 13.1 required for coreml
+                if (macos_version >= 22.2){
+                    if( !data.custom_models[model_name] ){
+                        Vue.set(this.app_state.app_data.custom_models , model_name + " [CoreML ]", {
+                            name : model_name,
+                            orig_path : model_path,
+                            is_coreml : true})
+                    }
                 }
             }
         }
