@@ -437,6 +437,18 @@ ipcMain.on('delete_file', (event, fpath) => {
     
 })
 
+ipcMain.on('delete_dir', (event, fpath) => {
+    const fs = require('fs');
+    try{
+        fs.rmdirSync(fpath, { recursive: true });
+        console.log("deleted")
+        event.returnValue = true;
+    } catch {
+        console.log("err in deleting")
+        event.returnValue = false;
+    }
+
+})
 
 function run_realesrgan(input_path , cb ){
     const path = require('path');
