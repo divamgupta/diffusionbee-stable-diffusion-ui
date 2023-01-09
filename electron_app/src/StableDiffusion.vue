@@ -3,7 +3,7 @@
 </template>
 <script>
 
-import { send_to_py } from "./py_vue_bridge.js"
+import { send_to_py, send_to_swift } from "./py_vue_bridge.js"
 import {get_tokens} from './clip_tokeniser/clip_encoder.js'
 import {compute_time_remaining} from "./utils.js"
 const moment = require('moment')
@@ -94,13 +94,11 @@ export default {
             //     }
             // }
             if(msg_code == "nwim"){
-                if (this.$parent.app_state.app_data.settings.notification_sound == true) {
-                    notification_sound.play();
-                }
                 let impath = msg.substring(5).trim()
                 if(this.attached_cbs){
-                    if(this.attached_cbs.on_img)
+                    if(this.attached_cbs.on_img){
                         this.attached_cbs.on_img(impath);
+                    }
                 }
             }
 
@@ -124,6 +122,7 @@ export default {
             if(msg_code == "mltl"){
                 let p = (msg.substring(5).trim());
                 this.model_loading_title = p;
+                this.is_backend_loaded = false;
             }
 
 
@@ -163,18 +162,27 @@ export default {
                     }
                         
                 }
-
+            }
+            if (msg_code == "igws") {
+                if (this.$parent.app_state.app_data.settings.notification_sound == true) {
+                    notification_sound.play();
+                }
             }
 
 
         } ,
 
-        interupt(){
-            send_to_py("t2im __stop__")
+        interupt(is_coreml = false){
+            if(is_coreml){
+                send_to_swift("t2im __stop__")
+            }
+            else{
+                send_to_py("t2im __stop__")
+            }
             this.attached_cbs = undefined;
         },
 
-        text_to_img(prompt_params, callbacks, generated_by){
+        text_to_img(prompt_params, callbacks, generated_by, is_coreml){
             if(!this.is_input_avail)
                 return;
             let tokens = [49406].concat((get_tokens(prompt_params.prompt))).concat([49407])
@@ -196,16 +204,26 @@ export default {
 
             if(prompt_params.negative_prompt){
                 prompt_params.negative_prompt = remove_non_ascii(prompt_params.negative_prompt)
-            }                
+            }
+            
+            // console.log(this.$parent.app_state.app_data.settings.live_render);
+            if (this.$parent.app_state.app_data.settings.live_render) {
+                prompt_params.save_every = 1;
+            }
 
             this.last_iter_t = Date.now()
             this.generated_by = generated_by;
             this.attached_cbs = callbacks;
+    
             this.generation_state_msg = ""
             this.remaining_times = ""
             this.iter_times = []
             this.nb_its = prompt_params.ddim_steps||25
-            send_to_py("t2im " + JSON.stringify(prompt_params)) 
+            if (is_coreml) {
+                send_to_swift("t2im " + JSON.stringify(prompt_params))
+            } else {
+                send_to_py("t2im " + JSON.stringify(prompt_params))
+            }
         }
 
     },

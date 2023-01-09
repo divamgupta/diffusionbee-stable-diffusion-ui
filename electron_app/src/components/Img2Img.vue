@@ -150,6 +150,14 @@ export default {
                 seed = Number(this.seed);
             else
                 seed = Math.floor(Math.random() * 100000);
+            
+            this.selected_model = this.app_state.app_data.selected_model;
+            const is_coreml = this.selected_model != "Default" && this.app_state.app_data.custom_models[this.selected_model] ? this.app_state.app_data.custom_models[this.selected_model].is_coreml : false;
+            console.log("is_coreml", is_coreml);
+            if (is_coreml) {
+                Vue.$toast.default('CoreML model for img2img not yet available, please select a different model')
+                return;
+            }
 
             if(this.prompt.trim() == ""){
                 Vue.$toast.default('You need to enter a prompt')
@@ -211,6 +219,16 @@ export default {
 
             let callbacks = {
                 on_img(img_path){
+                    let exist = false;
+                    for (let i = 0; i < that.generated_images.length; i++) {
+                        const element = that.generated_images[i];
+                        let element_without_suffix = element.split('?')[0];
+                        if (element_without_suffix == img_path) {
+                            exist = true;
+                            break;
+                        }
+                    }
+                    if (!exist) {
                     that.generated_images.push(img_path);
 
                     let p = {
@@ -228,7 +246,16 @@ export default {
                     that.app_state.app_data.history[history_key].imgs.push(img_path)
 
                     console.log(that.app_state.app_data.history)
-
+                    }   else {
+                        const img_index = that.generated_images.findIndex((element) => {
+                            let element_without_suffix = element.split('?')[0];
+                            return element_without_suffix == img_path;
+                        });
+                        this.update_img(img_index, img_path);
+                    }
+                },
+                update_img(index, img_path) {
+                    Vue.set(that.generated_images, index, img_path + "?v=" + Math.random());
                 },
                 on_progress(p){
                     that.done_percentage = p;

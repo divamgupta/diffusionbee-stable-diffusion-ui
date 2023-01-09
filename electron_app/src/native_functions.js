@@ -143,6 +143,12 @@ ipcMain.on('save_file', (event, arg) => {
 })
 
 
+ipcMain.on('file_exist', (event, arg) => {
+    let p1 = arg.split("||")[0];
+    let exist = require('fs').existsSync(p1);
+    event.returnValue = exist;
+});
+
 
 
 
@@ -175,6 +181,18 @@ ipcMain.on('get_instance_id', (event, arg) => {
     event.returnValue =   instance_id;
 
 })
+
+ipcMain.on('get_macos_version', (event, arg) => {
+    let version = -1;
+    if (process.platform == 'darwin') {
+        const os = require('os');
+        const osVersion = os.release();
+        version = parseFloat(osVersion);
+    }
+
+    event.returnValue = version;
+})
+
 
 
 ipcMain.on('unfreeze_win', (event, arg) => {
@@ -419,6 +437,18 @@ ipcMain.on('delete_file', (event, fpath) => {
     
 })
 
+ipcMain.on('delete_dir', (event, fpath) => {
+    const fs = require('fs');
+    try{
+        fs.rmdirSync(fpath, { recursive: true });
+        console.log("deleted")
+        event.returnValue = true;
+    } catch {
+        console.log("err in deleting")
+        event.returnValue = false;
+    }
+
+})
 
 function run_realesrgan(input_path , cb ){
     const path = require('path');
@@ -511,19 +541,34 @@ ipcMain.handle('run_realesrgan', async (event, arg) => {
 
 
 
+
 ipcMain.on('list_custom_models', (event, arg) => {
     const path = require('path');
     const fs = require('fs');
     const homedir = require('os').homedir();
-    let models_path = path.join(homedir , ".diffusionbee" , "custom_models");
+    let models_path = path.join(homedir, ".diffusionbee", "custom_models");
+    let coreml_models_path = path.join(homedir, ".diffusionbee", "coreml_models");
 
-    if (!fs.existsSync(models_path)){
+    if (!fs.existsSync(models_path)) {
         fs.mkdirSync(models_path, { recursive: true });
     }
+    if (!fs.existsSync(coreml_models_path)) {
+        fs.mkdirSync(coreml_models_path, { recursive: true });
+    }
 
-    event.returnValue = fs.readdirSync(models_path, {withFileTypes: true}).filter(item => !item.isDirectory()).map(item => item.name).filter(item => item.endsWith('.tdict'))
+    let models = []
 
+    models.push(...fs.readdirSync(models_path, { withFileTypes: true }).filter(item => !item.isDirectory()).map(item => item.name).filter(item => item.endsWith('.tdict')).map(item => { return { name: item, path: path.join(models_path, item) } }))
+    for (const model_dir of fs.readdirSync(coreml_models_path, { withFileTypes: true }).filter(item => item.isDirectory())) {
+        let model_dir_path = path.join(coreml_models_path, model_dir.name);
+        let mlmodelc_files = fs.readdirSync(model_dir_path).filter(item => item.endsWith('.mlmodelc'))
+        if (mlmodelc_files.includes('TextEncoder.mlmodelc') && mlmodelc_files.includes('Unet.mlmodelc') && mlmodelc_files.includes('UnetChunk1.mlmodelc') && mlmodelc_files.includes('UnetChunk2.mlmodelc') && mlmodelc_files.includes('VAEDecoder.mlmodelc')) {
+            models.push({ name: model_dir.name, path: model_dir_path })
+        }
+    }
+    event.returnValue = models
 })
+
 
 
 

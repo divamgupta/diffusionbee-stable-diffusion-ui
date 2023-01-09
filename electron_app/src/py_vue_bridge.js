@@ -92,6 +92,12 @@ function send_to_py_async() {
 
 }
 
+function send_to_swift(msg) {
+    window.ipcRenderer.sendSync('to_swift_sync', msg)
+}
+
+function send_to_swift_async() {}
 
 
-export { send_to_py, bind_app_component, send_to_py_async }
+
+export { send_to_py, send_to_swift, bind_app_component, send_to_py_async, send_to_swift_async }

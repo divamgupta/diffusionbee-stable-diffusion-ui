@@ -182,8 +182,9 @@ export default {
                 num_imgs : this.num_imgs , 
                 batch_size : this.batch_size 
             }
-
-            if(this.selected_model && this.selected_model != "Default" && this.app_state.app_data.custom_models[this.selected_model] ){
+            this.selected_model = this.app_state.app_data.selected_model;
+            
+            if (this.selected_model && this.selected_model != "Default" && this.app_state.app_data.custom_models[this.selected_model]) {
                 params.model_id = -1;
                 params.custom_model_path =  this.app_state.app_data.custom_models[this.selected_model].path;
             }
@@ -206,42 +207,97 @@ export default {
             let history_key = Math.random();
 
             let callbacks = {
-                on_img(img_path){
-                    that.generated_images.push(img_path);
-
-                    if(!(that.app_state.app_data.history[history_key])){
-                        let p = {
-                            "prompt":that.prompt , "seed": seed, "img_w":that.img_w , "img_h":that.img_h ,  "key":history_key , "imgs" : [],
-                            "guidence_scale" : that.guidence_scale , "dif_steps" : that.dif_steps 
+                on_img(img_path) {
+                    let exist = false;
+                    for (let i = 0; i < that.generated_images.length; i++) {
+                        const element = that.generated_images[i];
+                        let element_without_suffix = element.split('?')[0];
+                        if (element_without_suffix == img_path) {
+                            exist = true;
+                            break;
                         }
-                        if(that.stable_diffusion.model_version)
-                            p['model_version'] = that.stable_diffusion.model_version;
-                        if(that.is_negative_prompt_avail)
-                            p['negative_prompt'] = that.negative_prompt;
-                        Vue.set(that.app_state.app_data.history, history_key , p);
                     }
-                        
+                    if (!exist) {
+                        that.generated_images.push(img_path);
 
-                    
-                    that.app_state.app_data.history[history_key].imgs.push(img_path)
-
-                    console.log(that.app_state.app_data.history)
-
+                        if (!(that.app_state.app_data.history[history_key])) {
+                            let p = {
+                                "prompt": that.prompt, "seed": seed, "img_w": that.img_w, "img_h": that.img_h, "key": history_key, "imgs": [],
+                                "guidence_scale": that.guidence_scale, "dif_steps": that.dif_steps
+                            }
+                            if (that.stable_diffusion.model_version)
+                                p['model_version'] = that.stable_diffusion.model_version;
+                            if (that.is_negative_prompt_avail)
+                                p['negative_prompt'] = that.negative_prompt;
+                            Vue.set(that.app_state.app_data.history, history_key, p);
+                        }
+                        that.app_state.app_data.history[history_key].imgs.push(img_path);
+                    } else {
+                        const img_index = that.generated_images.findIndex((element) => {
+                            let element_without_suffix = element.split('?')[0];
+                            return element_without_suffix == img_path;
+                        });
+                        this.update_img(img_index, img_path);
+                    }
+                    return;
                 },
-                on_progress(p ){
-                    that.done_percentage = p;                
+                update_img(index, img_path) {
+                    Vue.set(that.generated_images, index, img_path + "?v=" + Math.random());
                 },
-                on_err(err){
+                on_progress(p) {
+                    that.done_percentage = p;
+                },
+                on_err(err) {
                     that.backend_error = err;
                 },
+                dragElement(elmnt) {
+                    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+                    if (document.getElementById(elmnt.id + "header")) {
+                        // if present, the header is where you move the DIV from:
+                        document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+                    } else {
+                        // otherwise, move the DIV from anywhere inside the DIV:
+                        elmnt.onmousedown = dragMouseDown;
+                    }
+
+                    function dragMouseDown(e) {
+                        e = e || window.event;
+                        e.preventDefault();
+                        // get the mouse cursor position at startup:
+                        pos3 = e.clientX;
+                        pos4 = e.clientY;
+                        document.onmouseup = closeDragElement;
+                        // call a function whenever the cursor moves:
+                        document.onmousemove = elementDrag;
+                    }
+
+                    function elementDrag(e) {
+                        e = e || window.event;
+                        e.preventDefault();
+                        // calculate the new cursor position:
+                        pos1 = pos3 - e.clientX;
+                        pos2 = pos4 - e.clientY;
+                        pos3 = e.clientX;
+                        pos4 = e.clientY;
+                        // set the element's new position:
+                        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+                    }
+
+                    function closeDragElement() {
+                        // stop moving when mouse button is released:
+                        document.onmouseup = null;
+                        document.onmousemove = null;
+                    }
+                }
             }
 
             this.is_stopping = false;
 
-
-           if(this.stable_diffusion)
-                this.stable_diffusion.text_to_img(params, callbacks, 'txt2img');
-        } , 
+            const is_coreml = this.selected_model != "Default" && this.app_state.app_data.custom_models[this.selected_model] ? this.app_state.app_data.custom_models[this.selected_model].is_coreml : false;
+            if (this.stable_diffusion)
+                this.stable_diffusion.text_to_img(params, callbacks, 'txt2img', is_coreml);
+        },
 
 
         open_arthub(){
@@ -250,7 +306,8 @@ export default {
 
         stop_generation(){
             this.is_stopping = true;
-            this.stable_diffusion.interupt();
+            const is_coreml = this.selected_model != "Default" && this.app_state.app_data.custom_models[this.selected_model] ? this.app_state.app_data.custom_models[this.selected_model].is_coreml : false;
+            this.stable_diffusion.interupt(is_coreml);
         },
 
         add_style(tag){
@@ -338,5 +395,4 @@ export default {
         }
 
     }
-
 </style>
