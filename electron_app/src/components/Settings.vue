@@ -57,6 +57,7 @@
                 <div class="l_button" @click="delete_model(model.name)" style="float:right">Remove</div>
                 <p> Name : {{model.name}} </p>
                 <p> Path : {{model.orig_path}} </p>
+                <span v-if="model.is_coreml" style="color:white;background:#02b3b6;border-radius:10px;padding:2px 5px 2px 5px;font-size:12px;">CoreML Model</span>
                 <hr> 
             </div>
         </div>
