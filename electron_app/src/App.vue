@@ -239,7 +239,7 @@ export default
             
             let xmlHttp = new XMLHttpRequest();
             let user_id = window.ipcRenderer.sendSync('get_instance_id' , '');
-            let updates_url = "https://aeyfmzu2ac.execute-api.us-east-1.amazonaws.com/check_diffusionbee_updates?user_id="+user_id;
+            let updates_url = "https://checkupdates.diffusionbee.com/check_diffusionbee_updates?user_id="+user_id;
             xmlHttp.onreadystatechange = function() { 
                 if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
                 {
