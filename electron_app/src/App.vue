@@ -14,6 +14,7 @@
             </transition>
         </div>
         <ApplicationFrame ref="app_frame" v-else title="DiffusionBee - Stable Diffusion App"
+            :app_state="app_state"
 
             @menu_item_click_about="show_about"
             @menu_item_click_help="open_url('https://diffusionbee.com/')"
@@ -104,7 +105,7 @@
 <script>
 
 import { bind_app_component } from "./py_vue_bridge.js"
-import { send_to_py } from "./py_vue_bridge.js"
+import { send_to_py, send_to_swift } from "./py_vue_bridge.js"
 import {native_confirm, native_alert } from "./native_functions_vue_bridge.js"
 import StableDiffusion from "./StableDiffusion.vue"
 import SplashScreen from './components_bare/SplashScreen.vue'
@@ -146,7 +147,6 @@ export default
         this.stable_diffusion = this.$refs.stable_diffusion;
 
         bind_app_component(this);
-        send_to_py("strt");
 
         if( require('../package.json').is_dev || require('../package.json').build_number.includes("dev") )
             alert("Not checking for updates.")
@@ -176,10 +176,49 @@ export default
         if(!data.custom_models){
             data.custom_models = {}
         }
+        if (!data.selected_model) {
+            data.selected_model = ""
+        }
         if( data ){
             Vue.set(this.app_state , 'app_data' , data)
         }
-            
+        
+        let custom_models = window.ipcRenderer.sendSync('list_custom_models');
+        Vue.set(this.app_state.app_data , 'custom_models' , {})
+        
+        let macos_version = window.ipcRenderer.sendSync('get_macos_version');
+        console.log("macOS version: " + macos_version);
+
+        for (let i = 0; i < custom_models.length; i++) {
+            const model_name = custom_models[i].name;
+            const model_path = custom_models[i].path;
+            if( model_name.endsWith(".tdict") ){
+                if( !data.custom_models[model_name.slice(0,-6)] ){
+                    Vue.set(this.app_state.app_data.custom_models , model_name.slice(0,-6) , {
+                        name : model_name.slice(0,-6),
+                        orig_path : model_path,
+                        is_coreml : false})
+                }
+            }
+            else{
+                // macos 13.1 required for coreml
+                if (macos_version >= 22.2){
+                    if( !data.custom_models[model_name] ){
+                        Vue.set(this.app_state.app_data.custom_models , model_name + " [CoreML ]", {
+                            name : model_name,
+                            orig_path : model_path,
+                            is_coreml : true})
+                    }
+                }
+            }
+        }
+        
+        if (data.selected_model.endsWith(" [CoreML ]")) {
+            send_to_swift("strt");
+        }
+        else {
+            send_to_py("strt");
+        }
      
     },
 

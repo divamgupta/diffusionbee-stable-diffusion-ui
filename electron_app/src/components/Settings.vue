@@ -19,6 +19,19 @@
                 </label>
             </div>
             </div>
+            <div class="setting_box">
+            <div class="settings_left">
+            <h3>Live render preview</h3>
+            <p>To display a preview of the image as it is being rendered, at each step of the generation process</p>
+            </div>
+            <hr>
+            <div style="float:right;margin-right: 9px;align-self: center;" >
+                <label class="switch">
+                    <input type="checkbox" v-model="app_state.app_data.settings.live_render">
+                    <span class="toggle round"></span>
+                </label>
+            </div>
+            </div>
             <hr>
              <!-- 
             <div class="setting_box">
@@ -41,9 +54,10 @@
             <!-- <br> -->
             <hr> 
             <div v-for="model in Object.values(this.app_state.app_data.custom_models)" :key="model.name">
-                <div class="l_button" @click="delete_model(model.name)" style="float:right">Remove</div>
+                <div class="l_button" @click="delete_model(model.name, model.is_coreml)" style="float:right">Remove</div>
                 <p> Name : {{model.name}} </p>
                 <p> Path : {{model.orig_path}} </p>
+                <span v-if="model.is_coreml" style="color:white;background:#02b3b6;border-radius:10px;padding:2px 5px 2px 5px;font-size:12px;">CoreML Model</span>
                 <hr> 
             </div>
         </div>
@@ -73,10 +87,15 @@ export default {
         };
     },
     methods: {
-        delete_model(k){
-            let model_path = this.app_state.app_data.custom_models[k].path;
-            window.ipcRenderer.sendSync('delete_file',  model_path );
-            Vue.delete( this.app_state.app_data.custom_models , k );
+        delete_model(k, coreml){
+            let model_path = coreml ? this.app_state.app_data.custom_models[k+" [CoreML ]"].orig_path : this.app_state.app_data.custom_models[k].orig_path;
+            if (coreml) {
+                window.ipcRenderer.sendSync('delete_dir',  model_path );
+                Vue.delete( this.app_state.app_data.custom_models , k+" [CoreML ]" );
+            } else {
+                window.ipcRenderer.sendSync('delete_file',  model_path );
+                Vue.delete( this.app_state.app_data.custom_models , k );
+            }
         },
         add_model(){
             let that = this;

@@ -8,23 +8,30 @@ var is_app_closing = false;
 
 var last_few_err = ""
 
-function start_bridge() {
+var change_backend = false;
+
+let script_path = process.env.PY_SCRIPT || "./src/fake_backend.py";
+
+function start_bridge(bin_path = null) {
 
     console.log("starting briddddd")
     const fs = require('fs')
 
-    let script_path = process.env.PY_SCRIPT || "./src/fake_backend.py"; 
-    let bin_path =  process.env.BIN_PATH;
-    if(bin_path && (fs.existsSync(script_path))){
-        python = require('child_process').spawn( bin_path );
-    }
-    else if (fs.existsSync(script_path)) {
+    if (bin_path && (fs.existsSync(bin_path))) {
+        change_backend = true;
+        if (python) python.kill();
+        python = require('child_process').spawn(bin_path);
+    } else if (fs.existsSync(script_path)) {
+        change_backend = true;
+        if (python) python.kill();
+        console.log("using python, script path: " + script_path)
         python = require('child_process').spawn('python3', [script_path]);
-    }
-    else{
+    } else {
+        change_backend = true;
+        if (python) python.kill();
         const path = require('path');
-        let backend_path =  path.join(path.dirname(__dirname), 'core' , 'diffusionbee_backend' );
-        python = require('child_process').spawn( backend_path  );
+        let backend_path = path.join(path.dirname(__dirname), 'core', 'diffusionbee_backend');
+        python = require('child_process').spawn(backend_path);
     }
     
    
@@ -32,6 +39,7 @@ function start_bridge() {
 
     python.stdout.on('data', function(data) {
         console.log("Python response: ", data.toString('utf8'));
+        change_backend = false;
 
 
         if(! data.toString().includes("sdbk ")){
@@ -72,6 +80,7 @@ function start_bridge() {
     });
 
     python.on('close', (code) => {
+        if (change_backend) return;
         // if( code != 0 )
         // {
         // 	dialog.showMessageBox("Backend quit unexpectedly")
@@ -97,11 +106,30 @@ function start_bridge() {
 }
 
 
+function on_msg_recieve(msg) { // on new msg from python 
+
+    if (msg.substring(0, 4) == "py2b") {
+        on_msg_from_py(msg.substring(5))
+    } else if (msg.substring(0, 4) == "adlg") {
+        add_log(msg.substring(5))
+    } else {
+        alert("recieved unk message " + msg.toString())
+    }
+
+}
+
+
+var use = "python"
+
 ipcMain.on('to_python_sync', (event, arg) => {
+    if (use != "python") {
+        start_bridge();
+        use = "python"
+    }
     if (python) {
         event.returnValue = "ok";
-        // console("sending to py from  main " + arg )
         python.stdin.write("b2py " + arg.toString() + "\n")
+        console.log(arg.toString())
 
     } else {
         console.log("Python not binded yet!");
@@ -118,7 +146,28 @@ ipcMain.on('to_python_async', (event, arg) => {
 
 
 
+ipcMain.on('to_swift_sync', (event, arg) => {
+    if (use != "swift") {
+        start_bridge("./src/Debug/swiftbackend_diffusionbee");
+        use = "swift"
+    }
+    if (python) {
+        event.returnValue = "ok";
+        python.stdin.write("b2s " + arg.toString() + "\n")
+        console.log(arg.toString())
 
+    } else {
+        console.log("Python not binded yet!");
+        event.returnValue = "not_ok";
+    }
+})
+
+
+ipcMain.on('to_swift_async', (event, arg) => {
+    if (python) {
+        python.stdin.write("b2s " + arg.toString() + "\n")
+    }
+})
 
 
 
