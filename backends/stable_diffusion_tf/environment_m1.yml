@@ -30,7 +30,7 @@ dependencies:
   - google-auth=1.35.0=pyh6c4a22f_0
   - google-auth-oauthlib=0.4.6=pyhd8ed1ab_0
   - google-pasta=0.2.0=pyh8c360ce_0
-  - grpcio=1.49.1=py39h13431ec_0
+  - grpcio=1.49.1
   - h5py=3.1.0=nompi_py39h99babb8_100
   - hdf5=1.10.6=nompi_h0fc092c_1114
   - idna=3.4=pyhd8ed1ab_0
@@ -53,7 +53,7 @@ dependencies:
   - libffi=3.4.2=h3422bc3_5
   - libgfortran=5.0.0=11_3_0_hd922786_25
   - libgfortran5=11.3.0=hdaf2cc0_25
-  - libgrpc=1.49.1=h503f348_0
+  - libgrpc=1.49.1
   - liblapack=3.9.0=16_osxarm64_openblas
   - libllvm11=11.1.0=hfa12f05_5
   - libnghttp2=1.47.0=h232270b_1

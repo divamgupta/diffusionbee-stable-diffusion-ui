@@ -24,12 +24,7 @@
                     
                     <div class="l_button button_medium button_colored" style="float:right ; " @click="generate_from_prompt">Generate</div>
 
-                    <!-- <div style="float:right;"  >
-                        <div class="l_button" @click="is_adv_options = !is_adv_options">Advanced options</div>
-                    </div> -->
-
                     <SDOptionsDropdown :options_model_values="this_object"  :elements_hidden="[ 'inp_img_strength' ]"> </SDOptionsDropdown>
-
 
                     <div style="float:right; margin-top: -5px; " >
                         <b-dropdown id="dropdown-form" variant="link" ref="dropdown" toggle-class="text-decoration-none" no-caret >
@@ -56,6 +51,25 @@
   
                             </b-dropdown-form>
                         </b-dropdown>
+                    </div>
+
+                    <div style="float:right; margin-top: -5px; " >
+                        <b-dropdown id="dropdown-form" variant="link" ref="dropdown" toggle-class="text-decoration-none" no-caret >
+                            <template #button-content>
+                                <div class="l_button"  style="margin-right: -20px;" >Model : <span style="font-weight:">{{selected_model.substring(0, 10)}} <font-awesome-icon icon="chevron-down" />  </span></div>
+                            </template>
+                            <b-dropdown-item v-for="option in ['Default'].concat(Object.keys(app_state.app_data.custom_models))" :key="option" @click="selected_model = option" >
+                                {{option}}
+                            </b-dropdown-item>
+                            <hr style="opacity:0.1">
+                            <b-dropdown-item @click="$parent.$parent.$refs.app_frame.selectTab('settings')">
+                                Add New Model
+                            </b-dropdown-item>
+                            <!-- <b-dropdown-item @click="$parent.$parent.$refs.app_frame.selectTab('settings')">
+                                Browse Models
+                            </b-dropdown-item> -->
+                        </b-dropdown>
+                            
                     </div>
 
                     <div class="l_button button_medium" style="float:right ;margin-right: -10px; margin-top: -1px;" @click="open_arthub">Prompt Ideas</div>

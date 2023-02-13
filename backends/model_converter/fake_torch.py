@@ -1,5 +1,11 @@
 import numpy as np
-from math import prod
+
+try:
+  from math import prod
+except:
+  from functools import reduce
+  def prod(iterable):
+    return reduce(operator.mul, iterable, 1)
 import zipfile
 import pickle
 import sys
