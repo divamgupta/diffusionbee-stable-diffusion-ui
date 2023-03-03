@@ -80,7 +80,7 @@ History:
 ![image](https://user-images.githubusercontent.com/1890549/198916678-9061829c-69da-4eee-b28d-1989e01c11e0.png)
 
 
-
+### To learn more, visit the [documentation](https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/blob/master/DOCUMENTATION.md).
 
 ## Requirements 
 * Mac with Intel or M1/M2 CPU
