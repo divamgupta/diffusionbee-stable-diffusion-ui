@@ -8,9 +8,12 @@ var is_app_closing = false;
 
 var last_few_err = ""
 
+let RESTART_BACKEND_ON_CLOSE = true
+
+
 function start_bridge() {
 
-    console.log("starting briddddd")
+    console.log("starting bridge")
     const fs = require('fs')
 
     let script_path = process.env.PY_SCRIPT || "./src/fake_backend.py"; 
@@ -84,12 +87,29 @@ function start_bridge() {
             return;
         }
 
-        dialog.showMessageBox({ message: "Backend quit unexpectedly. " + last_few_err });
-        if (win)
-        {
-            is_app_closing = true;
-            app.exit(1);
+        
+
+
+        if(RESTART_BACKEND_ON_CLOSE){
+            // dialog.showMessageBox( win , { message: "Error in backend : " + last_few_err }); // this is non blocking 
+            if(!(last_few_err.includes("leaked semaphore objects to clean up at shutdown"))){
+                // this leaked semaphore issue just happens sometimes. so for now lets just silently restart 
+                dialog.showMessageBox( { message: "Error in backend : " + last_few_err });
+            }
+            
+            return start_bridge()
         }
+        else{
+
+            dialog.showMessageBox({ message: "Backend quit unexpectedly. " + last_few_err });
+
+            if (win)
+            {
+                is_app_closing = true;
+                app.exit(1);
+            }
+        }
+        
             
 
     });

@@ -59,7 +59,7 @@ class Decoder(tf.keras.Sequential):
     def __init__(self):
         super().__init__(
             [
-                tf.keras.layers.Lambda(lambda x: 1 / 0.18215 * x),
+                tf.keras.layers.Lambda(lambda x: 1 * x),
                 PaddedConv2D(4, 1),
                 PaddedConv2D(512, 3, padding=1),
                 ResnetBlock(512, 512),
@@ -118,6 +118,6 @@ class Encoder(tf.keras.Sequential):
                 tf.keras.layers.Activation("swish"),
                 PaddedConv2D(8, 3, padding=1 ),
                 PaddedConv2D(8, 1 ),
-                tf.keras.layers.Lambda(lambda x : x[... , :4] * 0.18215)
+                tf.keras.layers.Lambda(lambda x : x[... , :8]  )
             ]
         )

@@ -1,0 +1,5 @@
+The Stable Diffusion weights (not included as part of this repository) are under the following license (CreativeML Open RAIL-M):
+
+https://raw.githubusercontent.com/CompVis/stable-diffusion/main/LICENSE
+
+The weights content has not been modified as part of this reimplementation (only reformatted).

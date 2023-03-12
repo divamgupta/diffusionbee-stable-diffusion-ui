@@ -158,7 +158,7 @@ export default
         setTimeout( function(){
              
             that.app_state.is_start_screen = false;
-        }  , 4000)
+        }  , 5000)
 
         this.is_mounted = true;
 

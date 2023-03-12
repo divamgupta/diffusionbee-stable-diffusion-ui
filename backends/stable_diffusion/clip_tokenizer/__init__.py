@@ -6,7 +6,9 @@ from functools import lru_cache
 import ftfy
 import regex as re
 
-import tensorflow as tf
+# import tensorflow as tf
+# from tensorflow import keras
+
 
 
 @lru_cache()
@@ -24,10 +26,6 @@ def default_bpe():
         if os.path.exists(p2):
             return p2
         assert False
-        return tf.keras.utils.get_file(
-            "bpe_simple_vocab_16e6.txt.gz",
-            "https://github.com/openai/CLIP/blob/main/clip/bpe_simple_vocab_16e6.txt.gz?raw=true",
-        )
 
 
 @lru_cache()
@@ -37,7 +35,7 @@ def bytes_to_unicode():
     The reversible bpe codes work on unicode strings.
     This means you need a large # of unicode characters in your vocab if you want to avoid UNKs.
     When you're at something like a 10B token dataset you end up needing around 5K for decent coverage.
-    This is a signficant percentage of your normal, say, 32K bpe vocab.
+    This is a significant percentage of your normal, say, 32K bpe vocab.
     To avoid that, we want lookup tables between utf-8 bytes and unicode strings.
     And avoids mapping to whitespace/control characters the bpe code barfs on.
     """

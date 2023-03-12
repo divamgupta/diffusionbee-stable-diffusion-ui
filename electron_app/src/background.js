@@ -1,5 +1,6 @@
 ﻿'use strict'
 
+
 import { app, protocol, BrowserWindow, nativeTheme, ipcMain , Menu} from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
@@ -12,6 +13,8 @@ import settings from 'electron-settings';
 
 import { start_bridge, bind_window_bridge } from './bridge.js'
 import { bind_window_native_functions } from "./native_functions.js"
+
+start_bridge();
 
 
 let is_windows = process.platform.startsWith('win');
@@ -29,7 +32,6 @@ protocol.registerSchemesAsPrivileged([
 import {menu_template} from "./menu_template"
 Menu.setApplicationMenu(Menu.buildFromTemplate(menu_template))
 
-start_bridge();
 
 
 
