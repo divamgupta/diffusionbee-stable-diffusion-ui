@@ -38,8 +38,10 @@ if not USE_DUMMY_INTERFACE :
 else:
     from fake_interface import ModelInterface
 
-from diffusers import LMSDiscreteScheduler, PNDMScheduler, DDIMScheduler
-
+# from diffusers import LMSDiscreteScheduler, PNDMScheduler, DDIMScheduler
+from schedulers.scheduling_ddim import DDIMScheduler
+from schedulers.scheduling_lms_discrete  import LMSDiscreteScheduler
+from schedulers.scheduling_pndm import PNDMScheduler
 
 def process_inp_img(input_image):
     input_image = Image.open(input_image)
@@ -411,7 +413,7 @@ class StableDiffusion:
         mask_image=None,
         negative_prompt="",
         input_image_strength=0.5,
-        scheduler='ddim',
+        scheduler='pndm',
         tdict_path=None, # if none then it will just use current one
         dtype='float16',
         mode="txt2img" # txt2img , img2img, inpaint_15
