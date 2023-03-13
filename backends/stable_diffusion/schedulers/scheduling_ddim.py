@@ -130,6 +130,11 @@ class DDIMScheduler(SchedulerMixin):
         self.config = self
         self.set_format(tensor_format=tensor_format)
 
+        self.initial_scale = 1
+
+    def get_input_scale(self, _ ):
+        return 1
+
     def _get_variance(self, timestep, prev_timestep):
         alpha_prod_t = self.alphas_cumprod[timestep]
         alpha_prod_t_prev = self.alphas_cumprod[prev_timestep] if prev_timestep >= 0 else self.final_alpha_cumprod
@@ -160,11 +165,15 @@ class DDIMScheduler(SchedulerMixin):
         model_output: Union[ np.ndarray],
         timestep: int,
         sample: Union[ np.ndarray],
+        seed=None,
         eta: float = 0.0,
         use_clipped_model_output: bool = False,
         generator=None,
         return_dict: bool = True,
     ) -> Union[ Tuple]:
+
+        timestep = self.timesteps[timestep]
+
         """
         Predict the sample at the previous timestep by reversing the SDE. Core function to propagate the diffusion
         process from the learned model outputs (most often the predicted noise).
@@ -249,6 +258,11 @@ class DDIMScheduler(SchedulerMixin):
         noise: Union[ np.ndarray],
         timesteps: Union[np.ndarray],
     ) -> Union[ np.ndarray]:
+
+        
+        timesteps = np.array([ self.timesteps[i] for i in timesteps ])
+
+
         sqrt_alpha_prod = self.alphas_cumprod[timesteps] ** 0.5
         sqrt_alpha_prod = self.match_shape(sqrt_alpha_prod, original_samples)
         sqrt_one_minus_alpha_prod = (1 - self.alphas_cumprod[timesteps]) ** 0.5

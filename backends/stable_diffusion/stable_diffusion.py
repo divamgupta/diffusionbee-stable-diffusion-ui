@@ -42,6 +42,8 @@ else:
 from schedulers.scheduling_ddim import DDIMScheduler
 from schedulers.scheduling_lms_discrete  import LMSDiscreteScheduler
 from schedulers.scheduling_pndm import PNDMScheduler
+from schedulers.k_euler_ancestral import KEulerAncestralSampler
+from schedulers.k_euler import KEulerSampler
 
 def process_inp_img(input_image):
     input_image = Image.open(input_image)
@@ -127,6 +129,12 @@ def get_scheduler(name):
             beta_schedule="scaled_linear",
             skip_prk_steps = True,
             tensor_format="np")
+
+    if name == "k_euler_ancestral":
+        return KEulerAncestralSampler()
+
+    if name == "k_euler":
+        return KEulerSampler()
 
 
 def dummy_callback(state="" , progress=-1):
@@ -283,18 +291,14 @@ class StableDiffusion:
             # latent_np = latent_np * np.float64(self.scheduler.init_noise_sigma)
             sd_run.latent = latent_np
 
-            if isinstance(self.scheduler, LMSDiscreteScheduler):
-                sd_run.latent  = sd_run.latent  * self.scheduler.sigmas[0]
+            sd_run.latent  = sd_run.latent  * self.scheduler.initial_scale
 
         else:
             latent = self.get_encoded_img(sd_run , sd_run.input_image_processed )
             sd_run.encoded_img_unmasked = np.copy(latent)
 
-            if isinstance(self.scheduler, LMSDiscreteScheduler):
-                start_timestep = np.array([self.t_to_i(sd_run.start_timestep)] * sd_run.batch_size, dtype=np.int64 )
-            else:
-                start_timestep = np.array([sd_run.start_timestep] * sd_run.batch_size, dtype=np.int64 )
-
+            start_timestep = np.array([self.t_to_i(sd_run.start_timestep)] * sd_run.batch_size, dtype=np.int64 )
+           
             noise = self.get_noise(sd_run.seed , latent.shape )
             latent = self.scheduler.add_noise(latent, noise, start_timestep )
             sd_run.latent = latent
@@ -344,12 +348,8 @@ class StableDiffusion:
                 np.repeat( (1 - sd_run.processed_mask_downscaled ), sd_run.batch_size , axis=0) , 
                 sd_run.encoded_masked_img 
             ], axis=-1)
-
-        if isinstance(self.scheduler, LMSDiscreteScheduler):
-            sigma = self.scheduler.sigmas[self.t_to_i(t)]
-            latent_model_input =  latent_model_input / ((sigma**2 + 1) ** 0.5)
-
-        # latent_model_input = self.scheduler.scale_model_input(sd_run.latent, t)
+   
+        latent_model_input =  latent_model_input * self.scheduler.get_input_scale(self.t_to_i(t))
 
         if sd_run.combine_unet_run:
             latent_combined = np.concatenate([latent_model_input,latent_model_input])
@@ -374,22 +374,16 @@ class StableDiffusion:
             eta = 0.0 # should be between 0 and 1, but 0 for now
             extra_step_kwargs["eta"] = eta
 
-        if isinstance(self.scheduler, LMSDiscreteScheduler):
-            latents = self.scheduler.step(noise_pred, self.t_to_i(t), sd_run.latent, **extra_step_kwargs)["prev_sample"]
-        else:
-            latents = self.scheduler.step(noise_pred, t, sd_run.latent, **extra_step_kwargs)["prev_sample"]
+        step_seed = sd_run.seed + 10000 + self.t_to_i(t)*4242
+        latents = self.scheduler.step(noise_pred, self.t_to_i(t), sd_run.latent , seed=step_seed , **extra_step_kwargs)["prev_sample"]
+       
 
         if sd_run.do_masking:
 
             latent_proper = np.copy(sd_run.encoded_img_unmasked)
 
             noise = self.get_noise(sd_run.seed , latent_proper.shape )
-
-            if isinstance(self.scheduler, LMSDiscreteScheduler):
-                latent_proper = self.scheduler.add_noise(latent_proper, noise, np.array([self.t_to_i(sd_run.current_t)] * sd_run.batch_size, dtype=np.int64 ) )
-            else:
-                latent_proper = self.scheduler.add_noise(latent_proper, noise, np.array([sd_run.current_t] * sd_run.batch_size, dtype=np.int64 ) )
-
+            latent_proper = self.scheduler.add_noise(latent_proper, noise, np.array([self.t_to_i(sd_run.current_t)] * sd_run.batch_size, dtype=np.int64 ) )
 
             latents = (latent_proper  * sd_run.processed_mask_downscaled) + (latents * (1 - sd_run.processed_mask_downscaled))
 
@@ -413,7 +407,7 @@ class StableDiffusion:
         mask_image=None,
         negative_prompt="",
         input_image_strength=0.5,
-        scheduler='pndm',
+        scheduler='k_euler',
         tdict_path=None, # if none then it will just use current one
         dtype='float16',
         mode="txt2img" # txt2img , img2img, inpaint_15

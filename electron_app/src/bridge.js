@@ -92,11 +92,11 @@ function start_bridge() {
 
         if(RESTART_BACKEND_ON_CLOSE){
             // dialog.showMessageBox( win , { message: "Error in backend : " + last_few_err }); // this is non blocking 
-            if(!(last_few_err.includes("leaked semaphore objects to clean up at shutdown"))){
-                // this leaked semaphore issue just happens sometimes. so for now lets just silently restart 
-                dialog.showMessageBox( { message: "Error in backend : " + last_few_err });
-            }
-            
+            // if(!(last_few_err.includes("leaked semaphore objects to clean up at shutdown"))){
+            //     // this leaked semaphore issue just happens sometimes. so for now lets just silently restart 
+            //     dialog.showMessageBox( { message: "Error in backend : " + last_few_err });
+            // }
+            dialog.showMessageBox( { message: "Error in backend : " + last_few_err });
             return start_bridge()
         }
         else{

@@ -132,6 +132,11 @@ class PNDMScheduler(SchedulerMixin):
         self.config = self
         self.set_format(tensor_format=tensor_format)
 
+        self.initial_scale = 1
+
+    def get_input_scale(self, _ ):
+        return 1
+
     def set_timesteps(self, num_inference_steps: int, offset: int = 0):
         """
         Sets the discrete timesteps used for the diffusion chain. Supporting function to be run before inference.
@@ -175,8 +180,12 @@ class PNDMScheduler(SchedulerMixin):
         model_output: Union[ np.ndarray],
         timestep: int,
         sample: Union[ np.ndarray],
+        seed=None,
         return_dict: bool = True,
     ) -> Union[SchedulerOutput, Tuple]:
+
+        timestep = self.timesteps[timestep]
+
         """
         Predict the sample at the previous timestep by reversing the SDE. Core function to propagate the diffusion
         process from the learned model outputs (most often the predicted noise).
@@ -354,6 +363,9 @@ class PNDMScheduler(SchedulerMixin):
         noise: Union[ np.ndarray],
         timesteps: Union[ np.ndarray],
     )  :
+
+        timesteps = np.array([ self.timesteps[i] for i in timesteps ])
+
         # mps requires indices to be in the same device, so we use cpu as is the default with cuda
         timesteps = timesteps.to(self.alphas_cumprod.device)
         sqrt_alpha_prod = self.alphas_cumprod[timesteps] ** 0.5

@@ -91,6 +91,12 @@ class LMSDiscreteScheduler(SchedulerMixin):
         self.timestep_values = timestep_values
         self.tensor_format = tensor_format
 
+        self.initial_scale = self.sigmas[0]
+
+    def get_input_scale(self, step_count=None):
+        sigma = self.sigmas[step_count]
+        return 1 / (sigma ** 2 + 1) ** 0.5
+
     def get_lms_coefficient(self, order, t, current_order):
         """
         Compute a linear multistep coefficient.
@@ -138,6 +144,7 @@ class LMSDiscreteScheduler(SchedulerMixin):
         model_output: Union[torch.FloatTensor, np.ndarray],
         timestep: int,
         sample: Union[torch.FloatTensor, np.ndarray],
+        seed=None,
         order: int = 4,
         return_dict: bool = True,
     ) -> Union[ Tuple]:
