@@ -13,9 +13,13 @@ import math
 import time
 import traceback
 from stable_diffusion import StableDiffusion
-
+import os
 # b2py t2im {"prompt": "sun glasses" , "W":640 , "H" : 640 , "num_imgs" : 10 , "input_image":"/Users/divamgupta/Downloads/inn.png" , "mask_image" : "/Users/divamgupta/Downloads/maa.png" , "is_inpaint":true  }
 
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(dir_path , "../model_converter"))
+from convert_model import convert_model
 
 
 from pathlib import Path
@@ -149,7 +153,7 @@ def process_opt(d, generator):
 
 
 
-def main():
+def diffusion_bee_main():
 
 
     global p_14 , p_14_np
@@ -205,4 +209,12 @@ def main():
 
 if __name__ == "__main__":
     multiprocessing.freeze_support()  # for pyinstaller
-    main()
+
+    if len(sys.argv) > 1 and sys.argv[1] == 'convert_model':
+        checkpoint_filename = sys.argv[2]
+        out_filename = sys.argv[3]
+        convert_model(checkpoint_filename, out_filename )
+        print("model converted ")
+    else:
+        diffusion_bee_main()
+
