@@ -18,6 +18,11 @@ MAX_TEXT_LEN = 77
 
 USE_DUMMY_INTERFACE = False
 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+sys.path.append(os.path.join(dir_path , "../model_converter"))
+from tdict import TDict
+
 # get the model interface form the environ
 if not USE_DUMMY_INTERFACE :
     model_interface_path = os.environ.get('MODEL_INTERFACE_PATH') or "../stable_diffusion_tf_models"
@@ -30,7 +35,7 @@ if not USE_DUMMY_INTERFACE :
     module_name = model_interface_path.split("/")[-1]
     module_path = "/".join(model_interface_path.split("/")[:-1])
 
-    dir_path = os.path.dirname(os.path.realpath(__file__))
+    
     sys.path.append( os.path.join(dir_path , module_path) )
 
 
@@ -155,7 +160,7 @@ class StableDiffusion:
         self.current_tdict_path = tdict_path
         self.current_dtype = ModelInterface.default_float_type
 
-        self.model = ModelInterface( self.current_tdict_path , dtype=self.current_dtype, model_name=self.current_model_name )
+        self.model = ModelInterface( TDict(self.current_tdict_path ), dtype=self.current_dtype, model_name=self.current_model_name )
 
 
     def prepare_model_interface(self , sd_run=None ):
@@ -172,14 +177,14 @@ class StableDiffusion:
             print("Creating model interface")
             assert tdict_path is not None
             self.model.destroy()
-            self.model = ModelInterface(tdict_path , dtype=dtype, model_name=model_name )
+            self.model = ModelInterface(TDict(tdict_path ) , dtype=dtype, model_name=model_name )
             self.current_tdict_path = tdict_path
             self.current_dtype = dtype
             self.current_model_name = model_name
 
         if tdict_path != self.current_tdict_path:
             assert tdict_path is not None
-            self.model.load_from_tdict(tdict_path)
+            self.model.load_from_tdict(TDict(tdict_path))
             self.current_tdict_path = tdict_path
 
 

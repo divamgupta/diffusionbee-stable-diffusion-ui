@@ -59,7 +59,7 @@ class ModelInterface:
 
     default_float_type = 'float32'
 
-    def __init__(self, tdict_path,  dtype='float16', model_name="sd_1x"):
+    def __init__(self, tdict,  dtype='float16', model_name="sd_1x"):
 
         if model_name == "sd_1x":
             n_unet_ch = 4
@@ -80,7 +80,7 @@ class ModelInterface:
         self.decoder_f = decoder_f
         self.encoder_f = encoder_f
 
-        self.load_from_tdict(tdict_path)
+        self.load_from_tdict(tdict)
 
 
     def run_unet(self, time_emb, text_emb, unet_inp):
@@ -103,34 +103,20 @@ class ModelInterface:
     def destroy(self):
         pass
 
-    def load_from_tdict(self, tdict_path):
-        inp_file = open(tdict_path, mode='rb')
+    def load_from_tdict(self, tdict):
+        inp_file = tdict
+        inp_file.init_read()
 
-        inp_file.seek(0)
-        headers = inp_file.read(4)
-        assert tuple(headers) == (42, 10 , 8, 42)
-
-        inp_file.seek(5)
-        json_start = np.frombuffer(inp_file.read(8), dtype='long')[0]
-
-        inp_file.seek(14)
-        json_end = np.frombuffer(inp_file.read(8), dtype='long')[0]
-
-        inp_file.seek(json_start)
-        keys_dict = json.loads( inp_file.read(json_end - json_start ).decode('ascii') )
 
         for module_name in ['text_encoder', 'diffusion_model', 'decoder', 'encoder' ]:
             module_weights = []
             for i , (key , perm ) in enumerate(PYTORCH_CKPT_MAPPING[module_name]):
                 
-                w_idx_start = keys_dict[key]['start']
-                w_idx_len =  keys_dict[key]['end'] -  keys_dict[key]['start']
-                inp_file.seek(w_idx_start)
-                w = np.frombuffer(inp_file.read(w_idx_len), dtype=keys_dict[key]['dtype'])
-                w = w.reshape(tuple(keys_dict[key]['shape']))
+                w = inp_file.read_key(key)
 
                 if perm is not None:
                     w = np.transpose(w , perm )
                 module_weights.append(w)
             getattr(self, module_name).set_weights(module_weights)
             print("Loaded %d weights for %s"%(len(module_weights) , module_name))
+        inp_file.finish_read()

@@ -5,43 +5,43 @@ if __name__ == "__main__":
     sd = StableDiffusion( )
 
 
-    # for cur_run_id in range(2):
-    #     img = sd.generate(
-    #         prompt="a haloween bedroom" , 
-    #         img_height=512+64, 
-    #         img_width=512-64, 
-    #         seed=678, 
-    #         tdict_path=None,
-    #         batch_size=1,
-    #         dtype='float16',
-    #         scheduler='ddim',
-    #         input_image_strength=0.4,
-    #         input_image="bedroom2.jpg",
-    #         mode="img2img" )
-    #     Image.fromarray(img[0]).show()
+    for cur_run_id in range(2):
+        img = sd.generate(
+            prompt="a haloween bedroom" , 
+            img_height=512+64, 
+            img_width=512-64, 
+            seed=678, 
+            tdict_path=None,
+            batch_size=1,
+            dtype='float16',
+            scheduler='ddim',
+            input_image_strength=0.4,
+            input_image="bedroom2.jpg",
+            mode="img2img" )
+        Image.fromarray(img[0]).show()
 
-    # for cur_run_id in range(2):
-    #     img = sd.generate(
-    #         prompt="modern disney a blue colored baby lion with lots of fur" , 
-    #         img_height=512-64, 
-    #         img_width=512, 
-    #         seed=34, 
-    #         num_steps=25,
-    #         batch_size=1,
-    #         tdict_path="/Users/divamgupta/.diffusionbee/custom_models/moDi-v1-pruned.tdict",
-    #         dtype='float16',
-    #         scheduler='ddim',
-    #         mode="txt2img" )
-    #     Image.fromarray(img[0]).show()
+    for cur_run_id in range(2):
+        img = sd.generate(
+            prompt="modern disney a blue colored baby lion with lots of fur" , 
+            img_height=512-64, 
+            img_width=512, 
+            seed=34, 
+            num_steps=25,
+            batch_size=1,
+            tdict_path="/Users/divamgupta/.diffusionbee/custom_models/moDi-v1-pruned.tdict",
+            dtype='float16',
+            scheduler='ddim',
+            mode="txt2img" )
+        Image.fromarray(img[0]).show()
 
-    # img = sd.generate(
-    #     prompt="modern disney a blue colored baby lion with lots of fur" , 
-    #     img_height=512, 
-    #     img_width=512, 
-    #     seed=34, 
-    #     tdict_path=None,
-    #     mode="txt2img" )
-    # Image.fromarray(img[0]).show()
+    img = sd.generate(
+        prompt="modern disney a blue colored baby lion with lots of fur" , 
+        img_height=512, 
+        img_width=512, 
+        seed=34, 
+        tdict_path=None,
+        mode="txt2img" )
+    Image.fromarray(img[0]).show()
 
 
     img = sd.generate(
