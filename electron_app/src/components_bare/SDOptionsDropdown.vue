@@ -60,33 +60,7 @@
 
                             </div>
                         </div>
-                    </span>
-
-                    <span v-if="!elements_hidden.includes('batch_size')">
-                        <div class="options_title">
-                            <div class="options_title_box" style="width: 205px;">
-                                <span>Batch size</span>
-                                <span class="options_desc">How many images are created at the sametime. (Leave at 1 if
-                                    you have 16GB or less RAM)</span>
-                            </div>
-                            <div class="options_input" style="width: 75px;">
-                                <svg width="18" height="19" viewBox="0 0 18 19" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M15 5.5H7C5.89543 5.5 5 6.39543 5 7.5V15.5C5 16.6046 5.89543 17.5 7 17.5H15C16.1046 17.5 17 16.6046 17 15.5V7.5C17 6.39543 16.1046 5.5 15 5.5Z"
-                                        stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                    <path
-                                        d="M13 5.5V3.5C13 2.96957 12.7893 2.46086 12.4142 2.08579C12.0391 1.71071 11.5304 1.5 11 1.5H3C2.46957 1.5 1.96086 1.71071 1.58579 2.08579C1.21071 2.46086 1 2.96957 1 3.5V11.5C1 12.0304 1.21071 12.5391 1.58579 12.9142C1.96086 13.2893 2.46957 13.5 3 13.5H5"
-                                        stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                                <b-form-select v-model="options_model_values.batch_size" :options="[1, 2, 3, 4, 5, 6]"
-                                    required></b-form-select>
-                            </div>
-                        </div>
-
-                    </span>
+                    </span>                    
 
                     <span v-if="!elements_hidden.includes('img_h')">
                         <div class="options_title">
@@ -141,107 +115,202 @@
                         </div>
                     </span>
 
-                    <span v-if="!elements_hidden.includes('batch_size')">
-                    <b-form-group inline label="" style="margin-bottom: 6px;">
-                            <div class="options_title">
-                                <div class="options_title_box" style="width: 205px;">
-                                    <span>Steps</span>
-                                    <span class="options_desc">Iterations of the image (more steps means more detail &
-                                        more processing time - best to start around 10)</span>
-                                </div>
-                                <div class="options_input" style="width: 75px;">
-                                    <svg width="18" height="15" viewBox="0 0 18 15" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M1 13.5H5V9.5H9V5.5H13V1.5H17" stroke="#A2A3AA" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-
-                                    <b-form-select v-model="options_model_values.dif_steps"
-                                        :options="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75]"
-                                        required></b-form-select>
-                                </div>
+                    <span v-if="!elements_hidden.includes('seed')">
+                        <div class="options_title">
+                            <div class="options_title_box" style="width: 155px;">
+                                <span>Seed</span>
+                                <span class="options_desc">Starting point for iterations (any random
+                                    number will do; DB will pick one if left blank)</span>
                             </div>
-                    </b-form-group>
+                            <div class="options_input" style="width: 125px;">
+                                <svg style="height: auto;" width="20" height="20" viewBox="0 0 20 19" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M10 7.5C10 5.9087 9.36786 4.38258 8.24264 3.25736C7.11742 2.13214 5.5913 1.5 4 1.5H1V3.5C1 5.0913 1.63214 6.61742 2.75736 7.74264C3.88258 8.86786 5.4087 9.5 7 9.5H10"
+                                        stroke="#A2A3AA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path
+                                        d="M10 11.5C10 9.9087 10.6321 8.38258 11.7574 7.25736C12.8826 6.13214 14.4087 5.5 16 5.5H19V6.5C19 8.0913 18.3679 9.61742 17.2426 10.7426C16.1174 11.8679 14.5913 12.5 13 12.5H10"
+                                        stroke="#A2A3AA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M10 17.5V7.5" stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+
+                                <b-form-input onkeypress="return event.keyCode != 13;" class="custom-input"
+                                    v-model="options_model_values.seed" type="number" width="70" value="100" maxlength="5"
+                                    placeholder="-1"></b-form-input>
+                            </div>
+                        </div>
                     </span>
+
+                    <span v-if="!elements_hidden.includes('batch_size')">
+                        <b-form-group inline label="" style="margin-bottom: 6px;">
+                                <div class="options_title">
+                                    <div class="options_title_box" style="width: 205px;">
+                                        <span>Steps</span>
+                                        <span class="options_desc">Iterations of the image (more steps means more detail &
+                                            more processing time - best to start around 10)</span>
+                                    </div>
+                                    <div class="options_input" style="width: 75px;">
+                                        <svg width="18" height="15" viewBox="0 0 18 15" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M1 13.5H5V9.5H9V5.5H13V1.5H17" stroke="#A2A3AA" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+
+                                        <b-form-select v-model="options_model_values.dif_steps"
+                                            :options="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75]"
+                                            required></b-form-select>
+                                    </div>
+                                </div>
+                        </b-form-group>
+                    </span>
+
+                    <span v-if="elements_extra && elements_extra.includes('sampler')">
+                        <div class="options_title">
+                            <div class="options_title_box" style="width: 165px;">
+                                <span>Sampler</span>
+                                <span class="options_desc">The sampling algorithm used by Stable Diffusion to generate images.</span>
+                            </div>
+                            <div class="options_input" style="width: 115px;">
+                                <svg width="18" height="19" viewBox="0 0 18 19" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 5.5H12.01" stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path
+                                        d="M14 1.5H4C2.34315 1.5 1 2.84315 1 4.5V14.5C1 16.1569 2.34315 17.5 4 17.5H14C15.6569 17.5 17 16.1569 17 14.5V4.5C17 2.84315 15.6569 1.5 14 1.5Z"
+                                        stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path
+                                        d="M1 12.5L5 8.50001C5.45606 8.06117 5.97339 7.83014 6.5 7.83014C7.02661 7.83014 7.54394 8.06117 8 8.50001L13 13.5"
+                                        stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path
+                                        d="M11 11.5L12 10.5C12.4561 10.0612 12.9734 9.83014 13.5 9.83014C14.0266 9.83014 14.5439 10.0612 15 10.5L17 12.5"
+                                        stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+
+                                <b-form-select v-model="options_model_values.selected_sampler"
+                                    :options="['ddim' , 'lmsd' , 'pndm' , 'k_euler_ancestral' , 'k_euler' ]"
+                                    required></b-form-select>
+                            </div>
+                        </div>
+                    </span>
+
+                     <span v-if="elements_extra && elements_extra.includes('use_soft_seed')">
+                        <div class="options_title">
+                            <div class="options_title_box" style="width: 205px;">
+                                <span>Similar images</span>
+                                <span class="options_desc">If it should generate similar images for a given seed.</span>
+                            </div>
+                            <div class="options_input" style="width: 75px;">
+                                <svg width="18" height="19" viewBox="0 0 18 19" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 5.5H12.01" stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path
+                                        d="M14 1.5H4C2.34315 1.5 1 2.84315 1 4.5V14.5C1 16.1569 2.34315 17.5 4 17.5H14C15.6569 17.5 17 16.1569 17 14.5V4.5C17 2.84315 15.6569 1.5 14 1.5Z"
+                                        stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path
+                                        d="M1 12.5L5 8.50001C5.45606 8.06117 5.97339 7.83014 6.5 7.83014C7.02661 7.83014 7.54394 8.06117 8 8.50001L13 13.5"
+                                        stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path
+                                        d="M11 11.5L12 10.5C12.4561 10.0612 12.9734 9.83014 13.5 9.83014C14.0266 9.83014 14.5439 10.0612 15 10.5L17 12.5"
+                                        stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                                <b-form-select v-model="options_model_values.use_soft_seed" id="use_soft_seed"
+                                    :options="['Yes' , 'No']"
+                                    required>
+                                </b-form-select>
+
+                            </div>
+                        </div>
+                    </span>           
+
 
                     <span v-if="!elements_hidden.includes('guidence_scale')">
-                    <b-form-group inline label="" style="margin-bottom: 6px;">
-                        <div style="display: flex;flex-direction: column;width: 300px;">
-                            <div class="options_title_box">
-                                <span>Guidance scale</span>
-                                <span class="options_desc">How closely to follow your prompt (lower
-                                    numbers give the AI more creativity)</span>
+                        <b-form-group inline label="" style="margin-bottom: 6px;">
+                            <div style="display: flex;flex-direction: column;width: 300px;">
+                                <div class="options_title_box">
+                                    <span>Guidance scale</span>
+                                    <span class="options_desc">How closely to follow your prompt (lower
+                                        numbers give the AI more creativity)</span>
+                                </div>
+                                <input type="range" min="0" max="20" v-model="options_model_values.guidence_scale" step='0.01' class="slider"
+                                    @input="SetGuidenceScale" list='tickmarks'>
+                                <div id="tickmarks">
+                                    <p>0</p>
+                                    <p>5</p>
+                                    <p>10</p>
+                                    <p>15</p>
+                                    <p>20</p>
+                                </div>
                             </div>
-                            <input type="range" min="0" max="20" v-model="options_model_values.guidence_scale" step='0.01' class="slider"
-                                @input="SetGuidenceScale" list='tickmarks'>
-                            <div id="tickmarks">
-                                <p>0</p>
-                                <p>5</p>
-                                <p>10</p>
-                                <p>15</p>
-                                <p>20</p>
-                            </div>
-                        </div>
-                    </b-form-group>
+                        </b-form-group>
                     </span>
 
-                    <span v-if="!elements_hidden.includes('seed')">
-                    <div class="options_title">
-                        <div class="options_title_box" style="width: 155px;">
-                            <span>Seed</span>
-                            <span class="options_desc">Starting point for iterations (any random
-                                number will do; DB will pick one if left blank)</span>
-                        </div>
-                        <div class="options_input" style="width: 125px;">
-                            <svg style="height: auto;" width="20" height="20" viewBox="0 0 20 19" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M10 7.5C10 5.9087 9.36786 4.38258 8.24264 3.25736C7.11742 2.13214 5.5913 1.5 4 1.5H1V3.5C1 5.0913 1.63214 6.61742 2.75736 7.74264C3.88258 8.86786 5.4087 9.5 7 9.5H10"
-                                    stroke="#A2A3AA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                <path
-                                    d="M10 11.5C10 9.9087 10.6321 8.38258 11.7574 7.25736C12.8826 6.13214 14.4087 5.5 16 5.5H19V6.5C19 8.0913 18.3679 9.61742 17.2426 10.7426C16.1174 11.8679 14.5913 12.5 13 12.5H10"
-                                    stroke="#A2A3AA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                <path d="M10 17.5V7.5" stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                            </svg>
 
-                            <b-form-input onkeypress="return event.keyCode != 13;" class="custom-input"
-                                v-model="options_model_values.seed" type="number" width="70" value="100" maxlength="5"
-                                placeholder="-1"></b-form-input>
+                    <span v-if="!elements_hidden.includes('batch_size')">
+                        <div class="options_title">
+                            <div class="options_title_box" style="width: 205px;">
+                                <span>Batch size</span>
+                                <span class="options_desc">How many images are created at the sametime. (Leave at 1 if
+                                    you have 16GB or less RAM)</span>
+                            </div>
+                            <div class="options_input" style="width: 75px;">
+                                <svg width="18" height="19" viewBox="0 0 18 19" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M15 5.5H7C5.89543 5.5 5 6.39543 5 7.5V15.5C5 16.6046 5.89543 17.5 7 17.5H15C16.1046 17.5 17 16.6046 17 15.5V7.5C17 6.39543 16.1046 5.5 15 5.5Z"
+                                        stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path
+                                        d="M13 5.5V3.5C13 2.96957 12.7893 2.46086 12.4142 2.08579C12.0391 1.71071 11.5304 1.5 11 1.5H3C2.46957 1.5 1.96086 1.71071 1.58579 2.08579C1.21071 2.46086 1 2.96957 1 3.5V11.5C1 12.0304 1.21071 12.5391 1.58579 12.9142C1.96086 13.2893 2.46957 13.5 3 13.5H5"
+                                        stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                                <b-form-select v-model="options_model_values.batch_size" :options="[1, 2, 3, 4, 5, 6]"
+                                    required></b-form-select>
+                            </div>
                         </div>
-                    </div>
+
                     </span>
+
+                    
 
                     <span v-if="!elements_hidden.includes('custom_model')">
-                    <div class="options_title">
-                        <div class="options_title_box" style="width: 165px;">
-                            <span>Custom Model</span>
-                            <span class="options_desc">You can use a custom stable diffusion model. Open settings to add a ckpt model.</span>
-                        </div>
-                        <div class="options_input" style="width: 115px;">
-                            <svg width="18" height="19" viewBox="0 0 18 19" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 5.5H12.01" stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                                <path
-                                    d="M14 1.5H4C2.34315 1.5 1 2.84315 1 4.5V14.5C1 16.1569 2.34315 17.5 4 17.5H14C15.6569 17.5 17 16.1569 17 14.5V4.5C17 2.84315 15.6569 1.5 14 1.5Z"
-                                    stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                                <path
-                                    d="M1 12.5L5 8.50001C5.45606 8.06117 5.97339 7.83014 6.5 7.83014C7.02661 7.83014 7.54394 8.06117 8 8.50001L13 13.5"
-                                    stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                                <path
-                                    d="M11 11.5L12 10.5C12.4561 10.0612 12.9734 9.83014 13.5 9.83014C14.0266 9.83014 14.5439 10.0612 15 10.5L17 12.5"
-                                    stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                            </svg>
+                        <div class="options_title">
+                            <div class="options_title_box" style="width: 165px;">
+                                <span>Custom Model</span>
+                                <span class="options_desc">You can use a custom stable diffusion model. Open settings to add a ckpt model.</span>
+                            </div>
+                            <div class="options_input" style="width: 115px;">
+                                <svg width="18" height="19" viewBox="0 0 18 19" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 5.5H12.01" stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path
+                                        d="M14 1.5H4C2.34315 1.5 1 2.84315 1 4.5V14.5C1 16.1569 2.34315 17.5 4 17.5H14C15.6569 17.5 17 16.1569 17 14.5V4.5C17 2.84315 15.6569 1.5 14 1.5Z"
+                                        stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path
+                                        d="M1 12.5L5 8.50001C5.45606 8.06117 5.97339 7.83014 6.5 7.83014C7.02661 7.83014 7.54394 8.06117 8 8.50001L13 13.5"
+                                        stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path
+                                        d="M11 11.5L12 10.5C12.4561 10.0612 12.9734 9.83014 13.5 9.83014C14.0266 9.83014 14.5439 10.0612 15 10.5L17 12.5"
+                                        stroke="#A2A3AA" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
 
-                            <b-form-select v-model="options_model_values.selected_model"
-                                :options="['Default'].concat(Object.keys(options_model_values.app_state.app_data.custom_models))"
-                                required></b-form-select>
+                                <b-form-select v-model="options_model_values.selected_model"
+                                    :options="['Default'].concat(Object.keys(options_model_values.app_state.app_data.custom_models))"
+                                    required></b-form-select>
+                            </div>
                         </div>
-                    </div>
                     </span>
 
                     <div class="options_title">
@@ -275,6 +344,7 @@ export default {
     props: {
         options_model_values: Object,
         elements_hidden: Array,
+        elements_extra:Array, 
     },
     components: {},
     mounted() {

@@ -132,6 +132,7 @@ def process_opt(d, generator):
             input_image=d['input_image'],
             tdict_path=tdict_path,
             mode=model_mode,
+            scheduler=d['scheduler'],
             mask_image=d['mask_image'],
             input_image_strength=(float(d['img_strength'])),
         )
@@ -169,6 +170,7 @@ def main():
 
     default_d = { "W" : 512 , "H" : 512, "num_imgs":1 , "ddim_steps" : 25 ,
      "scale" : 7.5, "batch_size":1 , "input_image" : None, "img_strength": 0.5
+     , "scheduler":"ddim"
      , "negative_prompt" : "" ,  "mask_image" : None, "model_id": 0 , "custom_model_path":None}
 
 

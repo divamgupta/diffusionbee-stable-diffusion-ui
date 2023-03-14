@@ -24,7 +24,7 @@
                     
                     <div class="l_button button_medium button_colored" style="float:right ; " @click="generate_from_prompt">Generate</div>
 
-                    <SDOptionsDropdown :options_model_values="this_object"  :elements_hidden="[ 'inp_img_strength' ]"> </SDOptionsDropdown>
+                    <SDOptionsDropdown :options_model_values="this_object" :elements_extra="['sampler' , 'use_soft_seed']"  :elements_hidden="[ 'inp_img_strength' ]"> </SDOptionsDropdown>
 
                     <div style="float:right; margin-top: -5px; " >
                         <b-dropdown id="dropdown-form" variant="link" ref="dropdown" toggle-class="text-decoration-none" no-caret >
@@ -163,10 +163,12 @@ export default {
             backend_error : "",
             done_percentage : -1,
             is_stopping : false,
+            use_soft_seed:"No",
             modifiers : require("../modifiers.json"),
             is_negative_prompt_avail : false, 
             negative_prompt : "",
-            selected_model : 'Default'
+            selected_model : 'Default',
+            selected_sampler : 'ddim',
         };
         
     },
@@ -194,7 +196,8 @@ export default {
                 scale : this.guidence_scale , 
                 ddim_steps : this.dif_steps, 
                 num_imgs : this.num_imgs , 
-                batch_size : this.batch_size 
+                batch_size : this.batch_size ,
+                scheduler: this.selected_sampler,
             }
 
             if(this.selected_model && this.selected_model != "Default" && this.app_state.app_data.custom_models[this.selected_model] ){
@@ -204,6 +207,9 @@ export default {
 
             if(this.is_negative_prompt_avail)
                 params['negative_prompt'] = this.negative_prompt;
+
+            if(this.use_soft_seed == 'Yes')
+                params['soft_seed'] = 1
 
             let that = this;
 
@@ -226,7 +232,8 @@ export default {
                     if(!(that.app_state.app_data.history[history_key])){
                         let p = {
                             "prompt":that.prompt , "seed": seed, "img_w":that.img_w , "img_h":that.img_h ,  "key":history_key , "imgs" : [],
-                            "guidence_scale" : that.guidence_scale , "dif_steps" : that.dif_steps 
+                            "guidence_scale" : that.guidence_scale , "dif_steps" : that.dif_steps , "use_soft_seed" : that.use_soft_seed,
+                            "selected_sampler" : that.selected_sampler
                         }
                         if(that.stable_diffusion.model_version)
                             p['model_version'] = that.stable_diffusion.model_version;
@@ -279,6 +286,7 @@ export default {
                 Seed :this.computed_seed,
                 Scale : this.guidence_scale , 
                 Steps : this.dif_steps ,
+                sampler_name : "bee" + this.selected_sampler, 
                 model_version: this.stable_diffusion.model_version
             }
             if(this.is_negative_prompt_avail)

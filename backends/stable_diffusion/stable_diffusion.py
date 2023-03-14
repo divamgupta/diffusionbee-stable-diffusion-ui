@@ -38,7 +38,6 @@ if not USE_DUMMY_INTERFACE :
 else:
     from fake_interface import ModelInterface
 
-# from diffusers import LMSDiscreteScheduler, PNDMScheduler, DDIMScheduler
 from schedulers.scheduling_ddim import DDIMScheduler
 from schedulers.scheduling_lms_discrete  import LMSDiscreteScheduler
 from schedulers.scheduling_pndm import PNDMScheduler
@@ -357,8 +356,8 @@ class StableDiffusion:
             text_emb_combined = np.concatenate([sd_run.unconditional_context , sd_run.context ])
 
             o = self.model.run_unet(unet_inp=latent_combined, time_emb=temb_combined, text_emb=text_emb_combined )
-            sd_run.predicted_unconditional_latent = o[0:1]
-            sd_run.predicted_latent = o[1:2]
+            sd_run.predicted_unconditional_latent = o[0: o.shape[0]//2 ]
+            sd_run.predicted_latent = o[o.shape[0]//2 :]
         else:
             sd_run.predicted_unconditional_latent = self.model.run_unet(unet_inp=latent_model_input, time_emb=t_emb, text_emb=sd_run.unconditional_context )
             sd_run.predicted_latent = self.model.run_unet(unet_inp=latent_model_input, time_emb=t_emb, text_emb=sd_run.context)
