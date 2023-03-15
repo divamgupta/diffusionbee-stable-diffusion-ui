@@ -462,11 +462,20 @@ function add_custom_pytorch_models(pytorch_model_path, model_name, cb ){
         fs.mkdirSync(models_path, { recursive: true });
     }
 
+
+    let script_path = process.env.PY_SCRIPT || "./src/fake_backend.py"; 
+    
     let out_path =  path.join(homedir , ".diffusionbee" , "custom_models" , model_name+".tdict" );
-    let bin_path =  process.env.CONVERT_MODEL_BIN || path.join(path.dirname(__dirname), 'core' , 'convert_model' , 'convert_model' );
+    let proc;
+    if (fs.existsSync(script_path)) {
+        proc = require('child_process').spawn( "python3"  , [ script_path ,  "convert_model" ,  pytorch_model_path , out_path ]);
+    } else {
+        let bin_path =  path.join(path.dirname(__dirname), 'core' , 'diffusionbee_backend' );
+        proc = require('child_process').spawn( bin_path  , [ "convert_model" ,  pytorch_model_path , out_path ]);
+    }
     
 
-    let proc = require('child_process').spawn( bin_path  , [pytorch_model_path , out_path ]);
+    
     let errors = ""
 
     proc.stderr.on('data', (data) => {

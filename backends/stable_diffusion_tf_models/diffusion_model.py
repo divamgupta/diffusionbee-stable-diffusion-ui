@@ -1,7 +1,7 @@
 import tensorflow as tf
-from .group_norm import GroupNormalization
+from group_norm import GroupNormalization
 
-from .layers import PaddedConv2D, apply_seq, td_dot, GEGLU
+from layers import PaddedConv2D, apply_seq, td_dot, GEGLU
 
 
 class ResBlock(tf.keras.layers.Layer):

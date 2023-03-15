@@ -124,6 +124,8 @@ class TDict:
         weights_json_start = extra_head[4]
         weights_json_l = extra_head[5] - extra_head[4]
 
+        self.ctdict_version = int(extra_head[3])
+
         self.in_file.seek(weights_json_start)
         self.keys_info = json.loads( self.in_file.read(weights_json_l).decode('ascii') )
 

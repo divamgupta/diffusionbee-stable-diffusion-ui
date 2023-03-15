@@ -16,13 +16,15 @@ def default_bpe():
     p = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "bpe_simple_vocab_16e6.txt.gz"
     )
+    # print("checking " , p )
     if os.path.exists(p):
         return p
     else:
         p2 = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),  ".." , ".." ,"bpe_simple_vocab_16e6.txt.gz"
+            os.path.dirname(os.path.abspath(__file__)),  ".." ,"bpe_simple_vocab_16e6.txt.gz"
         )
         p2 = os.path.abspath(p2)
+        # print("checking " , p2 )
         if os.path.exists(p2):
             return p2
         assert False

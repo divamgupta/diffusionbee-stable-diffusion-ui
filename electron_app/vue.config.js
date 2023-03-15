@@ -23,9 +23,9 @@ module.exports = {
                     "hardenedRuntime": true,
                     "entitlements": "build/entitlements.mac.plist",
                     "entitlementsInherit": "build/entitlements.mac.plist",
-                    "minimumSystemVersion": "12.3.0",
+                    "minimumSystemVersion": "11.0.0",
                     "extendInfo": {
-                        "LSMinimumSystemVersion": "12.3.0"
+                        "LSMinimumSystemVersion": "11.0.0"
                     } , 
                     
                     "target": {

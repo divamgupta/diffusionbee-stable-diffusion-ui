@@ -11,37 +11,14 @@ import time
 import io
 from dataclasses import dataclass
 import os 
-import importlib
 import sys 
 
 MAX_TEXT_LEN = 77
 
-USE_DUMMY_INTERFACE = False
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-sys.path.append(os.path.join(dir_path , "../model_converter"))
 from tdict import TDict
-
-# get the model interface form the environ
-if not USE_DUMMY_INTERFACE :
-    model_interface_path = os.environ.get('MODEL_INTERFACE_PATH') or "../stable_diffusion_tf_models"
-
-    print("model_interface_path", model_interface_path )
-
-    if model_interface_path[-1] == "/":
-        model_interface_path = model_interface_path[:-1]
-
-    module_name = model_interface_path.split("/")[-1]
-    module_path = "/".join(model_interface_path.split("/")[:-1])
-
-    
-    sys.path.append( os.path.join(dir_path , module_path) )
-
-
-    ModelInterface = importlib.import_module( module_name +  ".interface").ModelInterface
-else:
-    from fake_interface import ModelInterface
 
 from schedulers.scheduling_ddim import DDIMScheduler
 from schedulers.scheduling_lms_discrete  import LMSDiscreteScheduler
@@ -145,8 +122,9 @@ def dummy_callback(state="" , progress=-1):
     pass
 
 class StableDiffusion:
-    def __init__(self ,  tdict_path , model_name="sd_1x",   callback=None ):
+    def __init__(self , ModelInterfaceClass ,  tdict_path , model_name="sd_1x",   callback=None ):
 
+        self.ModelInterfaceClass = ModelInterfaceClass
 
         if callback is None:
             callback = dummy_callback
@@ -158,9 +136,9 @@ class StableDiffusion:
 
         self.current_model_name = model_name 
         self.current_tdict_path = tdict_path
-        self.current_dtype = ModelInterface.default_float_type
+        self.current_dtype = self.ModelInterfaceClass.default_float_type
 
-        self.model = ModelInterface( TDict(self.current_tdict_path ), dtype=self.current_dtype, model_name=self.current_model_name )
+        self.model = self.ModelInterfaceClass( TDict(self.current_tdict_path ), dtype=self.current_dtype, model_name=self.current_model_name )
 
 
     def prepare_model_interface(self , sd_run=None ):
@@ -177,7 +155,7 @@ class StableDiffusion:
             print("Creating model interface")
             assert tdict_path is not None
             self.model.destroy()
-            self.model = ModelInterface(TDict(tdict_path ) , dtype=dtype, model_name=model_name )
+            self.model = self.ModelInterfaceClass(TDict(tdict_path ) , dtype=dtype, model_name=model_name )
             self.current_tdict_path = tdict_path
             self.current_dtype = dtype
             self.current_model_name = model_name

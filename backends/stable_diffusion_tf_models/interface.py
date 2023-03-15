@@ -2,11 +2,11 @@
 
 
 import tensorflow as tf
-from .autoencoder_kl import Decoder, Encoder
-from .diffusion_model import UNetModel
-from .clip_encoder import CLIPTextTransformer
+from autoencoder_kl import Decoder, Encoder
+from diffusion_model import UNetModel
+from clip_encoder import CLIPTextTransformer
 
-from .constants import PYTORCH_CKPT_MAPPING
+from mapping_constants import PYTORCH_CKPT_MAPPING
 
 import json
 

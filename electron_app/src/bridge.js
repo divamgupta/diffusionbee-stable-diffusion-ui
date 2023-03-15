@@ -8,7 +8,7 @@ var is_app_closing = false;
 
 var last_few_err = ""
 
-let RESTART_BACKEND_ON_CLOSE = true
+let RESTART_BACKEND_ON_CLOSE = false
 
 
 function start_bridge() {

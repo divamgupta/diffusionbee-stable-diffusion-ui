@@ -1,7 +1,7 @@
 import tensorflow as tf
-from .group_norm import GroupNormalization
+from group_norm import GroupNormalization
 
-from .layers import apply_seq, PaddedConv2D
+from layers import apply_seq, PaddedConv2D
 
 
 class AttentionBlock(tf.keras.layers.Layer):

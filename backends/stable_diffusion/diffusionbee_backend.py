@@ -1,4 +1,4 @@
-print("backend")
+print("starting backend")
 
 from  stdin_input import is_avail, get_input
 import argparse
@@ -12,18 +12,35 @@ import copy
 import math
 import time
 import traceback
-from stable_diffusion import StableDiffusion
 import os
+from pathlib import Path
+import importlib
+
 # b2py t2im {"prompt": "sun glasses" , "W":640 , "H" : 640 , "num_imgs" : 10 , "input_image":"/Users/divamgupta/Downloads/inn.png" , "mask_image" : "/Users/divamgupta/Downloads/maa.png" , "is_inpaint":true  }
 
+if not ( getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
+    print("Adding sys paths")
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    sys.path.append(os.path.join(dir_path , "../model_converter"))
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(os.path.join(dir_path , "../model_converter"))
+    model_interface_path = os.environ.get('MODEL_INTERFACE_PATH') or "../stable_diffusion_tf_models"
+    sys.path.append( os.path.join(dir_path , model_interface_path) )
+else:
+    print("not adding sys paths")
+
+
 from convert_model import convert_model
+from stable_diffusion import StableDiffusion
+
+# get the model interface form the environ
+USE_DUMMY_INTERFACE = False
+if  USE_DUMMY_INTERFACE :
+    from fake_interface import ModelInterface
+else:
+    from interface import ModelInterface
 
 
-from pathlib import Path
-import os
+
 
 home_path = Path.home()
 
@@ -68,13 +85,20 @@ def download_weights():
     is_downloaded = False
     for _ in range(10):
         try:
-            print("sdbk mltl Downloading Model 1/2")
 
-            p_14 = "/Users/divamgupta/Downloads/sd-v1-4.tdict"
+            p_14 = ProgressBarDownloader(title="Downloading Model 1/2").download(
+                        url="https://huggingface.co/divamgupta/stable_diffusion_mps/resolve/main/sd-v1-4_fp16.tdict",
+                        md5_checksum="9f1fc1e94821d000b811e3bb6e7686b2",
+                        verify_ssl=False,
+                        extract_zip=False,
+                    )
 
-            print("sdbk mltl Downloading Model 2/2")
-
-            p_14_np = "/Users/divamgupta/Downloads/sd-v1-5-inpainting.tdict"
+            p_14_np = ProgressBarDownloader(title="Downloading Model 2/2").download(
+                        url="https://huggingface.co/divamgupta/stable_diffusion_mps/resolve/main/sd-v1-5-inpainting_fp16.tdict",
+                        md5_checksum="68303f49cca00968c39abddc20b622a6",
+                        verify_ssl=False,
+                        extract_zip=False,
+                    )
 
             is_downloaded = True
             break
@@ -169,7 +193,7 @@ def diffusion_bee_main():
             if "__stop__" in get_input():
                 return "stop"
 
-    generator = StableDiffusion( p_14 , model_name="sd_1x", callback=callback)
+    generator = StableDiffusion( ModelInterface , p_14 , model_name="sd_1x", callback=callback)
     
 
     default_d = { "W" : 512 , "H" : 512, "num_imgs":1 , "ddim_steps" : 25 ,

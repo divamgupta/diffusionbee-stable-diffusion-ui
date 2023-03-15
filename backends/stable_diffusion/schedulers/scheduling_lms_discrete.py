@@ -18,7 +18,6 @@
 from typing import Optional, Tuple, Union
 
 import numpy as np
-import torch
 
 from scipy import integrate
 
@@ -141,9 +140,9 @@ class LMSDiscreteScheduler(SchedulerMixin):
 
     def step(
         self,
-        model_output: Union[torch.FloatTensor, np.ndarray],
+        model_output: Union[ np.ndarray],
         timestep: int,
-        sample: Union[torch.FloatTensor, np.ndarray],
+        sample: Union[ np.ndarray],
         seed=None,
         order: int = 4,
         return_dict: bool = True,
@@ -190,10 +189,10 @@ class LMSDiscreteScheduler(SchedulerMixin):
 
     def add_noise(
         self,
-        original_samples: Union[torch.FloatTensor, np.ndarray],
-        noise: Union[torch.FloatTensor, np.ndarray],
-        timesteps: Union[torch.IntTensor, np.ndarray],
-    ) -> Union[torch.FloatTensor, np.ndarray]:
+        original_samples: Union[ np.ndarray],
+        noise: Union[ np.ndarray],
+        timesteps: Union[np.ndarray],
+    ) -> Union[ np.ndarray]:
         sigmas = self.match_shape(self.sigmas[timesteps], noise)
         noisy_samples = original_samples + noise * sigmas
 

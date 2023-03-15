@@ -1,8 +1,8 @@
 import tensorflow as tf
 import numpy as np
 
-from .layers import quick_gelu
-from .group_norm import GroupNormalization
+from layers import quick_gelu
+from group_norm import GroupNormalization
 
 class CLIPAttention(tf.keras.layers.Layer):
     def __init__(self):
