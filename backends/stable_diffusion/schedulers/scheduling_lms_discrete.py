@@ -136,6 +136,8 @@ class LMSDiscreteScheduler(SchedulerMixin):
 
         self.derivatives = []
 
+        self.initial_scale = self.sigmas[0]
+
         self.set_format(tensor_format=self.tensor_format)
 
     def step(

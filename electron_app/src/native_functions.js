@@ -463,7 +463,7 @@ function add_custom_pytorch_models(pytorch_model_path, model_name, cb ){
     }
 
 
-    let script_path = process.env.PY_SCRIPT || "./src/fake_backend.py"; 
+    let script_path = process.env.PY_SCRIPT || "../backends/stable_diffusion/diffusionbee_backend.py"; 
     
     let out_path =  path.join(homedir , ".diffusionbee" , "custom_models" , model_name+".tdict" );
     let proc;

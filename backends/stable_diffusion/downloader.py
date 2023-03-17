@@ -19,7 +19,19 @@ import shutil
 import time
 
 def get_md5_file(fpath):
-    return str(hashlib.md5(open(fpath, 'rb').read()).hexdigest())
+
+    if os.path.exists(fpath + ".done"):
+        cached = open(fpath + ".done").read()
+        if "_" in cached:
+            md_str = cached.split("_")[0]
+            n_b = int(cached.split("_")[1])
+            if n_b == os.path.getsize(fpath):
+                return md_str
+
+    md_str =  str(hashlib.md5(open(fpath, 'rb').read()).hexdigest())
+    n_b = os.path.getsize(fpath)
+    open(fpath + ".done" , "w").write(md_str + "_" + str(n_b))
+    return md_str
 
 
 defualt_downloads_root = os.path.join(projects_root_path, "downloads")

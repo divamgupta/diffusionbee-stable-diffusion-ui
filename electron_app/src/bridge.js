@@ -16,7 +16,7 @@ function start_bridge() {
     console.log("starting bridge")
     const fs = require('fs')
 
-    let script_path = process.env.PY_SCRIPT || "./src/fake_backend.py"; 
+    let script_path = process.env.PY_SCRIPT || "../backends/stable_diffusion/diffusionbee_backend.py"; 
     let bin_path =  process.env.BIN_PATH;
     if(bin_path && (fs.existsSync(script_path))){
         python = require('child_process').spawn( bin_path );
