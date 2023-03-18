@@ -80,6 +80,7 @@ class SDRun():
     mask_image:str =None
     
     input_image_strength:float=0.5
+    second_tdict_path:str = None
 
 
 def get_scheduler(name):
@@ -136,6 +137,7 @@ class StableDiffusion:
 
         self.current_model_name = model_name 
         self.current_tdict_path = tdict_path
+        self.second_current_tdict_path = None
         self.current_dtype = self.ModelInterfaceClass.default_float_type
 
         self.model = self.ModelInterfaceClass( TDict(self.current_tdict_path ), dtype=self.current_dtype, model_name=self.current_model_name )
@@ -145,25 +147,43 @@ class StableDiffusion:
 
         if sd_run.mode == 'inpaint_15':
             model_name = "sd_1x_inpaint"
+        elif sd_run.mode == "controlnet":
+            model_name = "sd_1x_controlnet"
         else:
             model_name = "sd_1x"
 
         dtype = sd_run.dtype
         tdict_path = sd_run.tdict_path
+        second_tdict_path = sd_run.second_tdict_path
 
         if self.current_model_name != model_name or self.current_dtype != dtype :
             print("Creating model interface")
             assert tdict_path is not None
             self.model.destroy()
-            self.model = self.ModelInterfaceClass(TDict(tdict_path ) , dtype=dtype, model_name=model_name )
+
+            if second_tdict_path is not None:
+                tdict2 = TDict(second_tdict_path)
+            else:
+                tdict2 = None
+
+            self.model = self.ModelInterfaceClass(TDict(tdict_path ) , dtype=dtype, model_name=model_name , second_tdict=tdict2)
             self.current_tdict_path = tdict_path
+            self.second_current_tdict_path = second_tdict_path
             self.current_dtype = dtype
             self.current_model_name = model_name
 
-        if tdict_path != self.current_tdict_path:
+        if tdict_path != self.current_tdict_path or second_tdict_path != self.second_current_tdict_path:
             assert tdict_path is not None
-            self.model.load_from_tdict(TDict(tdict_path))
+            
             self.current_tdict_path = tdict_path
+            self.second_current_tdict_path = second_tdict_path
+
+            if second_tdict_path is not None:
+                tdict2 = TDict(second_tdict_path)
+            else:
+                tdict2 = None
+
+            self.model.load_from_tdict(TDict(tdict_path), tdict2 )
 
 
     def tokenize(self , prompt):
@@ -333,17 +353,25 @@ class StableDiffusion:
    
         latent_model_input =  latent_model_input * self.scheduler.get_input_scale(self.t_to_i(t))
 
+        if sd_run.mode == "controlnet":
+            hint_img = (sd_run.input_image_processed+1)/2
+            if sd_run.combine_unet_run:
+                hint_img = np.repeat(hint_img, sd_run.batch_size, axis=0)
+            controls = self.model.run_controlnet(unet_inp=latent_model_input, time_emb=t_emb, text_emb=sd_run.context, hint_img=hint_img )
+        else:
+            controls = None
+
         if sd_run.combine_unet_run:
             latent_combined = np.concatenate([latent_model_input,latent_model_input])
             temb_combined = np.concatenate([t_emb,t_emb])
             text_emb_combined = np.concatenate([sd_run.unconditional_context , sd_run.context ])
 
-            o = self.model.run_unet(unet_inp=latent_combined, time_emb=temb_combined, text_emb=text_emb_combined )
+            o = self.model.run_unet(unet_inp=latent_combined, time_emb=temb_combined, text_emb=text_emb_combined , control_inp=controls)
             sd_run.predicted_unconditional_latent = o[0: o.shape[0]//2 ]
             sd_run.predicted_latent = o[o.shape[0]//2 :]
         else:
-            sd_run.predicted_unconditional_latent = self.model.run_unet(unet_inp=latent_model_input, time_emb=t_emb, text_emb=sd_run.unconditional_context )
-            sd_run.predicted_latent = self.model.run_unet(unet_inp=latent_model_input, time_emb=t_emb, text_emb=sd_run.context)
+            sd_run.predicted_unconditional_latent = self.model.run_unet(unet_inp=latent_model_input, time_emb=t_emb, text_emb=sd_run.unconditional_context , control_inp=controls)
+            sd_run.predicted_latent = self.model.run_unet(unet_inp=latent_model_input, time_emb=t_emb, text_emb=sd_run.context, control_inp=controls)
 
 
     def get_next_latent(self, sd_run ):
@@ -391,13 +419,17 @@ class StableDiffusion:
         input_image_strength=0.5,
         scheduler='k_euler',
         tdict_path=None, # if none then it will just use current one
+        second_tdict_path=None,
         dtype='float16',
         mode="txt2img" # txt2img , img2img, inpaint_15
     ):
 
         self.scheduler = get_scheduler(scheduler)
 
-        assert mode in ['txt2img' , 'img2img' , 'inpaint_15']
+        assert mode in ['txt2img' , 'img2img' , 'inpaint_15', 'controlnet']
+
+        if dtype not in self.ModelInterfaceClass.avail_float_types:
+            dtype = self.ModelInterfaceClass.default_float_type
 
         if tdict_path is None:
             tdict_path = self.current_tdict_path
@@ -417,6 +449,7 @@ class StableDiffusion:
                 negative_prompt=negative_prompt,
                 input_image_strength=input_image_strength,
                 tdict_path=tdict_path,
+                second_tdict_path=second_tdict_path,
                 mode=mode,
                 dtype=dtype,
             )
@@ -427,6 +460,9 @@ class StableDiffusion:
 
             if mask_image is not None and mask_image != "":
                 sd_run.do_masking = True
+
+        if mode == "controlnet":
+            assert input_image is not None and input_image != ""
 
         signal = self.callback(state="Starting" , progress=-1  )
         if signal == "stop":

@@ -49,7 +49,8 @@ possible_model_shapes = {"SD_1x_float32": sd_1x_shapes ,
 ctdict_ids = {"SD_1x_float32": 12 , 
     "SD_1x_inpaint_float32": 13, 
     "SD_1x_float16": 1012 , 
-    "SD_1x_inpaint_float16": 1013}
+    "SD_1x_inpaint_float16": 1013 , 
+    "SD_1x_just_controlnet_16" : 1014}
 
 
 extra_keys = ['temb_coefficients_fp32' , 'temb_coefficients_fp16' , 'causal_mask' , 'aux_output_conv.weight' , 'aux_output_conv.bias', 'alphas_cumprod']
@@ -59,8 +60,10 @@ extra_keys = ['temb_coefficients_fp32' , 'temb_coefficients_fp16' , 'causal_mask
 def are_shapes_matching(state_dict , template_shapes):
     for k in template_shapes:
         if k not in state_dict:
+            print("key", k , "not found in state_dict" , state_dict.keys())
             return False
         if tuple(template_shapes[k]) != tuple(state_dict[k].shape):
+            print("shape mismatch", k , tuple(template_shapes[k]) ,tuple(state_dict[k].shape) )
             return False 
 
     return True

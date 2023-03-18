@@ -219,7 +219,17 @@ class UNetModel(tf.keras.models.Model):
         ]
 
     def call(self, inputs):
-        x, t_emb, context = inputs
+        if len(inputs) == 3:
+            x, t_emb, context = inputs
+            controls = None
+        elif len(inputs ) == (3+13):
+            x = inputs[0]
+            t_emb = inputs[1]
+            context = inputs[2]
+            controls = inputs[3:]
+        else:
+            raise ValueError("inalid no of inputs")
+
         emb = apply_seq(t_emb, self.time_embed)
 
         def apply(x, layer):
@@ -232,13 +242,20 @@ class UNetModel(tf.keras.models.Model):
             return x
 
         saved_inputs = []
-        for b in self.input_blocks:
+        for i,b in enumerate(self.input_blocks):
             for layer in b:
                 x = apply(x, layer)
             saved_inputs.append(x)
 
+        
         for layer in self.middle_block:
             x = apply(x, layer)
+
+        if controls is not None:
+            x = x + controls[12]
+            assert len(saved_inputs) == 12
+            for i in range(len(saved_inputs)):
+                saved_inputs[i] = saved_inputs[i] + controls[i]
 
         for b in self.output_blocks:
             x = tf.concat([x, saved_inputs.pop()], axis=-1)
