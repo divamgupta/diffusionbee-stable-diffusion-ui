@@ -34,7 +34,7 @@ Join discord server : https://discord.gg/t6rC5RaJQn
 * Runs locally on your computer
 * Negative prompts
 * Advanced prompt options
-
+* ControlNet
 
 
 ## How to use 
@@ -84,12 +84,19 @@ History:
 
 ## Requirements 
 * Mac with Intel or M1/M2 CPU
-* MacOS 12.3.1 or later
+* For Intel : MacOS 12.3.1 or later 
+* For M1/M2 : MacOS 11.0.0 or later 
 
 License : Stable Diffusion is released under the CreativeML OpenRAIL M license : https://github.com/CompVis/stable-diffusion/blob/main/LICENSE
 Diffusion Bee is just a GUI wrapper on top of Stable Diffusion, so all the term of Stable Diffusion are applied on the outputs. 
+
+
 
 References
 1) https://github.com/CompVis/stable-diffusion
 2) https://github.com/madebyollin/maple-diffusion
 3) https://github.com/divamgupta/stable-diffusion-tensorflow
+4) https://github.com/liuliu/swift-diffusion (big thanks to Liu Liu)
+5) https://github.com/huggingface/diffusers
+
+ 

@@ -16,14 +16,41 @@ p_14 = "/Users/divamgupta/.diffusionbee/downloads/sd-v1-4_fp16.tdict"
 
 sd = StableDiffusion( ModelInterface , p_14 , model_name="sd_1x", callback=None)
 
+
+
+
+# inp = "./test_assets/yoga1.jpg"
+
+
+# img = sd.generate(
+#         prompt="a man doing yoga, Underwater series /// High detail RAW color photo professional, highly detail face: 1.4, a detailed portrait of a woman floating underwater wearing long flowing dress, nymph style, amazing underwater, detailed skin, wet clothes, wet hair, see-through clothes, lens flare, shade, tindal effect, lens flare, backlighting, bokeh " , 
+#         img_height=512, 
+#         img_width=512, 
+#         seed=6378, 
+#         tdict_path=None,
+#         second_tdict_path="/Users/divamgupta/Downloads/just_control_sd15_openpose_fp16.tdict",
+#         batch_size=1,
+#         dtype=ModelInterface.default_float_type,
+#         scheduler='ddim',
+#         num_steps=25,
+#         input_image=inp,
+#         inp_img_preprocesser="body_pose",
+#         mode="controlnet" )
+
+
+# Image.fromarray(img[0]).show()
+
+
+
+
 inp = "./test_assets/scribble_turtle.png"
 
 
 img = sd.generate(
-        prompt="a tortoise" , 
+        prompt="a turtle" , 
         img_height=512, 
         img_width=512, 
-        seed=678, 
+        seed=6378, 
         tdict_path=None,
         second_tdict_path="/Users/divamgupta/Downloads/just_control_sd15_scribble_fp16.tdict",
         batch_size=1,
@@ -34,7 +61,7 @@ img = sd.generate(
         mode="controlnet" )
 
 
-Image.fromarray(img[0]).show()
+Image.fromarray(img['img'][0]).show()
 
 
 

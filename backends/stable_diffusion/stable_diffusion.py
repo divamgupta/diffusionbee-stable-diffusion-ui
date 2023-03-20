@@ -12,6 +12,10 @@ import io
 from dataclasses import dataclass
 import os 
 import sys 
+import functools
+
+from control_processors.process_body_pose import process_image_body_pose
+from control_processors.process_midas_depth import process_image_midas_depth
 
 MAX_TEXT_LEN = 77
 
@@ -25,6 +29,12 @@ from schedulers.scheduling_lms_discrete  import LMSDiscreteScheduler
 from schedulers.scheduling_pndm import PNDMScheduler
 from schedulers.k_euler_ancestral import KEulerAncestralSampler
 from schedulers.k_euler import KEulerSampler
+
+image_preprocess_model_paths = {
+    "body_pose" : None , 
+    "midas_depth" : None
+}
+
 
 def process_inp_img(input_image):
     input_image = Image.open(input_image)
@@ -64,6 +74,8 @@ class SDRun():
     do_masking:bool = False # if you wanna mask the latent at every sd step
     img_height: int = None
     img_width: int = None
+
+    inp_img_preprocesser:str = None # name of the preprocess fn 
 
     negative_prompt:str=""
 
@@ -121,6 +133,20 @@ def get_scheduler(name):
 
 def dummy_callback(state="" , progress=-1):
     pass
+
+
+
+def get_preprocess_function(preprocess_function_name):
+    if preprocess_function_name == "body_pose":
+        body_pose_model_path = image_preprocess_model_paths['body_pose']
+        return functools.partial(process_image_body_pose, model_path=body_pose_model_path)
+    elif preprocess_function_name == "midas_depth":
+        midas_depth_model_path = image_preprocess_model_paths['midas_depth']
+        return functools.partial(process_image_midas_depth, model_path=midas_depth_model_path)
+
+    else:
+        raise ValueError("invalid function name")
+
 
 class StableDiffusion:
     def __init__(self , ModelInterfaceClass ,  tdict_path , model_name="sd_1x",   callback=None ):
@@ -213,6 +239,17 @@ class StableDiffusion:
 
      
     def maybe_process_inp_imgs(self, sd_run):
+
+        if sd_run.inp_img_preprocesser is not None: #if you want to preprocess input image
+            sd_run.input_image_orig = sd_run.input_image
+            outfname = sd_run.input_image + ".controlnet_processed_" + sd_run.inp_img_preprocesser  + ".jpg"
+            if not os.path.exists(outfname):
+                preprocess_function = get_preprocess_function(sd_run.inp_img_preprocesser)
+                preprocess_function(inp_fname=sd_run.input_image , out_fname=outfname)
+                assert os.path.exists(outfname)
+            sd_run.input_image = outfname
+
+
         if sd_run.input_image is not None and sd_run.input_image != "": 
             sd_run.img_height, sd_run.img_width, sd_run.input_image_processed , sd_run.input_image_processed_downscaled = process_inp_img(sd_run.input_image)
             sd_run.input_image_processed = sd_run.input_image_processed[None]
@@ -420,9 +457,12 @@ class StableDiffusion:
         scheduler='k_euler',
         tdict_path=None, # if none then it will just use current one
         second_tdict_path=None,
+        inp_img_preprocesser=None, # for controlnet
         dtype='float16',
-        mode="txt2img" # txt2img , img2img, inpaint_15
+        mode="txt2img", # txt2img , img2img, inpaint_15
     ):
+
+
 
         self.scheduler = get_scheduler(scheduler)
 
@@ -452,6 +492,7 @@ class StableDiffusion:
                 second_tdict_path=second_tdict_path,
                 mode=mode,
                 dtype=dtype,
+                inp_img_preprocesser=inp_img_preprocesser,
             )
 
         if mode == "img2img":
@@ -508,7 +549,12 @@ class StableDiffusion:
             decoded = (sd_run.input_image_processed  * sd_run.processed_mask) + (decoded * (1 - sd_run.processed_mask ))
         
         decoded = ((decoded + 1) / 2) * 255
-        return np.clip(decoded, 0, 255).astype("uint8")
+        ret = ({"img" : np.clip(decoded, 0, 255).astype("uint8")})
+
+        if sd_run.inp_img_preprocesser is not None:
+            ret['aux_img'] = sd_run.input_image
+
+        return ret
 
 
     def timestep_embedding(self, timesteps, dim=320, max_period=10000):

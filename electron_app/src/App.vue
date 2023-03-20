@@ -24,7 +24,7 @@
 
         > 
             <template v-slot:txt2img>
-                <ImgGenerate v-if="is_mounted && stable_diffusion.is_backend_loaded"  :app_state="app_state" :stable_diffusion="stable_diffusion"></ImgGenerate>
+                <ImgGenerate v-if="is_mounted && stable_diffusion.is_ready()"  :app_state="app_state" :stable_diffusion="stable_diffusion"></ImgGenerate>
                 <div  v-else  class="animatable_content_box ">
                     <LoaderModal :loading_percentage="stable_diffusion.loading_percentage" :loading_desc="stable_diffusion.model_loading_msg"  :loading_title="stable_diffusion.model_loading_title ||'Loading Model'"> </LoaderModal>
                     <div class="bottom_float"> <p>Please make sure you have around 8GB of free space for the models.</p> </div>
@@ -36,7 +36,7 @@
 
             <template v-slot:img2img>
 
-                <Img2Img  ref="img2img" v-if="is_mounted && stable_diffusion.is_backend_loaded"  :app_state="app_state" :stable_diffusion="stable_diffusion"></Img2Img>
+                <Img2Img  ref="img2img" v-if="is_mounted && stable_diffusion.is_ready()"  :app_state="app_state" :stable_diffusion="stable_diffusion"></Img2Img>
                 <div  v-else  class="animatable_content_box ">
                     <LoaderModal :loading_percentage="stable_diffusion.loading_percentage" :loading_desc="stable_diffusion.model_loading_msg"  :loading_title="stable_diffusion.model_loading_title ||'Loading Model'"> </LoaderModal>
                     <div class="bottom_float"> <p>Please make sure you have around 8GB of free space for the models.</p> </div>
@@ -44,9 +44,23 @@
 
             </template>
 
+
+             <template v-slot:controlnet>
+                <KeepAlive>
+                    <ControlNet  ref="controlnet" v-if="is_mounted && stable_diffusion.is_ready()"  :app_state="app_state" :stable_diffusion="stable_diffusion"></ControlNet>
+                     <div  v-else  class="animatable_content_box ">
+                        <LoaderModal :loading_percentage="stable_diffusion.loading_percentage" :loading_desc="stable_diffusion.model_loading_msg"  :loading_title="stable_diffusion.model_loading_title ||'Loading Model'"> </LoaderModal>
+                        <div class="bottom_float"> <p>Please make sure you have around 8GB of free space for the models.</p> </div>
+                    </div>
+                </KeepAlive>
+               
+
+            </template>
+
+
             <template v-slot:outpainting>
                 
-                <Outpainting  ref="outpaint" v-if="is_mounted && stable_diffusion.is_backend_loaded"  :app_state="app_state" :stable_diffusion="stable_diffusion"></Outpainting>
+                <Outpainting  ref="outpaint" v-if="is_mounted && stable_diffusion.is_ready()"  :app_state="app_state" :stable_diffusion="stable_diffusion"></Outpainting>
                 <div  v-else  class="animatable_content_box ">
                     <LoaderModal :loading_percentage="stable_diffusion.loading_percentage" :loading_desc="stable_diffusion.model_loading_msg"  :loading_title="stable_diffusion.model_loading_title ||'Loading Model'"> </LoaderModal>
                     <div class="bottom_float"> <p>Please make sure you have around 8GB of free space for the models.</p> </div>
@@ -56,7 +70,7 @@
 
             <template v-slot:inpainting>
                 
-                <Inpainting  ref="inpaint" v-if="is_mounted && stable_diffusion.is_backend_loaded"  :app_state="app_state" :stable_diffusion="stable_diffusion"></Inpainting>
+                <Inpainting  ref="inpaint" v-if="is_mounted && stable_diffusion.is_ready()"  :app_state="app_state" :stable_diffusion="stable_diffusion"></Inpainting>
                 <div  v-else  class="animatable_content_box ">
                     <LoaderModal :loading_percentage="stable_diffusion.loading_percentage" :loading_desc="stable_diffusion.model_loading_msg"  :loading_title="stable_diffusion.model_loading_title ||'Loading Model'"> </LoaderModal>
                     <div class="bottom_float"> <p>Please make sure you have around 8GB of free space for the models.</p> </div>
@@ -111,6 +125,7 @@ import SplashScreen from './components_bare/SplashScreen.vue'
 import ApplicationFrame from './components_bare/ApplicationFrame.vue'
 import ImgGenerate from './components/ImgGenerate.vue'
 import Img2Img from './components/Img2Img.vue'
+import ControlNet from "./components/ControlNet.vue"
 import Outpainting from './components/Outpainting.vue'
 import UpscaleImage from './components/UpscaleImage.vue'
 import Inpainting from "./components/Inpainting.vue"
@@ -138,7 +153,8 @@ export default
         Outpainting,
         UpscaleImage, 
         Inpainting,
-        Settings
+        Settings,
+        ControlNet
     },
 
     mounted() {
@@ -266,7 +282,7 @@ export default
 
         set_show_dialog_on_quit(){
             // determine whether electron process should show a confirmation message while closing or not 
-            if(! this.$refs.stable_diffusion.is_backend_loaded )
+            if(! this.$refs.stable_diffusion.is_ready() )
             {
                 this.should_show_dialog_on_quit = true;
                 this.show_dialog_on_quit_msg = 'Model has not finished loading. Are you sure you want to quit?';

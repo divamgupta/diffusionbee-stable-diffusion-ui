@@ -18,8 +18,7 @@
 
             <div v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" @click="open_input_image" >Change Image</div>
             <div v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" @click="inp_img =''">Clear</div>
-            <div v-if="inp_img && stable_diffusion.is_input_avail && !is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Draw Mask</div>
-            <div v-if="inp_img && stable_diffusion.is_input_avail && is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Remove Mask</div>
+          
 
             <br> <br> 
             <textarea 
@@ -40,9 +39,9 @@
 
             <div v-if="stable_diffusion.is_input_avail" class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
                 <div class="l_button button_medium button_colored" style="float:right ; " @click="generate_img2img" >Generate</div>
-                <SDOptionsDropdown :options_model_values="this_object" :elements_hidden="['img_h' , 'img_w' ]" > </SDOptionsDropdown>
+                <SDOptionsDropdown :options_model_values="this_object" :elements_hidden="['img_h' , 'img_w' ]" :elements_extra="['controlnet']"  > </SDOptionsDropdown>
             </div>
-            <div v-else-if="stable_diffusion.generated_by=='img2img'"  class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
+            <div v-else-if="stable_diffusion.generated_by=='controlnet'"  class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
                 <div v-if="is_stopping" class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stopping ...</div>
                 <div v-else class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stop</div>
             </div>
@@ -74,7 +73,7 @@
                 </div>
             </div>
 
-            <div v-if="!stable_diffusion.is_input_avail && stable_diffusion.generated_by=='img2img'">
+            <div v-if="!stable_diffusion.is_input_avail && stable_diffusion.generated_by=='controlnet'">
                 <LoaderModal :loading_percentage="done_percentage" loading_title="Generating" :loading_desc="stable_diffusion.generation_state_msg" :remaining_times="stable_diffusion.remaining_times"></LoaderModal>
             </div>
             
@@ -93,7 +92,7 @@ import Vue from 'vue'
 import SDOptionsDropdown from '../components_bare/SDOptionsDropdown.vue'
 
 export default {
-    name: 'Img2Img',
+    name: 'ControlNet',
     props: {
         app_state : Object   , 
         stable_diffusion : Object,
@@ -138,7 +137,9 @@ export default {
 
             is_negative_prompt_avail : false, 
             negative_prompt : "",
-            selected_model : 'Default'
+            selected_model : 'Default', 
+            selected_control: "Body Pose",
+            do_controlnet_preprocess: "Yes",
         };
     },
     methods: {
@@ -175,6 +176,7 @@ export default {
                 mask_img = undefined;
             }
             
+            let control_names = {"Body Pose" : "body_pose" , "Depth" : "depth" , "Scribble": "scribble"}
 
             let params = {
                 prompt : this.prompt , 
@@ -187,7 +189,11 @@ export default {
                 batch_size : this.batch_size , 
                 img_strength : this.inp_img_strength,
                 input_image : input_image,
-                is_inpaint : this.is_inpaint                
+                is_inpaint : this.is_inpaint , 
+
+                control_name: control_names[this.selected_control],
+                do_controlnet: true, 
+                do_controlnet_preprocess: (this.do_controlnet_preprocess == "Yes"),                
             }
 
             if(this.selected_model && this.selected_model != "Default" && this.app_state.app_data.custom_models[this.selected_model] ){
@@ -215,7 +221,7 @@ export default {
 
                     let p = {
                             "prompt":that.prompt , "seed": seed, "key":history_key , "imgs" : [] , "inp_img": input_image_with_mask,
-                            "dif_steps" : that.dif_steps , "inp_img_strength" : that.inp_img_strength, "model_version": that.stable_diffusion.model_version , "guidence_scale" : that.guidence_scale , 
+                            "dif_steps" : that.dif_steps , "inp_img_strength" : that.inp_img_strength, "model_version": that.stable_diffusion.model_version , "guidence_scale" : that.guidence_scale, "controlnet" : that.selected_control , "controlnet_preprocess" : that.do_controlnet_preprocess , 
                         }
                     if(that.stable_diffusion.model_version)
                         p['model_version'] = that.stable_diffusion.model_version;
@@ -243,7 +249,7 @@ export default {
 
 
            if(this.stable_diffusion)
-                this.stable_diffusion.text_to_img(params, callbacks, 'img2img');
+                this.stable_diffusion.text_to_img(params, callbacks, 'controlnet');
         } , 
 
         open_input_image(){

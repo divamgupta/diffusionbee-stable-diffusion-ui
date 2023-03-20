@@ -35,6 +35,7 @@
             <div @click="selectTab('img2img')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'img2img'}">Image To Image</div>
             <div @click="selectTab('inpainting')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'inpainting'}">Inpainting</div>
             <div @click="selectTab('outpainting')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'outpainting'}">Outpainting</div>
+            <div @click="selectTab('controlnet')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'controlnet'}">ControlNet</div>
             <div @click="selectTab('history')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'history'}">History</div>
         </div>
         <div class="tab_content_frame">
@@ -47,6 +48,10 @@
 
                 <div  style="display:none"  :class="{ bl_display : selected_tab === 'img2img'  }" >
                     <slot name="img2img"></slot>
+                </div>
+
+                <div  style="display:none"  :class="{ bl_display : selected_tab === 'controlnet'  }" >
+                    <slot name="controlnet"></slot>
                 </div>
 
                 <div  v-if="selected_tab === 'history' " style="display:none"  :class="{ bl_display : selected_tab === 'history'  }" >

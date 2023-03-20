@@ -30,6 +30,7 @@ export default {
     data() {
         return {
             is_backend_loaded : false,
+            is_model_downloading: false, 
             is_input_avail : false,
             model_loading_msg : "",
             model_loading_title : "",
@@ -48,6 +49,9 @@ export default {
             let msg_code = msg.substring(0, 4);
             if(msg_code == "mdld"){
                 this.is_backend_loaded = true;
+            }
+            if(msg_code == "mldn"){
+                this.is_model_downloading = false;
             }
             if(msg_code == "inrd"){
                 this.is_input_avail = true;
@@ -123,11 +127,17 @@ export default {
 
             if(msg_code == "mltl"){
                 let p = (msg.substring(5).trim());
+
+                if( p.includes("Downloading") ){
+                    this.is_model_downloading = true;
+                }
+
                 this.model_loading_title = p;
             }
 
 
             if(msg_code == "errr"){
+                this.is_model_downloading = false;
                 let error = msg.substring(5).trim()
                 if(this.attached_cbs){
                     if(this.attached_cbs.on_err)
@@ -137,6 +147,7 @@ export default {
             }
 
             if(msg_code == "dnpr"){
+                this.is_model_downloading = false;
                 let p = Number(msg.substring(5).trim());
                 let iter_time =  Date.now()  -this.last_iter_t;
                 this.last_iter_t  = Date.now();
@@ -172,6 +183,12 @@ export default {
         interupt(){
             send_to_py("t2im __stop__")
             this.attached_cbs = undefined;
+        },
+
+        is_ready(){
+            if(this.is_model_downloading)
+                return false 
+            return this.is_backend_loaded
         },
 
         text_to_img(prompt_params, callbacks, generated_by){

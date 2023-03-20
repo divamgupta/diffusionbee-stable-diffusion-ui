@@ -30,7 +30,7 @@ else:
 
 
 from convert_model import convert_model
-from stable_diffusion import StableDiffusion
+from stable_diffusion import StableDiffusion , image_preprocess_model_paths
 
 # get the model interface form the environ
 USE_DUMMY_INTERFACE = False
@@ -119,6 +119,9 @@ def process_opt(d, generator):
     batch_size = int(d['batch_size'])
     n_imgs = math.ceil(d['num_imgs'] / batch_size)
 
+    second_tdict_path = None
+    inp_img_preprocesser = None
+
     if d['model_id'] == 1:
         model_mode = "inpaint_15"
         tdict_path = p_14_np
@@ -126,7 +129,52 @@ def process_opt(d, generator):
     else:
         tdict_path = p_14
         print("sdbk mdvr 1.4")
-        if "input_image" in d and  d['input_image' ] is not None and d['input_image'] != "" :
+
+        if d['do_controlnet'] == True:
+            if d['control_name'] == "body_pose":
+                second_tdict_path = ProgressBarDownloader(title="Downloading ControlNet Body Model 1/2").download(
+                        url="https://huggingface.co/divamgupta/controlnet_tensorflow/resolve/main/just_control_sd15_openpose_fp16.tdict",
+                        md5_checksum="81077e9fe3472ed2242a7a3d8035b6eb",
+                        verify_ssl=False,
+                        extract_zip=False,
+                    )
+                if d['do_controlnet_preprocess']:
+                    image_preprocess_model_paths['body_pose'] = ProgressBarDownloader(title="Downloading ControlNet Body Model 2/2").download(
+                        url="https://huggingface.co/divamgupta/controlnet_tensorflow/resolve/main/body_pose_model.onnx",
+                        md5_checksum="51499a50aff296971a99605f32c7e8e7",
+                        verify_ssl=False,
+                        extract_zip=False,
+                    )
+
+                    inp_img_preprocesser = "body_pose"
+            elif d['control_name'] == "scribble":
+                second_tdict_path = ProgressBarDownloader(title="Downloading ControlNet Scribble Model 1/1").download(
+                        url="https://huggingface.co/divamgupta/controlnet_tensorflow/resolve/main/just_control_sd15_scribble_fp16.tdict",
+                        md5_checksum="2d29e2d006035919180e2f8b6decc40a",
+                        verify_ssl=False,
+                        extract_zip=False,
+                    )
+            elif d['control_name'] == "depth":
+                second_tdict_path = ProgressBarDownloader(title="Downloading ControlNet Depth Model 1/2").download(
+                        url="https://huggingface.co/divamgupta/controlnet_tensorflow/resolve/main/just_control_sd15_depth_fp16.tdict",
+                        md5_checksum="652bb2d467e37ba8253b7361973c82b6",
+                        verify_ssl=False,
+                        extract_zip=False,
+                    )
+                if d['do_controlnet_preprocess']:
+                    inp_img_preprocesser = "midas_depth"
+                    image_preprocess_model_paths['midas_depth'] = ProgressBarDownloader(title="Downloading ControlNet Depth Model 2/2").download(
+                        url="https://huggingface.co/divamgupta/controlnet_tensorflow/resolve/main/midas_monodepth.onnx",
+                        md5_checksum="3ad9d8a9d820214d2bfe65c0d37683a7",
+                        verify_ssl=False,
+                        extract_zip=False,
+                    )
+            else:
+                raise ValueError("invalid control name " +d['control_name'] )
+            model_mode = "controlnet"
+
+
+        elif "input_image" in d and  d['input_image' ] is not None and d['input_image'] != "" :
             model_mode = "img2img"
         else:
             model_mode = "txt2img"
@@ -135,6 +183,8 @@ def process_opt(d, generator):
         cust_model_path = d['custom_model_path']
         tdict_path = cust_model_path
         print("sdbk mdvr custom_" + cust_model_path.split(os.sep)[-1].split(".")[0])
+
+    aux_imgs = []
 
     for i in range(n_imgs):
         if 'seed' in d:
@@ -146,7 +196,7 @@ def process_opt(d, generator):
         else:
             soft_seed = None
 
-        img = generator.generate(
+        outs  = generator.generate(
             d['prompt'],
             img_height=d["H"], img_width=d["W"],
             num_steps=d['ddim_steps'],
@@ -159,11 +209,25 @@ def process_opt(d, generator):
             negative_prompt=d['negative_prompt'],
             input_image=d['input_image'],
             tdict_path=tdict_path,
+            second_tdict_path=second_tdict_path, 
+            inp_img_preprocesser=inp_img_preprocesser,
             mode=model_mode,
             scheduler=d['scheduler'],
             mask_image=d['mask_image'],
             input_image_strength=(float(d['img_strength'])),
         )
+
+        if outs is None:
+            return
+
+        img = outs['img']
+
+        if 'aux_img' in outs:
+            aux_img = outs['aux_img']
+            if aux_img not in aux_imgs:
+                aux_imgs.append(aux_img)
+                print("sdbk nwim %s"%(aux_img) )
+
         if img is None:
             return
         
@@ -198,7 +262,8 @@ def diffusion_bee_main():
 
     default_d = { "W" : 512 , "H" : 512, "num_imgs":1 , "ddim_steps" : 25 ,
      "scale" : 7.5, "batch_size":1 , "input_image" : None, "img_strength": 0.5
-     , "scheduler":"ddim"
+     , "scheduler":"ddim" 
+     , "do_controlnet" : False , "control_name" : None , "do_controlnet_preprocess" : False
      , "negative_prompt" : "" ,  "mask_image" : None, "model_id": 0 , "custom_model_path":None}
 
 
