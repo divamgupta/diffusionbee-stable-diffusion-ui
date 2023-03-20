@@ -37,9 +37,9 @@
             
 
             <div v-if="top_right_icon || top_right_button_text" class="gall_top_right_btn_container">
-                <div v-on:click.stop @click=" $emit('on_click_top_right_btn', item_id)" class="l_button button_grey" style="margin-right: 0;">
+                <button v-on:click.stop @click=" $emit('on_click_top_right_btn', item_id)" class="l_button button_grey" style="margin-right: 0;">
                      <font-awesome-icon v-if=top_right_icon :icon="top_right_icon" /> {{top_right_button_text}}
-                </div>
+                </button>
             </div>
 
              <div v-if="audio_url" class="audio_button_container" >
@@ -48,10 +48,10 @@
             
 
             <div v-if="tag" class="gall_tag_container">
-                <div class="gall_tag l_button" :style="{'background-color':tag_color}" >
+                <button class="gall_tag l_button" :style="{'background-color':tag_color}" >
                     <div v-if="tag !=  '__loading__'">{{tag}}</div>
                     <MoonLoader v-else  color="#ffffff" size="17px"></MoonLoader>
-                </div>
+                </button>
 
             </div>
         </div>

@@ -1,12 +1,12 @@
 <template>
-     <div  class="animatable_content_box ">
+     <form  class="animatable_content_box " @submit.prevent="generate">
 
         <div class="content_toolbox" style="margin-bottom: 5px; margin-top: -5px ;">
-            <div class="l_button" v-if="stable_diffusion.is_input_avail"  style="float:right "  @click="init_state"> Reset</div>
-            <div class="l_button"  v-if="is_stage_modified && stable_diffusion.is_input_avail"   style="float:right "  @click="save_image"> Save Image </div>
-            <div v-if="undo_history.length > 0 && stable_diffusion.is_input_avail " class="l_button"  style="float:right " @click="do_undo" > Undo </div>
-            <div class="l_button" v-if="stable_diffusion.is_input_avail"  style="float:right "  @click="add_ext_img"> Add Image</div>
-            <div class="l_button" v-if="stable_diffusion.is_input_avail && is_stage_modified"  style="float:right "  @click="is_eraser_enabled=!is_eraser_enabled; freeze_last_resizable_img()"> {{is_eraser_enabled?'Stop':'Start'}} Erasing</div>
+            <button class="l_button" v-if="stable_diffusion.is_input_avail"  style="float:right "  @click="init_state"> Reset</button>
+            <button class="l_button"  v-if="is_stage_modified && stable_diffusion.is_input_avail"   style="float:right "  @click="save_image"> Save Image </button>
+            <button v-if="undo_history.length > 0 && stable_diffusion.is_input_avail " class="l_button"  style="float:right " @click="do_undo" > Undo </button>
+            <button class="l_button" v-if="stable_diffusion.is_input_avail"  style="float:right "  @click="add_ext_img"> Add Image</button>
+            <button class="l_button" v-if="stable_diffusion.is_input_avail && is_stage_modified"  style="float:right "  @click="is_eraser_enabled=!is_eraser_enabled; freeze_last_resizable_img()"> {{is_eraser_enabled?'Stop':'Start'}} Erasing</button>
             
         </div>
        
@@ -35,11 +35,11 @@
         
         <div v-if="stable_diffusion.is_input_avail" style="margin-top: 15px">
             <SDOptionsDropdown :style="is_negative_prompt_avail?'margin-top:-43px':''" :options_model_values="this_object"  :elements_hidden="[ 'num_imgs', 'inp_img_strength', 'batch_size', 'guidence_scale', 'img_h', 'custom_model', 'seed']"> </SDOptionsDropdown>
-            <div  class="l_button button_medium button_colored" style="float:right ; " @click="generate()" >Generate</div>
+            <button  class="l_button button_medium button_colored" style="float:right ; " type="submit" >Generate</button>
         </div>
         <span v-else-if="stable_diffusion.generated_by=='outpainting'"   >
-            <div v-if="is_stopping" class="l_button button_medium button_colored" style="float:right; float:right ; margin-top: 20px; " @click="stop_generation">Stopping ...</div>
-            <div v-else class="l_button button_medium button_colored" style="float:right; float:right ; margin-top: 20px; " @click="stop_generation">Stop</div>
+            <button v-if="is_stopping" class="l_button button_medium button_colored" style="float:right; float:right ; margin-top: 20px; " @click="stop_generation">Stopping ...</button>
+            <button v-else class="l_button button_medium button_colored" style="float:right; float:right ; margin-top: 20px; " @click="stop_generation">Stop</button>
         </span>
 
 
@@ -55,7 +55,7 @@
 
         <p style="opacity:0.5; zoom:0.8; float:left; max-width: calc(100vw - 200px); margin-bottom: 0; "> Please describe image you want to draw in the box. </p>
 
-     </div>
+     </form>
 </template>
 <script>
 import Konva from 'konva';

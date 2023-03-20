@@ -2,7 +2,7 @@
 
 <template>
      <div  class="animatable_content_box ">
-        <div class="left_half">
+        <form class="left_half" @submit.prevent="generate_img2img">
             <!-- <p>Input Image:</p>
             <img class="gal_img" style="width: 90%;" src="https://colormadehappy.com/wp-content/uploads/2022/02/How-to-draw-a-cute-dog-6.jpg"/> 
          -->
@@ -16,10 +16,10 @@
                 </center>
             </div>
 
-            <div v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" @click="open_input_image" >Change Image</div>
-            <div v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" @click="inp_img =''">Clear</div>
-            <div v-if="inp_img && stable_diffusion.is_input_avail && !is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Draw Mask</div>
-            <div v-if="inp_img && stable_diffusion.is_input_avail && is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Remove Mask</div>
+            <button v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" @click="open_input_image" >Change Image</button>
+            <button v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" @click="inp_img =''">Clear</button>
+            <button v-if="inp_img && stable_diffusion.is_input_avail && !is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Draw Mask</button>
+            <button v-if="inp_img && stable_diffusion.is_input_avail && is_inpaint" class="l_button" @click="is_inpaint = !is_inpaint ">Remove Mask</button>
 
             <br> <br> 
             <textarea 
@@ -39,17 +39,17 @@
                     :rows="1"></textarea>
 
             <div v-if="stable_diffusion.is_input_avail" class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
-                <div class="l_button button_medium button_colored" style="float:right ; " @click="generate_img2img" >Generate</div>
-                <SDOptionsDropdown :options_model_values="this_object" :elements_hidden="['img_h' , 'img_w' ]" > </SDOptionsDropdown>
+                <button class="l_button button_medium button_colored" style="float:right ; " type="submit" >Generate</button>
+                <SDOptionsDropdown :options_model_values="this_object" :elements_hidden="['img_h' , 'img_w' ]"> </SDOptionsDropdown>
             </div>
             <div v-else-if="stable_diffusion.generated_by=='img2img'"  class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
-                <div v-if="is_stopping" class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stopping ...</div>
-                <div v-else class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stop</div>
+                <button v-if="is_stopping" class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stopping ...</button>
+                <button v-else class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stop</button>
             </div>
             <br><br>
             <p style="opacity:0.5; zoom:0.8"> Please describe the complete image which you want to see as the output. </p>
         
-        </div>
+        </form>
 
         <div  class="right_half">
 

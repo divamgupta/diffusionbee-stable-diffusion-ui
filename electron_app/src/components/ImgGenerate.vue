@@ -2,7 +2,7 @@
 <template>
     <div  class="animatable_content_box ">
         <div v-if="stable_diffusion.is_backend_loaded">
-            <div class="textbox_section" >
+            <form class="textbox_section" @submit.prevent="generate_from_prompt">
                 <textarea 
                     v-model="prompt" 
                     placeholder="Enter your prompt here" 
@@ -22,7 +22,7 @@
 
                 <div v-if="stable_diffusion.is_input_avail" class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
                     
-                    <div class="l_button button_medium button_colored" style="float:right ; " @click="generate_from_prompt">Generate</div>
+                    <button class="l_button button_medium button_colored" style="float:right ; " type="submit">Generate</button>
 
                     <SDOptionsDropdown :options_model_values="this_object" :elements_extra="['sampler' , 'use_soft_seed']"  :elements_hidden="[ 'inp_img_strength' ]"> </SDOptionsDropdown>
 
@@ -30,7 +30,7 @@
                         <b-dropdown id="dropdown-form" variant="link" ref="dropdown" toggle-class="text-decoration-none" no-caret >
                         
                             <template #button-content>
-                                <div class="l_button"  style="margin-right: -20px;" >Styles</div>
+                                <button class="l_button"  style="margin-right: -20px;" >Styles</button>
                             </template>
 
                             <b-dropdown-form style="width: 540px ; ">
@@ -38,7 +38,7 @@
                                 <div style="max-height: calc(100vh - 300px); overflow-y: scroll;">
                                     <div v-for="modifier in modifiers" :key="modifier[0]">
                                         <p>{{modifier[0]}}</p>
-                                        <div v-for="tag in modifier[1]" @click="add_style(tag)" :key="tag" class="l_button button_small button_colored" style="float:left; margin-bottom: 7px;">{{tag}}</div>
+                                        <button v-for="tag in modifier[1]" @click="add_style(tag)" :key="tag" class="l_button button_small button_colored" style="float:left; margin-bottom: 7px;">{{tag}}</button>
 
                                         <div style="clear: both; display: table; margin-bottom: 3px;"> </div>
                                         <hr>
@@ -56,7 +56,7 @@
                     <div style="float:right; margin-top: -5px; " >
                         <b-dropdown id="dropdown-form" variant="link" ref="dropdown" toggle-class="text-decoration-none" no-caret >
                             <template #button-content>
-                                <div class="l_button"  style="margin-right: -20px;" >Model : <span style="font-weight:">{{selected_model.substring(0, 10)}} <font-awesome-icon icon="chevron-down" />  </span></div>
+                                <button class="l_button"  style="margin-right: -20px;" >Model : <span style="font-weight:">{{selected_model.substring(0, 10)}} <font-awesome-icon icon="chevron-down" />  </span></button>
                             </template>
                             <b-dropdown-item v-for="option in ['Default'].concat(Object.keys(app_state.app_data.custom_models))" :key="option" @click="selected_model = option" >
                                 {{option}}
@@ -72,16 +72,16 @@
                             
                     </div>
 
-                    <div class="l_button button_medium" style="float:right ;margin-right: -10px; margin-top: -1px;" @click="open_arthub">Prompt Ideas</div>
+                    <button class="l_button button_medium" style="float:right ;margin-right: -10px; margin-top: -1px;" @click="open_arthub">Prompt Ideas</button>
 
 
                     
                 </div>
                 <div v-else-if="stable_diffusion.generated_by=='txt2img'"  class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
-                    <div v-if="is_stopping" class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stopping ...</div>
-                    <div v-else class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stop</div>
+                    <button v-if="is_stopping" class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stopping ...</button>
+                    <button v-else class="l_button button_medium button_colored" style="float:right" @click="stop_generation">Stop</button>
                 </div>
-            </div>
+            </form>
 
 
             <div v-if="generated_images.length == 1" >
@@ -122,7 +122,7 @@
         <p>Please close other applications for best speed.</p>
     </div>
 
-    <div @click="share_current_arthub"  v-if="generated_images.length > 0"  class="l_button bottom_float" style="right : 10px; bottom : 15px; background-color: inherit; cursor: pointer;">Share on ArtHub.ai</div>
+    <button @click="share_current_arthub"  v-if="generated_images.length > 0"  class="l_button bottom_float" style="right : 10px; bottom : 15px; background-color: inherit; cursor: pointer;">Share on ArtHub.ai</button>
 
 
 </div>
@@ -359,6 +359,9 @@ export default {
             color:rgb(210, 0, 0) !important ;
         }
 
+    }
+    .textbox_section {
+      background-color: unset;
     }
 
 </style>

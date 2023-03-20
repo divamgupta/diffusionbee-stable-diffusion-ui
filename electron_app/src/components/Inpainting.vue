@@ -1,18 +1,18 @@
 <template>
-    <div  class="animatable_content_box ">
+    <form  class="animatable_content_box " @submit.prevent="generate">
         <div class="content_toolbox" style="margin-bottom: -13px; ">
             
-            <div v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" style="float:right " @click="clear" > Reset</div>
-            <div v-if="undo_history.length > 0  && stable_diffusion.is_input_avail" class="l_button" style="float:right " @click="do_undo" > Undo</div>
-            <div v-if="inp_img " class="l_button" style="float:right " @click="save_img" > Save Image</div>
-            <div v-if="retry_params  && stable_diffusion.is_input_avail" class="l_button" style="float:right "   @click="generate(true)"> Retry</div>
+            <button v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" style="float:right " @click="clear" > Reset</button>
+            <button v-if="undo_history.length > 0  && stable_diffusion.is_input_avail" class="l_button" style="float:right " @click="do_undo" > Undo</button>
+            <button v-if="inp_img " class="l_button" style="float:right " @click="save_img" > Save Image</button>
+            <button v-if="retry_params  && stable_diffusion.is_input_avail" class="l_button" style="float:right "   @click="generate(true)"> Retry</button>
             
             
             <div v-if="stable_diffusion.is_input_avail && inp_img"   style="float:right ; margin-right: 10px" >
                 <input v-model="stroke_size_no" style="zoom:0.8; margin-top: 7px; width:100px" type="range"
                         min="1" max="100" >                
             </div>
-            <div v-if="stable_diffusion.is_input_avail && inp_img"   class="l_button no_hover_bg" style="float:right ; margin-right: -5px; " > Stroke Size</div>
+            <button v-if="stable_diffusion.is_input_avail && inp_img"   class="l_button no_hover_bg" style="float:right ; margin-right: -5px; " > Stroke Size</button>
             
 
         </div>
@@ -38,10 +38,10 @@
                     <!-- v-bind:class="{ 'disabled' : !stable_diffusion.is_input_avail}" -->
             </textarea>
 
-            <div  v-if="stable_diffusion.is_input_avail" @click="generate()"  class="l_button button_medium button_colored" style="float:right ; margin-top: 4px; ">Inpaint</div>
+            <button  v-if="stable_diffusion.is_input_avail" type="submit"  class="l_button button_medium button_colored" style="float:right ; margin-top: 4px; ">Inpaint</button>
             <span v-else-if="stable_diffusion.generated_by=='inpainting'"   >
-                <div v-if="is_stopping" class="l_button button_medium button_colored" style="float:right ; margin-top: 4px; " @click="stop_generation">Stopping</div>
-                <div v-else class="l_button button_medium button_colored" style="float:right ; margin-top: 4px; " @click="stop_generation">Stop</div>
+                <button v-if="is_stopping" class="l_button button_medium button_colored" style="float:right ; margin-top: 4px; " @click="stop_generation">Stopping</button>
+                <button v-else class="l_button button_medium button_colored" style="float:right ; margin-top: 4px; " @click="stop_generation">Stop</button>
             </span>
 
         </div>
@@ -57,7 +57,7 @@
         </div>
 
 
-    </div>
+    </form>
    
    
      

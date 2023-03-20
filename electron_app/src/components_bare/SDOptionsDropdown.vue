@@ -3,7 +3,7 @@
         <b-dropdown id="dropdown-form" variant="link" ref="dropdown" toggle-class="text-decoration-none" no-caret>
 
             <template #button-content>
-                <div class="l_button" style="">Options</div>
+                <button class="l_button" style="">Options</button>
             </template>
 
             <b-dropdown-form style="min-width: 350px;max-height: calc(100vh - 300px); overflow-y: scroll;">
@@ -387,13 +387,13 @@
                             <span class="options_desc">Negative prompt allows adding things to avoid in the image,</span>
                         </div>
                         <div class="options_input" style="width: 75px;">
-                            <div v-if="(!options_model_values.is_negative_prompt_avail) && !elements_hidden.includes('nagative_prompt')"
+                            <button v-if="(!options_model_values.is_negative_prompt_avail) && !elements_hidden.includes('nagative_prompt')"
                                 class="l_button"
                                 @click="options_model_values.is_negative_prompt_avail = !options_model_values.is_negative_prompt_avail">
-                                Enable </div>
-                            <div v-else class="l_button"
+                                Enable </button>
+                            <button v-else class="l_button"
                                 @click="options_model_values.is_negative_prompt_avail = !options_model_values.is_negative_prompt_avail">
-                                Disable</div>
+                                Disable</button>
                         </div>
                     </div>
 
