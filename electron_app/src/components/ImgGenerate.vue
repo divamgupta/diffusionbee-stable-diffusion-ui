@@ -7,7 +7,8 @@
                     v-model="prompt" 
                     placeholder="Enter your prompt here" 
                     style="border-radius: 12px 12px 12px 12px; width: calc(100%); resize: none; " 
-                    class="form-control"  
+                    class="form-control"
+                    autofocus
                     v-bind:class="{ 'disabled' : !stable_diffusion.is_input_avail}"
                     :rows="is_negative_prompt_avail ? 2:3"></textarea>
 
