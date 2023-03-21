@@ -81,7 +81,7 @@ export default {
         add_model(){
             let that = this;
             
-            let pytorch_model_path = window.ipcRenderer.sendSync('file_dialog',  "ckpt_file" );
+            let pytorch_model_path = window.ipcRenderer.sendSync('file_dialog',  "weights_file" );
             if(!pytorch_model_path)
                 return;
 

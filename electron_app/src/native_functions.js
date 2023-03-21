@@ -61,10 +61,10 @@ ipcMain.on('file_dialog', (event, arg) => {
         properties = ['openFile' ]
         options = { filters :[ {name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'bmp']}] , properties: properties } ;
     }
-    else if(arg == 'ckpt_file') // single image file 
+    else if(arg == 'weights_file') // single image file 
     {
         properties = ['openFile' ]
-        options = { filters :[ {name: 'Checkpoints', extensions: ['ckpt']}] , properties: properties } ;
+        options = { filters :[ {name: 'Checkpoints', extensions: ['ckpt' , 'safetensors' ]}] , properties: properties } ;
     }
     else if(arg == 'img_files') // multi image files
     {

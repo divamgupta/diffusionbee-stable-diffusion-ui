@@ -140,6 +140,9 @@ def examine_pickle(fb0, return_special=False):
   ## 3: this massive line also assigns values to keys, but does so differently
   ## _var2262.update({ 'cond_stage_model.transformer.text_model.encoder.layers.3.layer_norm2.bias': _var2001, [ .... and on  and on ]})
   ##
+  ## 4: in some pruned models, the last line is instead a combination of 2/3 into the final variable:
+  ## result = {'model.diffusion_model.input_blocks.0.0.weight': _var1, 'model.diffusion_model.input_blocks.0.0.bias': _var3, }
+  ##
   ## that's it  
 
   # make some REs to match the above.
@@ -147,6 +150,7 @@ def examine_pickle(fb0, return_special=False):
   re_assign = re.compile('^_var\d+ = \{.*\}$')
   re_update = re.compile('^_var\d+\.update\(\{.*\}\)$')
   re_ordered_dict = re.compile('^_var\d+ = OrderedDict\(\)$')
+  re_result = re.compile('^result = \{.*\}$')
 
   load_instructions = {}
   assign_instructions = AssignInstructions()
@@ -157,7 +161,7 @@ def examine_pickle(fb0, return_special=False):
     if re_rebuild.match(line):
       variable_name, load_instruction = line.split(' = ', 1)
       load_instructions[variable_name] = LoadInstruction(line, variable_name)
-    elif re_assign.match(line):
+    elif re_assign.match(line) or re_result.match(line):
       assign_instructions.parse_assign_line(line)
     elif re_update.match(line):
       assign_instructions.parse_update_line(line)
@@ -184,11 +188,34 @@ class AssignInstructions:
     self.integrated_instructions = {}
     self.collect_special = collect_special;
 
+  def parse_result_line(self, line):
+    garbage, huge_mess = line.split(' = {', 1)
+    assignments = huge_mess.split(', ')
+    del huge_mess
+    assignments[-1] = assignments[-1].strip('}')
+
+    #compile RE here to avoid doing it every loop iteration:
+    re_var = re.compile('^_var\d+$')
+
+    assignment_count = 0
+    for a in assignments:
+      if self._add_assignment(a, re_var):
+        assignment_count = assignment_count + 1
+    if NO_PICKLE_DEBUG:
+      print(f"Added/merged {assignment_count} assignments. Total of {len(self.instructions)} assignment instructions")
+
   def parse_assign_line(self, line):
     # input looks like this:
     # _var2262 = {'model.diffusion_model.input_blocks.0.0.weight': _var1, 'model.diffusion_model.input_blocks.0.0.bias': _var3,\
     #  ...\
     #  'cond_stage_model.transformer.text_model.encoder.layers.3.layer_norm2.weight': _var1999}
+
+    # input looks like the above, but with 'result' in place of _var2262:
+    # result = {'model.diffusion_model.input_blocks.0.0.weight': _var1, ... }
+    #
+    # or also look like: 
+    # result = {'state_dict': _var2314}
+    # ... which will be ignored later
     garbage, huge_mess = line.split(' = {', 1)
     assignments = huge_mess.split(', ')
     del huge_mess
@@ -211,7 +238,7 @@ class AssignInstructions:
     # 'embedding_manager.embedder.transformer.text_model.encoder.layers.6.mlp.fc1': {'version': 1}
     sd_key, fickling_var = assignment.split(': ', 1)
     sd_key = sd_key.strip("'")
-    if re_var.match(fickling_var):
+    if sd_key != 'state_dict' and re_var.match(fickling_var):
       self.instructions[sd_key] = fickling_var
       return True
     elif self.collect_special:
@@ -225,7 +252,8 @@ class AssignInstructions:
         v = v.strip("'")
         special_dict[k] = v
       self.special_instructions[sd_key] = special_dict
-      return False
+
+    return False
 
   def integrate(self, load_instructions):
     unfound_keys = {}

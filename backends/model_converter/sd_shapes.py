@@ -1,7 +1,7 @@
 
 from sd_shapes_consts import shapes_unet , shapes_encoder, shapes_decoder , shapes_text_encoder, shapes_params
 import copy
-
+from collections import Counter
 
 def add_aux_shapes(d):
     for k in list(d.keys()):
@@ -57,7 +57,7 @@ extra_keys = ['temb_coefficients_fp32' , 'temb_coefficients_fp16' , 'causal_mask
 
 
 
-def are_shapes_matching(state_dict , template_shapes):
+def are_shapes_matching(state_dict , template_shapes , name=None):
     for k in template_shapes:
         if k not in state_dict:
             print("key", k , "not found in state_dict" , state_dict.keys())
@@ -68,28 +68,50 @@ def are_shapes_matching(state_dict , template_shapes):
 
     return True
 
-def are_shapes_dtype(state_dict, template_shapes , dtype):
+
+def get_dtype(state_dict, template_shapes ):
+    c = Counter()
+
     for k in state_dict:
         if k in extra_keys:
             continue
         if k not in template_shapes:
             continue
-        if state_dict[k].dtype != dtype:
-            return False 
 
-    return True 
+        if 'float' in str(state_dict[k].dtype):
+            c[ str(state_dict[k].dtype)] += 1 
+    print(c.most_common())
+    return c.most_common(1)[0][0]
+
+
+
+def check_shapes_float(state_dict, template_shapes ):
+    for k in state_dict:
+        if k in extra_keys:
+            continue
+        if k not in template_shapes:
+            continue
+        
+        assert 'float' in str(state_dict[k].dtype )
+
 
 
 def get_model_type(state_dict):
-    if are_shapes_matching(state_dict , sd_1x_shapes) and are_shapes_dtype(state_dict , sd_1x_shapes, "float32"):
-        return "SD_1x_float32"
-    elif are_shapes_matching(state_dict , sd_1x_inpaint_shapes) and are_shapes_dtype(state_dict , sd_1x_inpaint_shapes , "float32"):
-        return "SD_1x_inpaint_float32"
-    elif are_shapes_matching(state_dict , sd_1x_shapes) and are_shapes_dtype(state_dict , sd_1x_shapes , "float16"):
-        return "SD_1x_float16"
-    elif are_shapes_matching(state_dict , sd_1x_inpaint_shapes) and are_shapes_dtype(state_dict , sd_1x_inpaint_shapes, "float16"):
-        return "SD_1x_inpaint_float16"
+
+    if are_shapes_matching(state_dict , sd_1x_shapes) :
+        shapes = sd_1x_shapes
+        mname = "SD_1x"
+    elif are_shapes_matching(state_dict , sd_1x_inpaint_shapes) :
+        shapes = sd_1x_inpaint_shapes
+        mname = "SD_1x_inpaint"
     else:
         return None
+
+    check_shapes_float(state_dict , shapes)
+    c_dtype = get_dtype(state_dict , shapes)
+    if c_dtype not in ["float32" , "float16"]:
+        raise ValueError("The weights should either be float32 or float16, but these are " + c_dtype)
+
+    return mname + "_" + c_dtype
 
 

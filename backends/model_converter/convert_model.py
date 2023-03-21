@@ -8,7 +8,7 @@ import sys, getopt
 # pyinstaller  convert_model.py  --onefile  --noconfirm --clean # build using intel machine so that its cross platform lol
 
  
-
+from safetensor_wrapper import SafetensorWrapper
 from fake_torch import extract_weights_from_checkpoint
 from sd_shapes import get_model_type , possible_model_shapes , ctdict_ids
 from tdict import TDict
@@ -16,7 +16,13 @@ from tdict import TDict
 
 
 def convert_model(checkpoint_filename, out_filename ):
-    torch_weights = extract_weights_from_checkpoint(open(checkpoint_filename, "rb"))
+
+    if checkpoint_filename.lower().endswith(".ckpt"):
+        torch_weights = extract_weights_from_checkpoint(open(checkpoint_filename, "rb"))
+    elif checkpoint_filename.lower().endswith(".safetensors"):
+        torch_weights = SafetensorWrapper(checkpoint_filename)
+    else:
+        raise ValueError("Invalid import format")
 
     if 'state_dict' in torch_weights:
         state_dict = torch_weights['state_dict']
@@ -65,6 +71,13 @@ def convert_model(checkpoint_filename, out_filename ):
     if model_type is None:
         raise ValueError("The model is not supported. Please make sure it is a valid SD 1.4/1.5 .ckpt file")
 
+    if "float16" in model_type:
+        cur_dtype = "float16"
+    elif "float32" in model_type:
+        cur_dtype = "float32"
+    else:
+        assert False
+
     print("model type " , model_type)
 
     model_shapes = possible_model_shapes[model_type]
@@ -76,6 +89,8 @@ def convert_model(checkpoint_filename, out_filename ):
 
     for k in model_shapes:
         np_arr = state_dict[k]
+        if "float" in str(np_arr.dtype):
+            np_arr = np_arr.astype(cur_dtype)
         shape = list(np_arr.shape)
         assert tuple(shape) == tuple(model_shapes[k]), ( "shape mismatch at" ,  k , shape , SD_SHAPES[k] )
         outfile.write_key(key=k , tensor=np_arr)
@@ -112,5 +127,7 @@ if __name__ == "__main__":
 
     checkpoint_filename = args[0]
     out_filename = args[1]
+
+    convert_model(checkpoint_filename , out_filename )
 
 
