@@ -2,6 +2,8 @@
 [![Twitter](https://img.shields.io/twitter/url.svg?label=Follow%20%40divamgupta&style=social&url=https%3A%2F%2Ftwitter.com%2Fdivamgupta)](https://twitter.com/divamgupta)
 
 
+[中文文档](./README_cn.md)
+
 ### Diffusion Bee is the easiest way to run Stable Diffusion locally on your Intel / M1 Mac. Comes with a one-click installer. No dependencies or technical knowledge needed.
 
 * Runs locally on your computer no data is sent to the cloud ( other than request to download the weights or unless you chose to upload an image ).
