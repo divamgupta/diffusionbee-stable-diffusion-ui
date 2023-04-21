@@ -123,6 +123,7 @@ class TDict:
 
         weights_json_start = extra_head[4]
         weights_json_l = extra_head[5] - extra_head[4]
+        print( "json pos" ,  weights_json_start , weights_json_l)
 
         self.ctdict_version = int(extra_head[3])
 

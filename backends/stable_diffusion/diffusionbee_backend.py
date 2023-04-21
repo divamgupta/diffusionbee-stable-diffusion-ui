@@ -243,10 +243,11 @@ def process_opt(d, generator):
 
 def diffusion_bee_main():
 
-
     global p_14 , p_14_np
     download_weights()
+
     print("sdbk mltl Loading Model")
+
 
     def callback(state="" , progress=-1):
         print("sdbk dnpr "+str(progress) )

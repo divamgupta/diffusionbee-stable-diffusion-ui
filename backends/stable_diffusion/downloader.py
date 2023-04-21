@@ -104,8 +104,10 @@ class ProgressBarDownloader(object):
                 if os.path.exists(out_abs_path.replace(".zip", "")):
                     # TODO , actually check if the extracted is valid, but then
                     # you might need spereate md5
+                    print("sdbk mldn")
                     return out_abs_path.replace(".zip", "")
             else:
+                print("sdbk mldn")
                 return out_abs_path
 
         with open(out_abs_path, "wb") as f:
@@ -149,5 +151,5 @@ class ProgressBarDownloader(object):
             out_abs_path = out_abs_path.replace(".zip", "")
             dest = shutil.move(extract_path, out_abs_path)
 
-
+        print("sdbk mldn")
         return out_abs_path

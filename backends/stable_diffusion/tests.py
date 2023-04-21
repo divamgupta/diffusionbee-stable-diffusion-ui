@@ -18,6 +18,146 @@ sd = StableDiffusion( ModelInterface , p_14 , model_name="sd_1x", callback=None)
 
 
 
+def test_1():
+
+    img = sd.generate(
+            prompt="a tree" , 
+            img_height=512, 
+            img_width=512, 
+            seed=1, 
+            tdict_path=None,
+            batch_size=1,
+            dtype=ModelInterface.default_float_type,
+            scheduler='ddim',
+            mode="txt2img" )
+
+    gt_p = "./test_assets/outputs/a_tree_1_ddim.png"
+
+    Image.fromarray(img['img'][0]).show()
+
+
+
+
+
+def test_2():
+
+    img = sd.generate(
+            prompt="a fantasy tiger rightening , Fangs and tusks , massive square jaw with underbite , cybernetic eye , smoking lit cigar , Heavy and crude industrial sci " , 
+            img_height=512, 
+            img_width=512, 
+            seed=145, 
+            tdict_path=None,
+            batch_size=1,
+            dtype=ModelInterface.default_float_type,
+            scheduler='k_euler_ancestral',
+            mode="txt2img" )
+    gt_p = "./test_assets/outputs/tiger_k_euler_ancestral_145.png"
+
+    Image.fromarray(img['img'][0]).show()
+
+
+
+
+
+def test_3():
+
+    img = sd.generate(
+            prompt="a fantasy tiger rightening , Fangs and tusks , massive square jaw with underbite , cybernetic eye , smoking lit cigar , Heavy and crude industrial sci " , 
+            img_height=512, 
+            img_width=512, 
+            seed=145, 
+            tdict_path=None,
+            batch_size=1,
+            dtype=ModelInterface.default_float_type,
+            scheduler='lmsd',
+            mode="txt2img" )
+    gt_p = "./test_assets/outputs/tiger_lmsd_145.png"
+
+    Image.fromarray(img['img'][0]).show()
+
+
+def test_4():
+
+    img = sd.generate(
+            prompt="a fantasy tiger rightening , Fangs and tusks , massive square jaw with underbite , cybernetic eye , smoking lit cigar , Heavy and crude industrial sci " , 
+            img_height=512, 
+            img_width=512, 
+            seed=145, 
+            tdict_path=None,
+            batch_size=1,
+            dtype=ModelInterface.default_float_type,
+            scheduler='pndm',
+            mode="txt2img" )
+
+    gt_p = "./test_assets/outputs/tiger_pndm_145.png"
+
+    Image.fromarray(img['img'][0]).show()
+
+
+
+def test_5():
+
+    inp = "./test_assets/mmm.png"
+    mas = "./test_assets/ddd.png"
+
+    img = sd.generate(
+        prompt="Face of red cat, high resolution, sitting on a park bench" , 
+        img_height=512, 
+        img_width=512, 
+        seed=443136, 
+        input_image=inp, 
+        mask_image=mas,  
+        scheduler='ddim',
+        tdict_path="/Users/divamgupta/.diffusionbee/downloads/sd-v1-5-inpainting_fp16.tdict",
+        mode="inpaint_15" )
+
+    gt_p = "./test_assets/outputs/inp_out_443136.png"
+    Image.fromarray(img['img'][0]).show()
+
+
+
+def test_6():
+
+    inp = "./test_assets/mmm.png"
+    mas = "./test_assets/ddd.png"
+
+    img = sd.generate(
+        prompt="yellow cat, high resolution, sitting on a park bench" , 
+        img_height=512, 
+        img_width=512, 
+        seed=678, 
+        input_image=inp, 
+        mask_image=mas,  
+        scheduler='ddim',
+        tdict_path="/Users/divamgupta/.diffusionbee/downloads/sd-v1-5-inpainting_fp16.tdict",
+        mode="inpaint_15" )
+    gt_p = "./test_assets/outputs/inp_out_678.png"
+    Image.fromarray(img['img'][0]).show()
+
+
+def test_7():
+
+    img = sd.generate(
+            prompt="a tree" , 
+            img_height=512, 
+            img_width=512, 
+            seed=1, 
+            batch_size=2,
+            tdict_path=None,
+            dtype=ModelInterface.default_float_type,
+            scheduler='ddim',
+            mode="txt2img" )
+
+    gt_p = "./test_assets/outputs/a_tree_1_ddim.png"
+    gt_p2 = "./test_assets/outputs/a_tree_1_ddim_2.png"
+
+
+    Image.fromarray(img['img'][0]).show()
+    Image.fromarray(img['img'][1]).show()
+
+
+
+
 
 # inp = "./test_assets/yoga1.jpg"
 
@@ -43,46 +183,43 @@ sd = StableDiffusion( ModelInterface , p_14 , model_name="sd_1x", callback=None)
 
 
 
-inp = "./test_assets/scribble_turtle.png"
+# inp = "./test_assets/scribble_turtle.png"
 
 
-img = sd.generate(
-        prompt="a turtle" , 
-        img_height=512, 
-        img_width=512, 
-        seed=6378, 
-        tdict_path=None,
-        second_tdict_path="/Users/divamgupta/Downloads/just_control_sd15_scribble_fp16.tdict",
-        batch_size=1,
-        dtype=ModelInterface.default_float_type,
-        scheduler='ddim',
-        num_steps=25,
-        input_image=inp,
-        mode="controlnet" )
+# img = sd.generate(
+#         prompt="a turtle" , 
+#         img_height=512, 
+#         img_width=512, 
+#         seed=6378, 
+#         tdict_path=None,
+#         second_tdict_path="/Users/divamgupta/Downloads/just_control_sd15_scribble_fp16.tdict",
+#         batch_size=1,
+#         dtype=ModelInterface.default_float_type,
+#         scheduler='ddim',
+#         num_steps=25,
+#         input_image=inp,
+#         mode="controlnet" )
 
 
-Image.fromarray(img['img'][0]).show()
+# Image.fromarray(img['img'][0]).show()
 
 
+# img = sd.generate(
+#         prompt="a tortoise" , 
+#         img_height=512, 
+#         img_width=512, 
+#         seed=678, 
+#         tdict_path=None,
+#         batch_size=1,
+#         dtype=ModelInterface.default_float_type,
+#         scheduler='ddim',
+#         input_image=inp,
+#         mode="txt2img" )
 
 
-img = sd.generate(
-        prompt="a tortoise" , 
-        img_height=512, 
-        img_width=512, 
-        seed=678, 
-        tdict_path=None,
-        batch_size=1,
-        dtype=ModelInterface.default_float_type,
-        scheduler='ddim',
-        input_image=inp,
-        mode="txt2img" )
+# Image.fromarray(img[0]).show()
 
-
-Image.fromarray(img[0]).show()
-
-
-
+test_7()
 
 
 exit()
