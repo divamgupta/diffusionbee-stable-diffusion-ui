@@ -131,6 +131,10 @@ def process_opt(d, generator):
         print("sdbk mdvr 1.4")
 
         if d['do_controlnet'] == True:
+
+            if "sd_1x_controlnet" not in generator.model.avail_models:
+                raise ValueError("ControlNet is not supported. Please upgrade to macOS13.0+")
+
             if d['control_name'] == "body_pose":
                 second_tdict_path = ProgressBarDownloader(title="Downloading ControlNet Body Model 1/2").download(
                         url="https://huggingface.co/divamgupta/controlnet_tensorflow/resolve/main/just_control_sd15_openpose_fp16.tdict",

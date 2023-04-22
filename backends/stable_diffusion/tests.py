@@ -158,6 +158,27 @@ def test_7():
 
 
 
+def test_ctrl_1():
+    inp = "./test_assets/scribble_turtle.png"
+
+    img = sd.generate(
+            prompt="a turtle" , 
+            img_height=512, 
+            img_width=512, 
+            seed=6378, 
+            tdict_path=None,
+            second_tdict_path="/Users/divamgupta/Downloads/just_control_sd15_scribble_fp16.tdict",
+            batch_size=1,
+            dtype="float32",
+            scheduler='ddim',
+            num_steps=10,
+            input_image=inp,
+            mode="controlnet" )
+
+    Image.fromarray(img['img'][0]).show()
+
+
+
 
 # inp = "./test_assets/yoga1.jpg"
 
@@ -183,23 +204,6 @@ def test_7():
 
 
 
-# inp = "./test_assets/scribble_turtle.png"
-
-
-# img = sd.generate(
-#         prompt="a turtle" , 
-#         img_height=512, 
-#         img_width=512, 
-#         seed=6378, 
-#         tdict_path=None,
-#         second_tdict_path="/Users/divamgupta/Downloads/just_control_sd15_scribble_fp16.tdict",
-#         batch_size=1,
-#         dtype=ModelInterface.default_float_type,
-#         scheduler='ddim',
-#         num_steps=25,
-#         input_image=inp,
-#         mode="controlnet" )
-
 
 # Image.fromarray(img['img'][0]).show()
 
@@ -219,7 +223,7 @@ def test_7():
 
 # Image.fromarray(img[0]).show()
 
-test_7()
+test_ctrl_1()
 
 
 exit()

@@ -99,6 +99,7 @@ class ModelInterface:
 
     default_float_type = 'float32'
     avail_float_types = ['float32']
+    avail_models = ["sd_1x" , "sd_1x_inpaint" ,  "sd_1x_controlnet"]
 
     def __init__(self, tdict,  dtype='float16', model_name="sd_1x", second_tdict=None ):
 
