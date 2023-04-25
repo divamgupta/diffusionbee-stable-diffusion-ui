@@ -3,18 +3,19 @@
 
 import tensorflow as tf
 from autoencoder_kl import Decoder, Encoder
-from diffusion_model import UNetModel
+from diffusion_model import UNetModel , UNetModelV2
 from clip_encoder import CLIPTextTransformer
+from clip_encoder_v2 import CLIPTextTransformerV2
 from controlnet import ControlNet, HintNet
 
-from mapping_constants import PYTORCH_CKPT_MAPPING
+from mapping_constants import PYTORCH_CKPT_MAPPING , PYTORCH_CKPT_MAPPING_SD2
 
 import json
 
 MAX_TEXT_LEN = 77
 import numpy as np
 
-def get_models(n_unet_ch=4 ):
+def get_models(n_unet_ch=4 , is_sd2=False ):
 
     img_height=512
     img_width=512
@@ -25,16 +26,26 @@ def get_models(n_unet_ch=4 ):
     # Create text encoder
     input_word_ids = tf.keras.layers.Input(shape=(MAX_TEXT_LEN,), dtype="int32")
     input_pos_ids = tf.keras.layers.Input(shape=(MAX_TEXT_LEN,), dtype="int32")
-    text_encoder_f = CLIPTextTransformer()
+    if is_sd2:
+        text_encoder_f = CLIPTextTransformerV2()
+    else:
+        text_encoder_f = CLIPTextTransformer()
     embeds = text_encoder_f([input_word_ids, input_pos_ids])
     text_encoder = tf.keras.models.Model([input_word_ids, input_pos_ids], embeds)
 
     # Creation diffusion UNet
-    context = tf.keras.layers.Input((MAX_TEXT_LEN, 768))
+    if is_sd2:
+        context = tf.keras.layers.Input((MAX_TEXT_LEN, 1024))
+    else:
+        context = tf.keras.layers.Input((MAX_TEXT_LEN, 768))
     t_emb = tf.keras.layers.Input((320,))
   
     latent = tf.keras.layers.Input((n_h, n_w, n_unet_ch))
-    unet = UNetModel()
+
+    if is_sd2:
+        unet = UNetModelV2()
+    else:
+        unet = UNetModel()
     diffusion_model_f = unet
     diffusion_model = tf.keras.models.Model(
         [latent, t_emb, context], unet([latent, t_emb, context])
@@ -78,12 +89,17 @@ def get_controlnet_models():
     return hintnet_model , controlnet_model , hintnet_f , controlnet_f
 
 
-def load_from_tdict(inp_file , models ):
+def load_from_tdict(inp_file , models , is_sd2=False ):
     inp_file.init_read()
+
+    if is_sd2:
+        mappings_to_use = PYTORCH_CKPT_MAPPING_SD2
+    else:
+        mappings_to_use = PYTORCH_CKPT_MAPPING
+
     for module_name in models.keys():
         module_weights = []
-        for i , (key , perm ) in enumerate(PYTORCH_CKPT_MAPPING[module_name]):
-            
+        for i , (key , perm ) in enumerate(mappings_to_use[module_name]):
             w = inp_file.read_key(key)
 
             if perm is not None:
@@ -99,16 +115,20 @@ class ModelInterface:
 
     default_float_type = 'float32'
     avail_float_types = ['float32']
-    avail_models = ["sd_1x" , "sd_1x_inpaint" ,  "sd_1x_controlnet"]
+    avail_models = ["sd_1x" , "sd_2x" , "sd_1x_inpaint" ,  "sd_1x_controlnet"]
 
     def __init__(self, tdict,  dtype='float16', model_name="sd_1x", second_tdict=None ):
 
         print("initing " , model_name)
 
         self.is_control_net = False 
+        self.is_sd2 = False
 
         if model_name == "sd_1x":
             n_unet_ch = 4
+        elif model_name == "sd_2x":
+            n_unet_ch = 4
+            self.is_sd2 = True
         elif model_name == "sd_1x_inpaint":
             n_unet_ch = 9
         elif model_name == "sd_1x_controlnet":
@@ -120,7 +140,7 @@ class ModelInterface:
 
 
 
-        text_encoder, diffusion_model, decoder, encoder , text_encoder_f , diffusion_model_f , decoder_f , encoder_f = get_models( n_unet_ch=n_unet_ch )
+        text_encoder, diffusion_model, decoder, encoder , text_encoder_f , diffusion_model_f , decoder_f , encoder_f = get_models( n_unet_ch=n_unet_ch , is_sd2=self.is_sd2  )
         self.text_encoder = text_encoder
         self.diffusion_model = diffusion_model
         self.decoder = decoder
@@ -166,7 +186,8 @@ class ModelInterface:
         return np.array(self.decoder_f(unet_out))
 
     def run_text_enc(self, tokens, pos_ids):
-        return np.array(self.text_encoder_f([tokens , pos_ids]))
+        o =  np.array(self.text_encoder_f([tokens , pos_ids]))
+        return o
 
     def run_enc(self, inp):
         inp = np.array(inp).astype('float32')
@@ -196,13 +217,13 @@ class ModelInterface:
             load_from_tdict(second_tdict , {
                 'controlnet' : self.controlnet, 
                 'hintnet' : self.hintnet
-            } )
+            }  , is_sd2=self.is_sd2 )
 
         load_from_tdict(tdict , {
             'text_encoder' : self.text_encoder, 
             'diffusion_model' : self.diffusion_model , 
             'decoder' : self.decoder , 
             'encoder' : self.encoder 
-        } )
+        } , is_sd2=self.is_sd2)
 
 

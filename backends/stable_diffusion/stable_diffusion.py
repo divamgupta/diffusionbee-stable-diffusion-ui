@@ -1,7 +1,7 @@
 import numpy as np
 from tqdm import tqdm
 import math
-from clip_tokenizer import SimpleTokenizer
+from clip_tokenizer import SimpleTokenizer , SimpleTokenizerV2
 import inspect
 
 from stdin_input import is_avail, get_input
@@ -29,6 +29,9 @@ from schedulers.scheduling_lms_discrete  import LMSDiscreteScheduler
 from schedulers.scheduling_pndm import PNDMScheduler
 from schedulers.k_euler_ancestral import KEulerAncestralSampler
 from schedulers.k_euler import KEulerSampler
+
+from utils.logging import log_object
+
 
 image_preprocess_model_paths = {
     "body_pose" : None , 
@@ -148,8 +151,17 @@ def get_preprocess_function(preprocess_function_name):
         raise ValueError("invalid function name")
 
 
+tdict_model_versions = {}
+def get_tdict_model_version(tdict_path):
+    if tdict_path in tdict_model_versions:
+        return tdict_model_versions[tdict_path]
+    f = TDict(tdict_path, mode='r')
+    tdict_model_versions[ tdict_path] = f.ctdict_version
+    return tdict_model_versions[ tdict_path] 
+
+
 class StableDiffusion:
-    def __init__(self , ModelInterfaceClass ,  tdict_path , model_name="sd_1x",   callback=None ):
+    def __init__(self , ModelInterfaceClass ,  tdict_path , model_name="sd_1x",   callback=None , debug_output_path=None ):
 
         self.ModelInterfaceClass = ModelInterfaceClass
 
@@ -157,35 +169,60 @@ class StableDiffusion:
             callback = dummy_callback
        
         self.tokenizer = SimpleTokenizer()
+        self.tokenizerv2 = SimpleTokenizerV2()
 
         self.current_mode = None
         self.callback = callback
+
+        self.debug_output_path = debug_output_path
 
         self.current_model_name = model_name 
         self.current_tdict_path = tdict_path
         self.second_current_tdict_path = None
         self.current_dtype = self.ModelInterfaceClass.default_float_type
 
-        self.model = self.ModelInterfaceClass( TDict(self.current_tdict_path ), dtype=self.current_dtype, model_name=self.current_model_name )
+        if model_name is not None:
+            self.model = self.ModelInterfaceClass( TDict(self.current_tdict_path ), dtype=self.current_dtype, model_name=self.current_model_name )
+        else:
+            self.model = None
 
 
     def prepare_model_interface(self , sd_run=None ):
-
-        if sd_run.mode == 'inpaint_15':
-            model_name = "sd_1x_inpaint"
-        elif sd_run.mode == "controlnet":
-            model_name = "sd_1x_controlnet"
-        else:
-            model_name = "sd_1x"
 
         dtype = sd_run.dtype
         tdict_path = sd_run.tdict_path
         second_tdict_path = sd_run.second_tdict_path
 
+        tdict_model_version = get_tdict_model_version(tdict_path) % 1000
+
+        if sd_run.mode == 'inpaint_15':
+            model_name = "sd_1x_inpaint"
+            if tdict_model_version != 13:
+                raise ValueError("The model selected is not compatable with SD1.5 inpainting.")
+        elif sd_run.mode == "controlnet":
+            model_name = "sd_1x_controlnet"
+            if tdict_model_version != 12:
+                raise ValueError("Only SD 1.x models are supported with controlnet")
+        else:
+            if tdict_model_version == 12 :
+                model_name = "sd_1x"
+            elif tdict_model_version == 15 :
+                if "sd_2x" in self.ModelInterfaceClass.avail_models:
+                    model_name = "sd_2x"
+                else:
+                    raise ValueError("SD 2.x is not supported with this version")
+            else:
+                raise ValueError("This model is not compatable with this operation")
+
+
+       
+
         if self.current_model_name != model_name or self.current_dtype != dtype :
             print("Creating model interface")
             assert tdict_path is not None
-            self.model.destroy()
+
+            if self.model is not None:
+                self.model.destroy()
 
             if second_tdict_path is not None:
                 tdict2 = TDict(second_tdict_path)
@@ -213,11 +250,18 @@ class StableDiffusion:
 
 
     def tokenize(self , prompt):
-        inputs = self.tokenizer.encode(prompt)
+        if self.current_model_name == "sd_2x":
+            inputs = self.tokenizerv2.encode(prompt)
+        else:
+            inputs = self.tokenizer.encode(prompt)
+            
         if len(inputs) >= 77:
             print("Prompt is too long, stripping it ")
             inputs = inputs[:77]
-        phrase = inputs + [49407] * (77 - len(inputs))
+        if self.current_model_name == "sd_2x":
+            phrase = inputs + [0] * (77 - len(inputs))
+        else:
+            phrase = inputs + [49407] * (77 - len(inputs))
         phrase = np.array(phrase)[None].astype("int32")
         return phrase
 
@@ -236,6 +280,10 @@ class StableDiffusion:
 
         sd_run.context = np.repeat(context, sd_run.batch_size, axis=0)
         sd_run.unconditional_context = np.repeat(unconditional_context, sd_run.batch_size, axis=0)
+
+        if self.debug_output_path  is not None:
+            log_object(sd_run.unconditional_context   , self.debug_output_path  , key="unconditional_context")
+            log_object(sd_run.context  , self.debug_output_path  , key="context")
 
      
     def maybe_process_inp_imgs(self, sd_run):
@@ -322,6 +370,9 @@ class StableDiffusion:
         if not sd_run.starting_img_given:
             latent_np = self.get_noise(sd_run.seed ,(sd_run.batch_size, n_h, n_w, 4) )
 
+            if self.debug_output_path is not None:
+                log_object(latent_np , self.debug_output_path  , key="latent_np")
+
             if sd_run.soft_seed is not None and sd_run.soft_seed >= 0:
                 # latent_np = latent_np + 0.1*self.get_noise(sd_run.soft_seed, latent_np.shape ) #option 1 
                 nmask = (np.random.RandomState(sd_run.soft_seed).rand(*latent_np.shape ) > 0.99)
@@ -334,15 +385,26 @@ class StableDiffusion:
 
         else:
             latent = self.get_encoded_img(sd_run , sd_run.input_image_processed )
+
+            if self.debug_output_path is not None:
+                log_object(latent  , self.debug_output_path  , key="encoded_img")
+
             sd_run.encoded_img_unmasked = np.copy(latent)
 
             start_timestep = np.array([self.t_to_i(sd_run.start_timestep)] * sd_run.batch_size, dtype=np.int64 )
            
             noise = self.get_noise(sd_run.seed , latent.shape )
+
+            if self.debug_output_path is not None:
+                log_object(noise , self.debug_output_path  , key="noise_e")
+
             latent = self.scheduler.add_noise(latent, noise, start_timestep )
             sd_run.latent = latent
 
         sd_run.init_latent = sd_run.latent
+
+        if self.debug_output_path is not None:
+            log_object(sd_run.init_latent  , self.debug_output_path  , key="sd_run_init_latent")
 
         if sd_run.mode == "inpaint_15":
             masked_img  = sd_run.input_image_processed * sd_run.processed_mask
@@ -392,11 +454,20 @@ class StableDiffusion:
 
         if sd_run.mode == "controlnet":
             hint_img = (sd_run.input_image_processed+1)/2
+
+            if self.debug_output_path is not None:
+                log_object(hint_img , self.debug_output_path  , "hint_img")
+
             if sd_run.combine_unet_run:
                 hint_img = np.repeat(hint_img, sd_run.batch_size, axis=0)
             controls = self.model.run_controlnet(unet_inp=latent_model_input, time_emb=t_emb, text_emb=sd_run.context, hint_img=hint_img )
         else:
             controls = None
+
+        if self.debug_output_path is not None:
+            log_object(latent_model_input  , self.debug_output_path  , key="latent_model_input")
+            log_object(t_emb  , self.debug_output_path  , key="t_emb")
+            log_object(controls  , self.debug_output_path  , key="controls")
 
         if sd_run.combine_unet_run:
             latent_combined = np.concatenate([latent_model_input,latent_model_input])
@@ -410,10 +481,17 @@ class StableDiffusion:
             sd_run.predicted_unconditional_latent = self.model.run_unet(unet_inp=latent_model_input, time_emb=t_emb, text_emb=sd_run.unconditional_context , control_inp=controls)
             sd_run.predicted_latent = self.model.run_unet(unet_inp=latent_model_input, time_emb=t_emb, text_emb=sd_run.context, control_inp=controls)
 
+        if self.debug_output_path is not None:
+            log_object(sd_run.predicted_unconditional_latent  , self.debug_output_path  , key="unet_out_uncond")
+            log_object(sd_run.predicted_latent  , self.debug_output_path  , key="unet_out_cond")
+
 
     def get_next_latent(self, sd_run ):
         t = sd_run.current_t
         noise_pred = sd_run.predicted_unconditional_latent + sd_run.guidance_scale * (sd_run.predicted_latent  - sd_run.predicted_unconditional_latent)
+
+        if self.debug_output_path is not None:
+            log_object(noise_pred  , self.debug_output_path  , key="noise_pred")
         
         accepts_eta = "eta" in set(inspect.signature(self.scheduler.step).parameters.keys())
         extra_step_kwargs = {}
@@ -423,7 +501,9 @@ class StableDiffusion:
 
         step_seed = sd_run.seed + 10000 + self.t_to_i(t)*4242
         latents = self.scheduler.step(noise_pred, self.t_to_i(t), sd_run.latent , seed=step_seed , **extra_step_kwargs)["prev_sample"]
-       
+
+        if self.debug_output_path is not None:
+            log_object(latents  , self.debug_output_path  , key="latents_step")
 
         if sd_run.do_masking:
 
@@ -433,6 +513,9 @@ class StableDiffusion:
             latent_proper = self.scheduler.add_noise(latent_proper, noise, np.array([self.t_to_i(sd_run.current_t)] * sd_run.batch_size, dtype=np.int64 ) )
 
             latents = (latent_proper  * sd_run.processed_mask_downscaled) + (latents * (1 - sd_run.processed_mask_downscaled))
+
+        if self.debug_output_path is not None:
+            log_object(latents  , self.debug_output_path  , key="latents_mm")
 
         # latents = self.scheduler.step(model_output=noise_pred, timestep=t , sample=sd_run.latent , **extra_step_kwargs)["prev_sample"]
         sd_run.latent = latents
@@ -517,6 +600,10 @@ class StableDiffusion:
 
         self.prepare_seed(sd_run)
         self.prepare_timesteps(sd_run)
+
+        if self.debug_output_path is not None:
+            log_object(sd_run , self.debug_output_path  , key="sd_run")
+
         self.maybe_process_inp_imgs(sd_run)
                 
         # Tokenize prompt (i.e. starting context)

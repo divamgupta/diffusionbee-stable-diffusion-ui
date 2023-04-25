@@ -262,3 +262,107 @@ class UNetModel(tf.keras.models.Model):
             for layer in b:
                 x = apply(x, layer)
         return apply_seq(x, self.out)
+
+
+
+
+
+class UNetModelV2(tf.keras.models.Model):
+    def __init__(self):
+        super().__init__()
+        self.time_embed = [
+            tf.keras.layers.Dense(1280),
+            tf.keras.activations.swish,
+            tf.keras.layers.Dense(1280),
+        ]
+        self.input_blocks = [
+            [PaddedConv2D(320, kernel_size=3, padding=1)],
+            [ResBlock(320, 320), SpatialTransformer(320, 5, 64)],
+            [ResBlock(320, 320), SpatialTransformer(320, 5, 64)],
+            [Downsample(320)],
+            [ResBlock(320, 640), SpatialTransformer(640, 10, 64)],
+            [ResBlock(640, 640), SpatialTransformer(640, 10, 64)],
+            [Downsample(640)],
+            [ResBlock(640, 1280), SpatialTransformer(1280, 20, 64)],
+            [ResBlock(1280, 1280), SpatialTransformer(1280, 20, 64)],
+            [Downsample(1280)],
+            [ResBlock(1280, 1280)],
+            [ResBlock(1280, 1280)],
+        ]
+        self.middle_block = [
+            ResBlock(1280, 1280),
+            SpatialTransformer(1280, 20, 64),
+            ResBlock(1280, 1280),
+        ]
+        self.output_blocks = [
+            [ResBlock(2560, 1280)],
+            [ResBlock(2560, 1280)],
+            [ResBlock(2560, 1280), Upsample(1280)],
+            [ResBlock(2560, 1280), SpatialTransformer(1280, 20, 64)],
+            [ResBlock(2560, 1280), SpatialTransformer(1280, 20, 64)],
+            [
+                ResBlock(1920, 1280),
+                SpatialTransformer(1280, 20, 64),
+                Upsample(1280),
+            ],
+            [ResBlock(1920, 640), SpatialTransformer(640, 10, 64)],  # 6
+            [ResBlock(1280, 640), SpatialTransformer(640, 10, 64)],
+            [
+                ResBlock(960, 640),
+                SpatialTransformer(640, 10, 64),
+                Upsample(640),
+            ],
+            [ResBlock(960, 320), SpatialTransformer(320, 5, 64)],
+            [ResBlock(640, 320), SpatialTransformer(320, 5, 64)],
+            [ResBlock(640, 320), SpatialTransformer(320, 5, 64)],
+        ]
+        self.out = [
+            GroupNormalization(epsilon=1e-5),
+            tf.keras.activations.swish,
+            PaddedConv2D(4, kernel_size=3, padding=1),
+        ]
+
+    def call(self, inputs):
+        if len(inputs) == 3:
+            x, t_emb, context = inputs
+            controls = None
+        elif len(inputs ) == (3+13):
+            x = inputs[0]
+            t_emb = inputs[1]
+            context = inputs[2]
+            controls = inputs[3:]
+        else:
+            raise ValueError("inalid no of inputs")
+
+        emb = apply_seq(t_emb, self.time_embed)
+
+        def apply(x, layer):
+            if isinstance(layer, ResBlock):
+                x = layer([x, emb])
+            elif isinstance(layer, SpatialTransformer):
+                x = layer([x, context])
+            else:
+                x = layer(x)
+            return x
+
+        saved_inputs = []
+        for i,b in enumerate(self.input_blocks):
+            for layer in b:
+                x = apply(x, layer)
+            saved_inputs.append(x)
+
+        
+        for layer in self.middle_block:
+            x = apply(x, layer)
+
+        if controls is not None:
+            x = x + controls[12]
+            assert len(saved_inputs) == 12
+            for i in range(len(saved_inputs)):
+                saved_inputs[i] = saved_inputs[i] + controls[i]
+
+        for b in self.output_blocks:
+            x = tf.concat([x, saved_inputs.pop()], axis=-1)
+            for layer in b:
+                x = apply(x, layer)
+        return apply_seq(x, self.out)

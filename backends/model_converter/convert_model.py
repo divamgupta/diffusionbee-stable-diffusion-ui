@@ -51,6 +51,13 @@ def convert_model(checkpoint_filename, out_filename ):
             state_dict[k + "._split_1"] = pp[:pp.shape[0]//2].copy() 
             state_dict[k + "._split_2"] = pp[pp.shape[0]//2:].copy() 
 
+        elif "attn.in_proj" in k and  state_dict[k].shape[0] == 3072 :
+            pp = state_dict[k]
+            state_dict[k + "._split_1"] = pp[:pp.shape[0]//3].copy()
+            state_dict[k + "._split_2"] = pp[pp.shape[0]//3:2*pp.shape[0]//3].copy()
+            state_dict[k + "._split_3"] = pp[2*pp.shape[0]//3: ].copy()
+
+
     keys_list = list(state_dict.keys())
     mid_key = keys_list[len(keys_list)//2]
 
@@ -69,7 +76,7 @@ def convert_model(checkpoint_filename, out_filename ):
     model_type = get_model_type(state_dict)
 
     if model_type is None:
-        raise ValueError("The model is not supported. Please make sure it is a valid SD 1.4/1.5 .ckpt file")
+        raise ValueError("The model is not supported. Please make sure it is a valid SD 1.4/1.5/2.1 .ckpt/safetensor file")
 
     if "float16" in model_type:
         cur_dtype = "float16"
@@ -88,7 +95,9 @@ def convert_model(checkpoint_filename, out_filename ):
     outfile.init_write(ctdict_version=ctdict_id )
 
     for k in model_shapes:
-        np_arr = state_dict[k]
+        np_arr = np.copy(state_dict[k])
+        np_arr = np.reshape(np_arr , model_shapes[k] )
+
         if "float" in str(np_arr.dtype):
             np_arr = np_arr.astype(cur_dtype)
         shape = list(np_arr.shape)

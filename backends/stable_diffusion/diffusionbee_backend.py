@@ -16,6 +16,8 @@ import os
 from pathlib import Path
 import importlib
 
+
+
 # b2py t2im {"prompt": "sun glasses" , "W":640 , "H" : 640 , "num_imgs" : 10 , "input_image":"/Users/divamgupta/Downloads/inn.png" , "mask_image" : "/Users/divamgupta/Downloads/maa.png" , "is_inpaint":true  }
 
 if not ( getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
@@ -48,6 +50,19 @@ projects_root_path = os.path.join(home_path, ".diffusionbee")
 
 if not os.path.isdir(projects_root_path):
     os.mkdir(projects_root_path)
+
+
+
+
+if 'DEBUG' in os.environ and str(os.environ['DEBUG']) == '1':
+    debug_output_path = os.path.join(projects_root_path, "debug_outs")
+    if not os.path.isdir(debug_output_path):
+        os.mkdir(debug_output_path)
+    print("Debug outputs stored at : " , debug_output_path )
+else:
+    debug_output_path = None
+
+
 
 
 defualt_data_root = os.path.join(projects_root_path, "images")
@@ -262,7 +277,7 @@ def diffusion_bee_main():
             if "__stop__" in get_input():
                 return "stop"
 
-    generator = StableDiffusion( ModelInterface , p_14 , model_name="sd_1x", callback=callback)
+    generator = StableDiffusion( ModelInterface , p_14 , model_name="sd_1x", callback=callback, debug_output_path=debug_output_path )
     
 
     default_d = { "W" : 512 , "H" : 512, "num_imgs":1 , "ddim_steps" : 25 ,

@@ -14,7 +14,10 @@ from stable_diffusion import StableDiffusion
 
 p_14 = "/Users/divamgupta/.diffusionbee/downloads/sd-v1-4_fp16.tdict"
 
-sd = StableDiffusion( ModelInterface , p_14 , model_name="sd_1x", callback=None)
+p_21 = "/Users/divamgupta/Downloads/v2-1_768-nonema-pruned.tdict"
+
+
+sd = StableDiffusion( ModelInterface , p_14 , model_name=None, callback=None)
 
 
 
@@ -167,15 +170,55 @@ def test_ctrl_1():
             img_width=512, 
             seed=6378, 
             tdict_path=None,
-            second_tdict_path="/Users/divamgupta/Downloads/just_control_sd15_scribble_fp16.tdict",
+            second_tdict_path="/Users/divamgupta/.diffusionbee/downloads/just_control_sd15_scribble_fp16.tdict",
             batch_size=1,
-            dtype="float32",
+            dtype="float16",
             scheduler='ddim',
             num_steps=10,
             input_image=inp,
             mode="controlnet" )
 
     Image.fromarray(img['img'][0]).show()
+
+
+
+def test_sd2_1():
+
+    img = sd.generate(
+            prompt="a tree" , 
+            img_height=512, 
+            img_width=512, 
+            seed=1, 
+            num_steps=25,
+            tdict_path="/Users/divamgupta/Downloads/v2-1_512-ema-pruned.tdict",
+            batch_size=1,
+            dtype=ModelInterface.default_float_type,
+            scheduler='ddim',
+            mode="txt2img" )
+
+    Image.fromarray(img['img'][0]).show()
+
+
+
+def test_sd2_2():
+
+    img = sd.generate(
+            prompt="dog" , 
+            img_height=512, 
+            img_width=512, 
+            seed=1, 
+            num_steps=5,
+            tdict_path="/Users/divamgupta/.diffusionbee/custom_models/djzJovianSkyshipV21_0.tdict",
+            batch_size=1,
+            dtype='float16',
+            scheduler='ddim',
+            mode="txt2img" )
+
+    Image.fromarray(img['img'][0]).show()
+
+
+
+
 
 
 
@@ -222,8 +265,8 @@ def test_ctrl_1():
 
 
 # Image.fromarray(img[0]).show()
+test_sd2_2()
 
-test_ctrl_1()
 
 
 exit()
