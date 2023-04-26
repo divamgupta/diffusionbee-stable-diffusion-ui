@@ -4,9 +4,9 @@
         <div v-if="!hide_dropdown" style=" position:absolute ; margin-top:7px ; margin-left:7px " class="">
             <b-dropdown left variant="link" size="sm" toggle-class="text-decoration-none" no-caret>
                 <template #button-content>
-                    <div   class=" l_button button_colored" style="background-color: rgba(0,0,0,0.6);">
+                    <button   class=" l_button button_colored" style="background-color: rgba(0,0,0,0.6);">
                         <font-awesome-icon icon="bars" />
-                    </div>
+                    </button>
                 </template>
                 <b-dropdown-item-button   @click="save_image(path)"  >Save Image</b-dropdown-item-button>
                 <b-dropdown-item-button v-if="is_mac" @click="upsclae" >Upscale Image</b-dropdown-item-button>
@@ -21,7 +21,7 @@
         <img v-if="!path.startsWith('nsfw_')" @click="open_image_popup( path )"  class="gal_img" :src="'file://' + path " style="max-height: 100% ; max-width: 100%;" >
         <img v-else @click="open_image_popup( path )"  class="gal_img" :src="require('@/assets/nsfw.png')" style="max-height: 100% ; max-width: 100%;" >
         <br>
-        <div v-if="!hide_extra_save_button" @click="save_image(path)" class="l_button">Save Image</div>
+        <button v-if="!hide_extra_save_button" @click="save_image(path)" class="l_button">Save Image</button>
     </div>
 </template>
 <script>

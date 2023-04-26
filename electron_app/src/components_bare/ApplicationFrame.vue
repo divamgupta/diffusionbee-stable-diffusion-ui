@@ -6,9 +6,9 @@
                 <div style="float: right; margin-right: 10px; margin-top: -8.5px;" class="">
                     <b-dropdown right variant="link" size="sm" toggle-class="text-decoration-none" no-caret>
                         <template #button-content>
-                            <div style="" class="tab l_button">
+                            <button style="" class="tab l_button">
                                 <font-awesome-icon icon="bars" />
-                            </div>
+                            </button>
                         </template>
                         
                         <b-dropdown-item-button @click="$emit('menu_item_click_help',{})">Help</b-dropdown-item-button>
@@ -31,12 +31,12 @@
             </div>
         </div>
         <div class="tabs_bar">
-            <div @click="selectTab('txt2img')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'txt2img'}">Text To Image</div>
-            <div @click="selectTab('img2img')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'img2img'}">Image To Image</div>
-            <div @click="selectTab('inpainting')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'inpainting'}">Inpainting</div>
-            <div @click="selectTab('outpainting')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'outpainting'}">Outpainting</div>
-            <div @click="selectTab('controlnet')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'controlnet'}">ControlNet</div>
-            <div @click="selectTab('history')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'history'}">History</div>
+            <button @click="selectTab('txt2img')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'txt2img'}">Text To Image</button>
+            <button @click="selectTab('img2img')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'img2img'}">Image To Image</button>
+            <button @click="selectTab('inpainting')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'inpainting'}">Inpainting</button>
+            <button @click="selectTab('outpainting')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'outpainting'}">Outpainting</button>
+            <button @click="selectTab('controlnet')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'controlnet'}">ControlNet</button>
+            <button @click="selectTab('history')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'history'}">History</button>
         </div>
         <div class="tab_content_frame">
             <div class="tab_content">
@@ -226,7 +226,6 @@ body {
 
 .button_medium {
     height: 30px;
-    padding-top: 7px;
     padding-left: 15px;
     padding-right: 15px;
 }

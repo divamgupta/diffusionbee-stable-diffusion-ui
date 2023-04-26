@@ -14,12 +14,12 @@
             id="searchText"
         />
 
-        <div @click="toggle_order()" style="float:right; margin-bottom: 20px;" class="l_button">
+        <button @click="toggle_order()" style="float:right; margin-bottom: 20px;" class="l_button">
           {{this.app_state.show_history_in_oldest_first ? "Oldest": "Newest"}} First
-        </div>
-        <div @click="clear_history()" style="float:right; margin-bottom: 20px;" class="l_button">
+        </button>
+        <button @click="clear_history()" style="float:right; margin-bottom: 20px;" class="l_button">
           Clear History
-        </div>
+        </button>
         <div v-if="Object.values(app_state.app_data.history).length > 0">
             <div v-if="get_history.length > 30">
                 <b-pagination
@@ -31,14 +31,14 @@
             <div v-for="history_box in get_history.slice((currentPage - 1) * 30, currentPage * 30)" :key="history_box.key" style="clear: both;">
 
             
-                <div @click="delete_hist(history_box.key)" style="float:right; margin-top: 10px;"  class="l_button">Delete</div>
+                <button @click="delete_hist(history_box.key)" style="float:right; margin-top: 10px;"  class="l_button">Delete</button>
                 <!-- <div @click="share_on_arthub(history_box)" style="float:right; margin-top: 10px;"  class="l_button">Share</div> -->
 
                 <b-dropdown left variant="link" size="sm" toggle-class="text-decoration-none" no-caret style="float:right; margin-top: 5px;">
                     <template #button-content>
-                        <div   class=" l_button "  >
+                        <button   class=" l_button "  >
                             Share 
-                        </div>
+                        </button>
                     </template>
                     <b-dropdown-item-button   @click="share_on_arthub(history_box)"  >Share on ArtHub.ai</b-dropdown-item-button>
                 </b-dropdown>

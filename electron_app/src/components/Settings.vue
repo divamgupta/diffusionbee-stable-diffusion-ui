@@ -35,13 +35,13 @@
             </div>
             </div>
             <hr> -->
-            <div class="l_button button_colored" style="float:right" @click="add_model"  >Add New Model</div>
+            <button class="l_button button_colored" style="float:right" @click="add_model"  >Add New Model</button>
             <h2>Custom Models</h2>
             
             <!-- <br> -->
             <hr> 
             <div v-for="model in Object.values(this.app_state.app_data.custom_models)" :key="model.name">
-                <div class="l_button" @click="delete_model(model.name)" style="float:right">Remove</div>
+                <button class="l_button" @click="delete_model(model.name)" style="float:right">Remove</button>
                 <p> Name : {{model.name}} </p>
                 <p> Path : {{model.orig_path}} </p>
                 <hr> 
