@@ -31,7 +31,7 @@ from schedulers.k_euler_ancestral import KEulerAncestralSampler
 from schedulers.k_euler import KEulerSampler
 
 from utils.logging import log_object
-
+from utils.extra_model_utils import add_lora_ti_weights
 
 image_preprocess_model_paths = {
     "body_pose" : None , 
@@ -86,6 +86,7 @@ class SDRun():
     num_steps:int =25
     guidance_scale:float=7.5
     seed:int=None
+    seed_type:str="np"
     soft_seed:int=None
     img_id:int = 1 
 
@@ -96,6 +97,7 @@ class SDRun():
     
     input_image_strength:float=0.5
     second_tdict_path:str = None
+    weight_additions:tuple = ()
 
 
 def get_scheduler(name):
@@ -179,6 +181,7 @@ class StableDiffusion:
         self.current_model_name = model_name 
         self.current_tdict_path = tdict_path
         self.second_current_tdict_path = None
+        self.current_weight_additions = () #represents weights which are added on top, eg. Lora, TI etc
         self.current_dtype = self.ModelInterfaceClass.default_float_type
 
         if model_name is not None:
@@ -235,18 +238,37 @@ class StableDiffusion:
             self.current_dtype = dtype
             self.current_model_name = model_name
 
-        if tdict_path != self.current_tdict_path or second_tdict_path != self.second_current_tdict_path:
+        weight_additions = sd_run.weight_additions
+
+        if tdict_path != self.current_tdict_path or second_tdict_path != self.second_current_tdict_path or weight_additions != self.current_weight_additions:
             assert tdict_path is not None
-            
-            self.current_tdict_path = tdict_path
-            self.second_current_tdict_path = second_tdict_path
 
-            if second_tdict_path is not None:
-                tdict2 = TDict(second_tdict_path)
+            tdict_1 = None
+
+            if (tdict_path == self.current_tdict_path and second_tdict_path == self.second_current_tdict_path and self.current_weight_additions == ()):
+                pass
+                # current weigh has already been loaded with some tdicts , and nothing has been added
             else:
-                tdict2 = None
+                if second_tdict_path is not None:
+                    tdict2 = TDict(second_tdict_path)
+                else:
+                    tdict2 = None
 
-            self.model.load_from_tdict(TDict(tdict_path), tdict2 )
+                tdict_1 = TDict(tdict_path)
+
+                self.model.load_from_tdict(tdict_1, tdict2 )
+
+                self.current_tdict_path = tdict_path
+                self.second_current_tdict_path = second_tdict_path
+
+            if weight_additions is not None and weight_additions != ():
+                if tdict_1 is None:
+                    tdict_1 = TDict(tdict_path)
+
+                print("Loading LoRA weights")
+                extra_weights = add_lora_ti_weights(tdict_1 , weight_additions )
+                self.model.load_from_state_dict(extra_weights )
+                self.current_weight_additions = weight_additions
 
 
     def tokenize(self , prompt):
@@ -346,8 +368,18 @@ class StableDiffusion:
 
 
 
-    def get_noise(self, seed, shape):
-        return np.random.RandomState(seed).normal(size=shape).astype('float32')
+    def get_noise(self, seed, shape, seed_type):
+        if  seed_type == 'np':
+            return np.random.RandomState(seed).normal(size=shape).astype('float32')
+        elif seed_type == 'pt':
+            import torch
+            torch.manual_seed(seed)
+            if len(shape) == 4:
+                shape = (shape[0] , shape[3] , shape[1] , shape[2])
+            a = torch.randn( (1,4,64,64) ).numpy().astype('float32')
+            return np.rollaxis(a , 1 , 4 )
+        else:
+            raise ValueError("Invalid seed type")
 
 
     def get_encoded_img(self, sd_run , processes_img):
@@ -357,7 +389,7 @@ class StableDiffusion:
         enc_out_logvar = enc_out[... , 4:]
         enc_out_std = np.exp(0.5 * enc_out_logvar)
 
-        latent = enc_out_mu + enc_out_std*self.get_noise(sd_run.seed+1, enc_out_mu.shape )
+        latent = enc_out_mu + enc_out_std*self.get_noise(sd_run.seed+1, enc_out_mu.shape , seed_type=sd_run.seed_type)
         latent = 0.18215 * latent
         return latent
 
@@ -368,15 +400,15 @@ class StableDiffusion:
         n_w = sd_run.img_width // 8
   
         if not sd_run.starting_img_given:
-            latent_np = self.get_noise(sd_run.seed ,(sd_run.batch_size, n_h, n_w, 4) )
+            latent_np = self.get_noise(sd_run.seed ,(sd_run.batch_size, n_h, n_w, 4) ,  seed_type=sd_run.seed_type)
 
             if self.debug_output_path is not None:
                 log_object(latent_np , self.debug_output_path  , key="latent_np")
 
             if sd_run.soft_seed is not None and sd_run.soft_seed >= 0:
-                # latent_np = latent_np + 0.1*self.get_noise(sd_run.soft_seed, latent_np.shape ) #option 1 
+                # latent_np = latent_np + 0.1*self.get_noise(sd_run.soft_seed, latent_np.shape, seed_type=sd_run.seed_type ) #option 1 
                 nmask = (np.random.RandomState(sd_run.soft_seed).rand(*latent_np.shape ) > 0.99)
-                latent_np = latent_np*(1-nmask) + nmask*self.get_noise(sd_run.soft_seed, latent_np.shape )
+                latent_np = latent_np*(1-nmask) + nmask*self.get_noise(sd_run.soft_seed, latent_np.shape , seed_type=sd_run.seed_type )
 
             # latent_np = latent_np * np.float64(self.scheduler.init_noise_sigma)
             sd_run.latent = latent_np
@@ -393,7 +425,7 @@ class StableDiffusion:
 
             start_timestep = np.array([self.t_to_i(sd_run.start_timestep)] * sd_run.batch_size, dtype=np.int64 )
            
-            noise = self.get_noise(sd_run.seed , latent.shape )
+            noise = self.get_noise(sd_run.seed , latent.shape , seed_type=sd_run.seed_type )
 
             if self.debug_output_path is not None:
                 log_object(noise , self.debug_output_path  , key="noise_e")
@@ -509,7 +541,7 @@ class StableDiffusion:
 
             latent_proper = np.copy(sd_run.encoded_img_unmasked)
 
-            noise = self.get_noise(sd_run.seed , latent_proper.shape )
+            noise = self.get_noise(sd_run.seed , latent_proper.shape , seed_type=sd_run.seed_type )
             latent_proper = self.scheduler.add_noise(latent_proper, noise, np.array([self.t_to_i(sd_run.current_t)] * sd_run.batch_size, dtype=np.int64 ) )
 
             latents = (latent_proper  * sd_run.processed_mask_downscaled) + (latents * (1 - sd_run.processed_mask_downscaled))
@@ -531,6 +563,7 @@ class StableDiffusion:
         guidance_scale=7.5,
         temperature=None, 
         seed=None,
+        seed_type="np",
         soft_seed=None,
         img_id=0,
         input_image=None,
@@ -540,6 +573,7 @@ class StableDiffusion:
         scheduler='k_euler',
         tdict_path=None, # if none then it will just use current one
         second_tdict_path=None,
+        lora_tdict_paths={}, # {tdict_path: ratio}
         inp_img_preprocesser=None, # for controlnet
         dtype='float16',
         mode="txt2img", # txt2img , img2img, inpaint_15
@@ -557,6 +591,10 @@ class StableDiffusion:
         if tdict_path is None:
             tdict_path = self.current_tdict_path
 
+        weight_additions = ()
+        for tpath in lora_tdict_paths:
+            weight_additions += (('lora' ,tpath , lora_tdict_paths[tpath] ),)
+
         sd_run = SDRun(
                 prompt=prompt,
                 img_height=img_height,
@@ -565,6 +603,7 @@ class StableDiffusion:
                 num_steps=num_steps,
                 guidance_scale=guidance_scale,
                 seed=seed,
+                seed_type=seed_type,
                 soft_seed=soft_seed,
                 img_id=img_id,
                 input_image=input_image,
@@ -573,6 +612,7 @@ class StableDiffusion:
                 input_image_strength=input_image_strength,
                 tdict_path=tdict_path,
                 second_tdict_path=second_tdict_path,
+                weight_additions=weight_additions,
                 mode=mode,
                 dtype=dtype,
                 inp_img_preprocesser=inp_img_preprocesser,

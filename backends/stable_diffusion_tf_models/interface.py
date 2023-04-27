@@ -138,8 +138,6 @@ class ModelInterface:
         else:
             raise ValueError("invalid model name")
 
-
-
         text_encoder, diffusion_model, decoder, encoder , text_encoder_f , diffusion_model_f , decoder_f , encoder_f = get_models( n_unet_ch=n_unet_ch , is_sd2=self.is_sd2  )
         self.text_encoder = text_encoder
         self.diffusion_model = diffusion_model

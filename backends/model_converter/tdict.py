@@ -50,6 +50,9 @@ class TDict:
             "n_end_data": n_end_data,
             "n_bytes": len(data_bytes)}
 
+    def keys(self):
+        return self.keys_info.keys()
+
 
 
     def read_block(self, header_pos, np_shape=None, np_dtype=None):

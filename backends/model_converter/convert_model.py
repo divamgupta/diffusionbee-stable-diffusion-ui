@@ -15,14 +15,15 @@ from tdict import TDict
 
 
 
-def convert_model(checkpoint_filename, out_filename ):
+def convert_model(checkpoint_filename=None, out_filename=None,  torch_weights=None):
 
-    if checkpoint_filename.lower().endswith(".ckpt"):
-        torch_weights = extract_weights_from_checkpoint(open(checkpoint_filename, "rb"))
-    elif checkpoint_filename.lower().endswith(".safetensors"):
-        torch_weights = SafetensorWrapper(checkpoint_filename)
-    else:
-        raise ValueError("Invalid import format")
+    if torch_weights is None:
+        if checkpoint_filename.lower().endswith(".ckpt"):
+            torch_weights = extract_weights_from_checkpoint(open(checkpoint_filename, "rb"))
+        elif checkpoint_filename.lower().endswith(".safetensors"):
+            torch_weights = SafetensorWrapper(checkpoint_filename)
+        else:
+            raise ValueError("Invalid import format")
 
     if 'state_dict' in torch_weights:
         state_dict = torch_weights['state_dict']

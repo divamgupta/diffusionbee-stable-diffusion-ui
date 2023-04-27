@@ -39,6 +39,25 @@ def test_1():
     Image.fromarray(img['img'][0]).show()
 
 
+def test_1_pt_seed():
+
+    img = sd.generate(
+            prompt="a tree" , 
+            img_height=512, 
+            img_width=512, 
+            seed=1417326105, 
+            seed_type="pt",
+            tdict_path=None,
+            batch_size=1,
+            dtype=ModelInterface.default_float_type,
+            scheduler='ddim',
+            mode="txt2img" )
+
+    gt_p = "./test_assets/outputs/a_tree_pt_1417326105.jpg"
+
+    Image.fromarray(img['img'][0]).show()
+
+
 
 
 
@@ -118,6 +137,28 @@ def test_5():
     Image.fromarray(img['img'][0]).show()
 
 
+def test_5_5():
+
+    inp = "./test_assets/mmm.png"
+    mas = "./test_assets/ddd.png"
+
+    img = sd.generate(
+        prompt="Face of yellow cat, high resolution, sitting on a park bench" , 
+        img_height=512, 
+        img_width=512, 
+        seed=44136, 
+        input_image=inp, 
+        mask_image=mas,  
+        num_steps=50,
+        scheduler='ddim',
+        tdict_path="/Users/divamgupta/.diffusionbee/downloads/sd-v1-5-inpainting_fp16.tdict",
+        mode="inpaint_15" )
+
+    gt_p = "./test_assets/outputs/inp_out_2_443136.png"
+    Image.fromarray(img['img'][0]).show()
+
+
+
 
 def test_6():
 
@@ -190,11 +231,33 @@ def test_sd2_1():
             img_width=512, 
             seed=1, 
             num_steps=25,
-            tdict_path="/Users/divamgupta/Downloads/v2-1_512-ema-pruned.tdict",
+            tdict_path="/Users/divamgupta/.diffusionbee/custom_models/v2-1_512-ema-pruned.tdict",
             batch_size=1,
             dtype=ModelInterface.default_float_type,
             scheduler='ddim',
             mode="txt2img" )
+
+    # a_tree_1_sd2.png
+
+    Image.fromarray(img['img'][0]).show()
+
+
+
+def test_sd2_3():
+
+    img = sd.generate(
+            prompt="Face of yellow cat, high resolution, sitting on a park bench" , 
+            img_height=512, 
+            img_width=512, 
+            seed=111, 
+            num_steps=50,
+            tdict_path="/Users/divamgupta/.diffusionbee/custom_models/v2-1_512-ema-pruned.tdict",
+            batch_size=1,
+            dtype=ModelInterface.default_float_type,
+            scheduler='ddim',
+            mode="txt2img" )
+
+    # sd2_a_cat_111_test_sd2_3.png
 
     Image.fromarray(img['img'][0]).show()
 
@@ -220,6 +283,162 @@ def test_sd2_2():
 
 
 
+
+def test_sd2_4():
+
+    img = sd.generate(
+            prompt="A Tree" , 
+            img_height=512, 
+            img_width=512, 
+            seed=1, 
+            num_steps=10,
+            tdict_path="/Volumes/ext_drive_1/sd_data_models/v2-1_768-nonema-pruned.tdict",
+            batch_size=1,
+            dtype="float32",
+            scheduler='pndm',
+            mode="txt2img" )
+
+    # sd2_a_cat_111_test_sd2_3.png
+
+    Image.fromarray(img['img'][0]).show()
+
+
+
+
+def test_lr_1():
+
+    img = sd.generate(
+            prompt="masterpiece,best quality,toon,3D,simple design, Pixar style,house, sandbox ,Peach and Mint,tree ,Florist, Arial view" , 
+            negative_prompt="lowres, bad anatomy, bad hands,text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry,tree on the roof,",
+            img_height=512, 
+            img_width=512, 
+            seed=1456, 
+            batch_size=1,
+            # tdict_path="/Users/divamgupta/Downloads/merge.tdict",
+            tdict_path="/Volumes/ext_drive_1/sd_data_models/sd-v1-5_fp16.tdict",
+            dtype=ModelInterface.default_float_type,
+            scheduler='ddim',
+            mode="txt2img" )
+
+    gt_p = "./test_assets/outputs/a_tree_1_ddim.png"
+
+    Image.fromarray(img['img'][0]).show()
+
+
+
+
+def test_1_torchseed():
+
+    img = sd.generate(
+            prompt="a tree" , 
+            img_height=512, 
+            img_width=512, 
+            seed=1417326105, 
+            tdict_path="/Volumes/ext_drive_1/sd_data_models/sd-v1-5_fp16.tdict",
+            batch_size=1,
+            dtype=ModelInterface.default_float_type,
+            scheduler='ddim',
+            mode="txt2img" )
+
+    Image.fromarray(img['img'][0]).show()
+
+
+
+
+
+def test_lr_2():
+
+    img = sd.generate(
+            prompt="masterpiece,best quality,toon,3D,simple design, Pixar style,house, sandbox ,Peach and Mint,tree ,Florist, Arial view" , 
+            negative_prompt="lowres, bad anatomy, bad hands,text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry,tree on the roof,",
+            img_height=512, 
+            img_width=512, 
+            seed=1456, 
+            batch_size=1,
+            tdict_path="/Users/divamgupta/Downloads/merge.tdict",
+            # tdict_path="/Volumes/ext_drive_1/sd_data_models/sd-v1-5_fp16.tdict",
+            dtype=ModelInterface.default_float_type,
+            scheduler='ddim',
+            mode="txt2img" )
+
+    gt_p = "./test_assets/outputs/a_tree_1_ddim.png"
+
+    Image.fromarray(img['img'][0]).show()
+
+
+
+
+def test_lr_3():
+
+    img = sd.generate(
+            prompt="masterpiece,best quality,toon,3D,simple design, Pixar style,house, sandbox ,Peach and Mint,tree ,Florist, Arial view" , 
+            negative_prompt="lowres, bad anatomy, bad hands,text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry,tree on the roof,",
+            img_height=512, 
+            img_width=512, 
+            seed=1456, 
+            batch_size=1,
+            tdict_path="/Volumes/ext_drive_1/sd_data_models/sd-v1-5_fp16.tdict",
+            dtype=ModelInterface.default_float_type,
+            scheduler='ddim',   
+            num_steps=25,
+            lora_tdict_paths={"/Users/divamgupta/Downloads/lora.tdict" : 1.0 },
+            mode="txt2img" )
+
+    gt_p = "./test_assets/outputs/a_tree_1_ddim.png"
+
+    Image.fromarray(img['img'][0]).show()
+
+
+def test_lr_31():
+
+    img = sd.generate(
+            prompt="masterpiece,best quality,toon,3D,simple design, Pixar style,house, sandbox ,Peach and Mint,tree ,Florist, Arial view" , 
+            negative_prompt="lowres, bad anatomy, bad hands,text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry,tree on the roof,",
+            img_height=512-128, 
+            img_width=512+128, 
+            seed=1456, 
+            batch_size=1,
+            tdict_path="/Volumes/ext_drive_1/sd_data_models/sd-v1-5_fp16.tdict",
+            dtype=ModelInterface.default_float_type,
+            num_steps=25,
+            scheduler='ddim',   
+            lora_tdict_paths={"/Users/divamgupta/Downloads/lora.tdict" : 1.0 },
+            mode="txt2img" )
+
+    gt_p = "./test_assets/outputs/a_tree_1_ddim.png"
+
+    Image.fromarray(img['img'][0]).show()
+
+
+def test_lr_32():
+
+    img = sd.generate(
+            prompt="masterpiece,best quality,toon,3D,simple design, Pixar style,house, sandbox ,Peach and Mint,tree ,Florist, Arial view" , 
+            negative_prompt="lowres, bad anatomy, bad hands,text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry,tree on the roof,",
+            img_height=512-128, 
+            img_width=512+128, 
+            seed=1456, 
+            batch_size=1,
+            tdict_path=p_14,
+            dtype=ModelInterface.default_float_type,
+            num_steps=25,
+            scheduler='ddim',   
+            lora_tdict_paths={"/Users/divamgupta/Downloads/lora.tdict" : 1.0 },
+            mode="txt2img" )
+
+    gt_p = "./test_assets/outputs/a_tree_1_ddim.png"
+
+    Image.fromarray(img['img'][0]).show()
+
+
+
+
+# test_lr_1()
+
+
+test_sd2_4()
+
+exit()
 
 
 
@@ -265,11 +484,6 @@ def test_sd2_2():
 
 
 # Image.fromarray(img[0]).show()
-test_sd2_2()
-
-
-
-exit()
 
 
 inp = "./test_assets/mmm.png"
