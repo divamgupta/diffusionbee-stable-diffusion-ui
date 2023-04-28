@@ -88,6 +88,7 @@ class DDIMScheduler(SchedulerMixin):
         clip_sample: bool = True,
         set_alpha_to_one: bool = True,
         tensor_format: str = "pt",
+        prediction_type: str  = "epsilon"
     ):
         if trained_betas is not None:
             self.betas = np.asarray(trained_betas)
@@ -115,6 +116,7 @@ class DDIMScheduler(SchedulerMixin):
         self.clip_sample = clip_sample
         self.set_alpha_to_one = set_alpha_to_one
         self.tensor_format = tensor_format
+        self.prediction_type = prediction_type
 
         # At every step in ddim, we are looking into the previous alphas_cumprod
         # For the final step, there is no previous alphas_cumprod because we are already at 0
@@ -217,8 +219,14 @@ class DDIMScheduler(SchedulerMixin):
 
         # 3. compute predicted original sample from predicted noise also called
         # "predicted x_0" of formula (12) from https://arxiv.org/pdf/2010.02502.pdf
-        pred_original_sample = (sample - beta_prod_t ** (0.5) * model_output) / alpha_prod_t ** (0.5)
-
+        if self.config.prediction_type == "epsilon":
+            pred_original_sample = (sample - beta_prod_t ** (0.5) * model_output) / alpha_prod_t ** (0.5)
+            pred_epsilon = model_output
+        elif self.config.prediction_type == "v_prediction":
+            pred_original_sample = (alpha_prod_t**0.5) * sample - (beta_prod_t**0.5) * model_output
+            pred_epsilon = (alpha_prod_t**0.5) * model_output + (beta_prod_t**0.5) * sample
+        else:
+            raise ValueError("Unknown prediction_type")
         # 4. Clip "predicted x_0"
         if self.config.clip_sample:
             pred_original_sample = self.clip(pred_original_sample, -1, 1)
@@ -230,10 +238,10 @@ class DDIMScheduler(SchedulerMixin):
 
         if use_clipped_model_output:
             # the model_output is always re-derived from the clipped x_0 in Glide
-            model_output = (sample - alpha_prod_t ** (0.5) * pred_original_sample) / beta_prod_t ** (0.5)
+            pred_epsilon = (sample - alpha_prod_t ** (0.5) * pred_original_sample) / beta_prod_t ** (0.5)
 
         # 6. compute "direction pointing to x_t" of formula (12) from https://arxiv.org/pdf/2010.02502.pdf
-        pred_sample_direction = (1 - alpha_prod_t_prev - std_dev_t**2) ** (0.5) * model_output
+        pred_sample_direction = (1 - alpha_prod_t_prev - std_dev_t**2) ** (0.5) * pred_epsilon
 
         # 7. compute x_t without "random noise" of formula (12) from https://arxiv.org/pdf/2010.02502.pdf
         prev_sample = alpha_prod_t_prev ** (0.5) * pred_original_sample + pred_sample_direction

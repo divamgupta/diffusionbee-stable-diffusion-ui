@@ -287,15 +287,14 @@ def test_sd2_2():
 def test_sd2_4():
 
     img = sd.generate(
-            prompt="A Tree" , 
+            prompt="a tree" , 
             img_height=512, 
             img_width=512, 
-            seed=1, 
-            num_steps=10,
+            seed=13, 
+            num_steps=30,
             tdict_path="/Volumes/ext_drive_1/sd_data_models/v2-1_768-nonema-pruned.tdict",
-            batch_size=1,
             dtype="float32",
-            scheduler='pndm',
+            scheduler='ddim_v',
             mode="txt2img" )
 
     # sd2_a_cat_111_test_sd2_3.png

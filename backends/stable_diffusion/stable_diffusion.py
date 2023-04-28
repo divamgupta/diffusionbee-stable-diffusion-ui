@@ -111,7 +111,21 @@ def get_scheduler(name):
             set_alpha_to_one=False,
             # steps_offset= 1,
             trained_betas= None,
-            tensor_format="np"
+            tensor_format="np",
+        )
+
+    if name == "ddim_v":
+        return DDIMScheduler(
+            beta_start=0.00085,
+            beta_end=0.012,
+            beta_schedule="scaled_linear",
+            clip_sample= False,
+            num_train_timesteps= 1000,
+            set_alpha_to_one=False,
+            # steps_offset= 1,
+            trained_betas= None,
+            tensor_format="np",
+            prediction_type="v_prediction"
         )
 
     if name == "lmsd":
