@@ -36,7 +36,11 @@
             </div>
             <hr> -->
             <div class="l_button button_colored" style="float:right" @click="add_model"  >Add New Model</div>
+
             <h2>Custom Models</h2>
+            <p style="zoom:1"> Supported models : SD1.x , SD2.x - .ckpt and .safetensors  </p>
+            <p style="zoom:0.8"> Note: If you import SD2.x 768 model, you might need to use ddim_v sampler to get better results.    </p>
+
             
             <!-- <br> -->
             <hr> 

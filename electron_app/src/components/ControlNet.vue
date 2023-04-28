@@ -8,7 +8,7 @@
          -->
 
             <div v-if="inp_img" @drop.prevent="onDragFile" @dragover.prevent class="image_area" :class="{ crosshair_cur  : is_inpaint }"  style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
-                <ImageCanvas ref="inp_img_canvas" :is_inpaint="is_inpaint" :image_source="inp_img"  :is_disabled="!stable_diffusion.is_input_avail" canvas_id="img2imgcan" canvas_d_id="img2imgcand" ></ImageCanvas>
+                <ImageCanvas ref="inp_img_canvas" :is_inpaint="is_inpaint" :image_source="inp_img"  :is_disabled="!stable_diffusion.is_input_avail" canvas_id="ctrlnet" canvas_d_id="ctrlnetd" ></ImageCanvas>
             </div>
                 <div v-else @drop.prevent="onDragFile" @dragover.prevent @click="open_input_image" class="image_area" :class="{ pointer_cursor  : is_sd_active }" style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
                     <center>

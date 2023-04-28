@@ -155,7 +155,7 @@
 
 
                                     <b-form-select v-model="options_model_values.img_w"
-                                        :options="[64 * 4, 64 * 5, 64 * 6, 64 * 7, 64 * 8, 64 * 9, 64 * 10, 64 * 11, 64 * 12]"
+                                        :options="[64 * 4, 64 * 5, 64 * 6, 64 * 7, 64 * 8, 64 * 9, 64 * 10, 64 * 11, 64 * 12, 64*13 , 64*14]"
                                         required></b-form-select>
                                 </div>
                                 <div class="options_input" style="justify-content: center;width: 75px;">
@@ -175,7 +175,7 @@
                                             stroke-width="1.01368" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                     <b-form-select v-model="options_model_values.img_h"
-                                        :options="[64 * 4, 64 * 5, 64 * 6, 64 * 7, 64 * 8, 64 * 9, 64 * 10, 64 * 11, 64 * 12]"
+                                        :options="[64 * 4, 64 * 5, 64 * 6, 64 * 7, 64 * 8, 64 * 9, 64 * 10, 64 * 11, 64 * 12, 64*13 , 64*14]"
                                         required></b-form-select>
                                 </div>
                             </div>
@@ -259,7 +259,7 @@
                                 </svg>
 
                                 <b-form-select v-model="options_model_values.selected_sampler"
-                                    :options="['ddim' , 'lmsd' , 'pndm' , 'k_euler_ancestral' , 'k_euler' ]"
+                                    :options="['ddim' , 'lmsd' , 'pndm' , 'k_euler_ancestral' , 'k_euler' , 'ddim_v' ]"
                                     required></b-form-select>
                             </div>
                         </div>

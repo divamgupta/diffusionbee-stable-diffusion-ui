@@ -434,8 +434,27 @@ def test_lr_32():
 
 # test_lr_1()
 
+def test_11():
 
-test_sd2_4()
+    img = sd.generate(
+            prompt="a tree" , 
+            img_height=512, 
+            img_width=512, 
+            seed=1, 
+            tdict_path=None,
+            batch_size=1,
+            num_steps=5,
+            dtype=ModelInterface.default_float_type,
+            scheduler='ddim',
+            mode="txt2img" )
+
+    gt_p = "./test_assets/outputs/a_tree_1_ddim.png"
+
+    Image.fromarray(img['img'][0]).show()
+
+
+
+test_11()
 
 exit()
 

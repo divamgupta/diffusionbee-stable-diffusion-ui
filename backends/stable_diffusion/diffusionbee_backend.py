@@ -93,7 +93,7 @@ sys.stdout = Unbuffered(sys.stdout)
 
 
 def download_weights():
-    global p_14 , p_14_np
+    global p_15 , p_15_np
 
     print("sdbk mltl Loading Model")
 
@@ -101,14 +101,14 @@ def download_weights():
     for _ in range(10):
         try:
 
-            p_14 = ProgressBarDownloader(title="Downloading Model 1/2").download(
-                        url="https://huggingface.co/divamgupta/stable_diffusion_mps/resolve/main/sd-v1-4_fp16.tdict",
-                        md5_checksum="9f1fc1e94821d000b811e3bb6e7686b2",
+            p_15 = ProgressBarDownloader(title="Downloading Model 1/2").download(
+                        url="https://huggingface.co/divamgupta/stable_diffusion_mps/resolve/main/sd-v1-5_fp16.tdict",
+                        md5_checksum="a36c79b8edb4b21b75e50d5834d1f4ae",
                         verify_ssl=False,
                         extract_zip=False,
                     )
 
-            p_14_np = ProgressBarDownloader(title="Downloading Model 2/2").download(
+            p_15_np = ProgressBarDownloader(title="Downloading Model 2/2").download(
                         url="https://huggingface.co/divamgupta/stable_diffusion_mps/resolve/main/sd-v1-5-inpainting_fp16.tdict",
                         md5_checksum="68303f49cca00968c39abddc20b622a6",
                         verify_ssl=False,
@@ -139,10 +139,10 @@ def process_opt(d, generator):
 
     if d['model_id'] == 1:
         model_mode = "inpaint_15"
-        tdict_path = p_14_np
+        tdict_path = p_15_np
         print("sdbk mdvr 1.5_inp")
     else:
-        tdict_path = p_14
+        tdict_path = p_15
         print("sdbk mdvr 1.4")
 
         if d['do_controlnet'] == True:
@@ -262,7 +262,7 @@ def process_opt(d, generator):
 
 def diffusion_bee_main():
 
-    global p_14 , p_14_np
+    global p_15 , p_15_np
     download_weights()
 
     print("sdbk mltl Loading Model")
@@ -277,7 +277,7 @@ def diffusion_bee_main():
             if "__stop__" in get_input():
                 return "stop"
 
-    generator = StableDiffusion( ModelInterface , p_14 , model_name="sd_1x", callback=callback, debug_output_path=debug_output_path )
+    generator = StableDiffusion( ModelInterface , p_15 , model_name="sd_1x", callback=callback, debug_output_path=debug_output_path )
     
 
     default_d = { "W" : 512 , "H" : 512, "num_imgs":1 , "ddim_steps" : 25 ,

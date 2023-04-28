@@ -10,7 +10,7 @@ module.exports = async function (params) {
 
     console.log('afterSign hook triggered', params);
 
-    let appId = 'com.linerai.diffusionbee'
+    let appId = 'com.diffusionbee.diffusionbee'
 
     let appPath = path.join(params.appOutDir, `${params.packager.appInfo.productFilename}.app`);
     if (!fs.existsSync(appPath)) {

@@ -235,7 +235,7 @@ class StableDiffusion:
        
 
         if self.current_model_name != model_name or self.current_dtype != dtype :
-            print("Creating model interface")
+            print("[SD] Creating model interface")
             assert tdict_path is not None
 
             if self.model is not None:
@@ -279,7 +279,7 @@ class StableDiffusion:
                 if tdict_1 is None:
                     tdict_1 = TDict(tdict_path)
 
-                print("Loading LoRA weights")
+                print("[SD] Loading LoRA weights")
                 extra_weights = add_lora_ti_weights(tdict_1 , weight_additions )
                 self.model.load_from_state_dict(extra_weights )
                 self.current_weight_additions = weight_additions
@@ -292,7 +292,7 @@ class StableDiffusion:
             inputs = self.tokenizer.encode(prompt)
             
         if len(inputs) >= 77:
-            print("Prompt is too long, stripping it ")
+            print("[SD] Prompt is too long, stripping it ")
             inputs = inputs[:77]
         if self.current_model_name == "sd_2x":
             phrase = inputs + [0] * (77 - len(inputs))
@@ -461,7 +461,6 @@ class StableDiffusion:
 
     def t_to_i(self, t):
         i = list(self.scheduler.timesteps).index(t)
-        print("t 2 i " , i )
         assert i >= 0
         return i
 
