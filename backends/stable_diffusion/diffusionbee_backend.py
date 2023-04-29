@@ -143,7 +143,7 @@ def process_opt(d, generator):
         print("sdbk mdvr 1.5_inp")
     else:
         tdict_path = p_15
-        print("sdbk mdvr 1.4")
+        print("sdbk mdvr 1.5")
 
         if d['do_controlnet'] == True:
 
