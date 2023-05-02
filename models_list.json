@@ -1,0 +1,21 @@
+[
+  {
+    "id": "e34e3111wq",
+    "filename": "aa.safetensor",
+    "md5": "8e3fa39b94d873083aff51d6725016aa",
+    "url": "https://civitai.com/api/download/models/28907",
+    "title": "model1",
+    "description": "Description 1 ",
+    "post_process": "convert_sd_to_tdict",
+    "img_url": "https://imagecache.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/bdb99753-2243-44bd-d79f-a5cdc8567c00/width=450/00029-2345241878.jpeg"
+  },
+  {
+    "id": "e34e3111dde",
+    "filename": "aa.safetensor",
+    "md5": "blank",
+    "url": "https://civitai.com/api/download/models/28907",
+    "title": "model2",
+    "description": "Description 2",
+    "img_url": "https://imagecache.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/bdb99753-2243-44bd-d79f-a5cdc8567c00/width=450/00029-2345241878.jpeg"
+  }
+]
