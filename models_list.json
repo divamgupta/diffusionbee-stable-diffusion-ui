@@ -17,5 +17,15 @@
     "title": "model2",
     "description": "Description 2",
     "img_url": "https://imagecache.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/bdb99753-2243-44bd-d79f-a5cdc8567c00/width=450/00029-2345241878.jpeg"
+  },
+  {
+    "id": "e34e3111dde2",
+    "filename": "aa.safetensor",
+    "md5": "blank",
+    "url": "https://civitai.com/api/download/models/28907",
+    "title": "model3",
+    "description": "Description 3",
+    "min_version" : 19,
+    "img_url": "https://imagecache.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/bdb99753-2243-44bd-d79f-a5cdc8567c00/width=450/00029-2345241878.jpeg"
   }
 ]
