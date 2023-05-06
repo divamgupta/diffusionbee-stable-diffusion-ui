@@ -6,7 +6,8 @@
             <!-- <p>Input Image:</p>
             <img class="gal_img" style="width: 90%;" src="https://colormadehappy.com/wp-content/uploads/2022/02/How-to-draw-a-cute-dog-6.jpg"/> 
          -->
-
+                <PoseEditor ref="pose_editor_canvas" style="height: calc(100% - 200px);" v-if="do_controlnet_preprocess=='No' && openpose" :canvas_width="600" :canvas_height="420" ></PoseEditor>
+            <span v-if="!(openpose && do_controlnet_preprocess=='No')">
             <div v-if="inp_img" @drop.prevent="onDragFile" @dragover.prevent class="image_area" :class="{ crosshair_cur  : is_inpaint }"  style="height: calc(100% - 200px);  border-radius: 16px; padding:5px;">
                 <ImageCanvas ref="inp_img_canvas" :is_inpaint="is_inpaint" :image_source="inp_img"  :is_disabled="!stable_diffusion.is_input_avail" canvas_id="ctrlnet" canvas_d_id="ctrlnetd" ></ImageCanvas>
             </div>
@@ -15,6 +16,8 @@
                     <p style="margin-top: calc( 50vh - 180px); opacity: 70%;" >Click to add input image</p>
                 </center>
             </div>
+
+        </span>
 
             <div v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" @click="open_input_image" >Change Image</div>
             <div v-if="inp_img && stable_diffusion.is_input_avail" class="l_button" @click="inp_img =''">Clear</div>
@@ -39,6 +42,7 @@
 
             <div v-if="stable_diffusion.is_input_avail" class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
                 <div class="l_button button_medium button_colored" style="float:right ; " @click="generate_img2img" >Generate</div>
+                <div v-if="do_controlnet_preprocess=='No'" class="l_button button_medium button_colored" style="float:right ; " @click="open_pose_editor" >Open pose Editor</div>
                 <SDOptionsDropdown :options_model_values="this_object" :elements_hidden="['img_h' , 'img_w' ]" :elements_extra="['controlnet']"  > </SDOptionsDropdown>
             </div>
             <div v-else-if="stable_diffusion.generated_by=='controlnet'"  class="content_toolbox" style="margin-top:10px; margin-bottom:-10px;">
@@ -51,8 +55,6 @@
         </div>
 
         <div  class="right_half">
-
-        
             <div v-if="generated_images.length > 0 " >
 
                 <br> <br>
@@ -86,6 +88,7 @@
 <script>
 import ImageItem from '../components/ImageItem.vue'
 import ImageCanvas from '../components_bare/ImageCanvas.vue'
+import PoseEditor from '../components_bare/PoseEditor.vue'
 
 import LoaderModal from '../components_bare/LoaderModal.vue'
 import Vue from 'vue'
@@ -97,9 +100,8 @@ export default {
         app_state : Object   , 
         stable_diffusion : Object,
     },
-    components: { LoaderModal, ImageItem, ImageCanvas, SDOptionsDropdown },
+    components: { LoaderModal, ImageItem, ImageCanvas, PoseEditor, SDOptionsDropdown },
     mounted() {
-
     },
     computed:{
         is_sd_active(){
@@ -140,10 +142,12 @@ export default {
             selected_model : 'Default', 
             selected_control: "Body Pose",
             do_controlnet_preprocess: "Yes",
+            openpose: false,
+            stage_w :1000,
+            stage_h : 1000,
         };
     },
     methods: {
-
         generate_img2img(){
 
             let seed = 0;
@@ -156,17 +160,23 @@ export default {
                 Vue.$toast.default('You need to enter a prompt')
                 return;
             }
-                
 
-            if(!this.inp_img){
+
+            if(!this.inp_img && !this.openpose){
                 Vue.$toast.default('You need to add an input image')
                 return;
             }
                 
+            let input_image;
+            if (this.openpose && this.do_controlnet_preprocess=='No') {
+                input_image = window.ipcRenderer.sendSync('save_b64_image', this.$refs.pose_editor_canvas.get_img_b64());
+            } else {
+                input_image = window.ipcRenderer.sendSync('save_b64_image', this.$refs.inp_img_canvas.get_img_b64());
+            }
 
-            let input_image = window.ipcRenderer.sendSync('save_b64_image',  this.$refs.inp_img_canvas.get_img_b64()  );
             let input_image_with_mask;
             let mask_img;
+
             if(this.is_inpaint)
             { 
                 input_image_with_mask = window.ipcRenderer.sendSync('save_b64_image',  this.$refs.inp_img_canvas.get_img_mask_bg4() );
@@ -251,6 +261,10 @@ export default {
            if(this.stable_diffusion)
                 this.stable_diffusion.text_to_img(params, callbacks, 'controlnet');
         } , 
+
+        open_pose_editor(){
+            this.openpose = !this.openpose;
+        },
 
         open_input_image(){
             if( !this.stable_diffusion.is_input_avail)
