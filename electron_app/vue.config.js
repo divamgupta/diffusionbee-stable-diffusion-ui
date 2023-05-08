@@ -1,3 +1,4 @@
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 try {
     var build_config = require('./build_config.json');
@@ -9,6 +10,11 @@ try {
 
 module.exports = {
     
+    configureWebpack: {
+        plugins: [
+            new NodePolyfillPlugin()
+        ]
+    },
     pluginOptions: {
         electronBuilder: {
             preload: './src/preload.js',
