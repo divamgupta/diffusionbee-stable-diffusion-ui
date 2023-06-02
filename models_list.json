@@ -30,7 +30,7 @@
         "source_page_url":"https://civitai.com/models/65203?modelVersionId=69832",
         "description": "Disney Pixar Cartoon Type A",
         "post_process": "convert_sd_to_tdict",
-        "img_url": "https://civitai.com/images/780682?modelVersionId=69832&prioritizedUserIds=1501222&period=AllTime&sort=Most+Reactions&limit=20"
+        "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/240621a6-d56f-4c1d-8816-9a32f181d7cd/width=450/42830-3564781616-masterpiece,%20high%20quality%20best%20quality,close%20up,little%20boy%20adventurer,%20adventure,%20explorer,%20outdoors,%20nature,%20hiking,%20backpackin.jpeg"
     }, 
     {
         "id": "Deliberate_v2",
@@ -74,7 +74,9 @@
         "source_page_url":"https://huggingface.co/nitrosocke/mo-di-diffusion",
         "description": "Modern Disney Diffusion",
         "post_process": "convert_sd_to_tdict",
-        "trigger_word": "modern disney style",
+        "model_meta_data": {
+            "trigger_word": "modern disney style",
+        },
         "img_url": "https://huggingface.co/nitrosocke/mo-di-diffusion/resolve/main/modi-samples-01s.jpg"
     }
 
