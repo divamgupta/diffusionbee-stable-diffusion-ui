@@ -75,7 +75,7 @@
         "description": "Modern Disney Diffusion",
         "post_process": "convert_sd_to_tdict",
         "model_meta_data": {
-            "trigger_word": "modern disney style",
+            "trigger_word": "modern disney style"
         },
         "img_url": "https://huggingface.co/nitrosocke/mo-di-diffusion/resolve/main/modi-samples-01s.jpg"
     }
