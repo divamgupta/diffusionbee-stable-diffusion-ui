@@ -11,27 +11,17 @@
         "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e44bb2f8-5cf6-408f-a00d-34293272434e/width=450/3978525125-132340232-8k%20portrait%20of%20beautiful%20cyborg%20with%20brown%20hair,%20intricate,%20elegant,%20highly%20detailed,%20majestic,%20digital%20photography,%20art%20by%20artg.jpeg"
     } , 
     {
-        "id": "Samaritan_3d_Cartoon_v1",
-        "filename": "Samaritan_3d_Cartoon_v1.safetensors",
-        "md5": "a04e99608ef97bf4684b16025ac9d35e",
-        "url": "https://civitai.com/api/download/models/86224",
+        "id": "Samaritan_3d_Cartoon_v1_s2",
+        "filename": "samaritan3dCartoon_v10_ClipSkip2.safetensors",
+        "md5": "85717765eec1f11228735b9facc29211",
+        "url": "https://huggingface.co/divamgupta/stable_diffusion_models/resolve/main/samaritan3dCartoon_v10_ClipSkip2.safetensors",
         "title": "Samaritan 3d Cartoon",
         "source_page_url":"https://civitai.com/models/81270/samaritan-3d-cartoon",
         "description": "Samaritan 3d Cartoon",
         "post_process": "convert_sd_to_tdict",
         "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/200ce025-8c51-430f-8499-e1b09dc71571/width=450/48041-82963556-masterpiece,%20best%20quality,a%20blonde%20little%20girl%20wearing%20pajamas%20laughing%20with%20her%20mouth%20open%20,%20toothy%20expression.jpeg"
     }, 
-    {
-        "id": "Disney_Pixar_Cartoon_Type_A_v1",
-        "filename": "Disney_Pixar_Cartoon_Type_A_v1.safetensors",
-        "md5": "7f737667788bd19bbb67bb9040365349",
-        "url": "https://civitai.com/api/download/models/69832",
-        "title": "Disney Pixar Cartoon Type A",
-        "source_page_url":"https://civitai.com/models/65203?modelVersionId=69832",
-        "description": "Disney Pixar Cartoon Type A",
-        "post_process": "convert_sd_to_tdict",
-        "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/240621a6-d56f-4c1d-8816-9a32f181d7cd/width=450/42830-3564781616-masterpiece,%20high%20quality%20best%20quality,close%20up,little%20boy%20adventurer,%20adventure,%20explorer,%20outdoors,%20nature,%20hiking,%20backpackin.jpeg"
-    }, 
+
     {
         "id": "Deliberate_v2",
         "filename": "Deliberate_v2.safetensors",
@@ -56,11 +46,14 @@
     }, 
     {
         "id": "dreamlike-diffusion-10",
-        "filename": "dreamlike-diffusion-10.safetensors",
+        "filename": "dreamlike-diffusion-10.ckpt",
         "md5": "5446a657cf71261b9df4e0a7b1f1a4a6",
         "url": "https://civitai.com/api/download/models/1356",
         "title": "Dreamlike Diffusion 1.0",
         "source_page_url":"https://civitai.com/models/1274/dreamlike-diffusion-10",
+        "model_meta_data": {
+            "trigger_word": "dreamlikeart"
+        },
         "description": "Dreamlike Diffusion 1.0",
         "post_process": "convert_sd_to_tdict",
         "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c87c431b-d39f-4398-5841-d71b5ed1b500/width=450/preview.jpeg"
