@@ -1,31 +1,81 @@
 [
-  {
-    "id": "e34e3111wq",
-    "filename": "aa.safetensor",
-    "md5": "8e3fa39b94d873083aff51d6725016aa",
-    "url": "https://civitai.com/api/download/models/28907",
-    "title": "model1",
-    "description": "Description 1 ",
-    "post_process": "convert_sd_to_tdict",
-    "img_url": "https://imagecache.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/bdb99753-2243-44bd-d79f-a5cdc8567c00/width=450/00029-2345241878.jpeg"
-  },
-  {
-    "id": "e34e3111dde",
-    "filename": "aa.safetensor",
-    "md5": "blank",
-    "url": "https://civitai.com/api/download/models/28907",
-    "title": "model2",
-    "description": "Description 2",
-    "img_url": "https://imagecache.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/bdb99753-2243-44bd-d79f-a5cdc8567c00/width=450/00029-2345241878.jpeg"
-  },
-  {
-    "id": "e34e3111dde2",
-    "filename": "aa.safetensor",
-    "md5": "blank",
-    "url": "https://civitai.com/api/download/models/28907",
-    "title": "model3",
-    "description": "Description 3",
-    "min_version" : 19,
-    "img_url": "https://imagecache.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/bdb99753-2243-44bd-d79f-a5cdc8567c00/width=450/00029-2345241878.jpeg"
-  }
+    {
+        "id": "DreamShaper_6_baked_vae",
+        "filename": "DreamShaper.safetensors",
+        "md5": "370c40b66389081a0eeafe8078e7be2a",
+        "url": "https://civitai.com/api/download/models/78164",
+        "title": "DreamShaper",
+        "source_page_url":"https://civitai.com/models/4384",
+        "description": "DreamShaper",
+        "post_process": "convert_sd_to_tdict",
+        "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/e44bb2f8-5cf6-408f-a00d-34293272434e/width=450/3978525125-132340232-8k%20portrait%20of%20beautiful%20cyborg%20with%20brown%20hair,%20intricate,%20elegant,%20highly%20detailed,%20majestic,%20digital%20photography,%20art%20by%20artg.jpeg"
+    } , 
+    {
+        "id": "Samaritan_3d_Cartoon_v1",
+        "filename": "Samaritan_3d_Cartoon_v1.safetensors",
+        "md5": "a04e99608ef97bf4684b16025ac9d35e",
+        "url": "https://civitai.com/api/download/models/86224",
+        "title": "Samaritan 3d Cartoon",
+        "source_page_url":"https://civitai.com/models/81270/samaritan-3d-cartoon",
+        "description": "Samaritan 3d Cartoon",
+        "post_process": "convert_sd_to_tdict",
+        "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/200ce025-8c51-430f-8499-e1b09dc71571/width=450/48041-82963556-masterpiece,%20best%20quality,a%20blonde%20little%20girl%20wearing%20pajamas%20laughing%20with%20her%20mouth%20open%20,%20toothy%20expression.jpeg"
+    }, 
+    {
+        "id": "Disney_Pixar_Cartoon_Type_A_v1",
+        "filename": "Disney_Pixar_Cartoon_Type_A_v1.safetensors",
+        "md5": "7f737667788bd19bbb67bb9040365349",
+        "url": "https://civitai.com/api/download/models/69832",
+        "title": "Disney Pixar Cartoon Type A",
+        "source_page_url":"https://civitai.com/models/65203?modelVersionId=69832",
+        "description": "Disney Pixar Cartoon Type A",
+        "post_process": "convert_sd_to_tdict",
+        "img_url": "https://civitai.com/images/780682?modelVersionId=69832&prioritizedUserIds=1501222&period=AllTime&sort=Most+Reactions&limit=20"
+    }, 
+    {
+        "id": "Deliberate_v2",
+        "filename": "Deliberate_v2.safetensors",
+        "md5": "27d58071f1718392dd31eb5b09cc018a",
+        "url": "https://civitai.com/api/download/models/15236",
+        "title": "Deliberate",
+        "source_page_url":"https://civitai.com/models/4823/deliberate",
+        "description": "Deliberate",
+        "post_process": "convert_sd_to_tdict",
+        "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/528787c3-f363-4589-e7ce-6ab7d42e0300/width=450/150213.jpeg"
+    }, 
+    {
+        "id": "ReV_Animated_1.2.2",
+        "filename": "ReV_Animated_1.2.2.safetensors",
+        "md5": "e4535b884227ac43ce2fe78c52bf8d28",
+        "url": "https://civitai.com/api/download/models/46846",
+        "title": "ReV Animated",
+        "source_page_url":"https://civitai.com/models/7371/rev-animated",
+        "description": "ReV Animated",
+        "post_process": "convert_sd_to_tdict",
+        "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/6b14bf3f-b85e-453b-907c-ab1073a41700/width=450/00000-1192013237.jpeg"
+    }, 
+    {
+        "id": "dreamlike-diffusion-10",
+        "filename": "dreamlike-diffusion-10.safetensors",
+        "md5": "5446a657cf71261b9df4e0a7b1f1a4a6",
+        "url": "https://civitai.com/api/download/models/1356",
+        "title": "Dreamlike Diffusion 1.0",
+        "source_page_url":"https://civitai.com/models/1274/dreamlike-diffusion-10",
+        "description": "Dreamlike Diffusion 1.0",
+        "post_process": "convert_sd_to_tdict",
+        "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/c87c431b-d39f-4398-5841-d71b5ed1b500/width=450/preview.jpeg"
+    }, 
+    {
+        "id": "moDi-v1",
+        "filename": "moDi-v1-pruned.ckpt",
+        "md5": "393f79603e5cab05307670d0f71a5193",
+        "url": "https://huggingface.co/nitrosocke/mo-di-diffusion/resolve/main/moDi-v1-pruned.ckpt",
+        "title": "Mo Di Diffusion",
+        "source_page_url":"https://huggingface.co/nitrosocke/mo-di-diffusion",
+        "description": "Modern Disney Diffusion",
+        "post_process": "convert_sd_to_tdict",
+        "trigger_word": "modern disney style",
+        "img_url": "https://huggingface.co/nitrosocke/mo-di-diffusion/resolve/main/modi-samples-01s.jpg"
+    }
+
 ]
