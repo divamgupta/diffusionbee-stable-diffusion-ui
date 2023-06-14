@@ -71,6 +71,53 @@
             "trigger_word": "modern disney style"
         },
         "img_url": "https://huggingface.co/nitrosocke/mo-di-diffusion/resolve/main/modi-samples-01s.jpg"
+    },
+    {
+        "id": "GhostMix_v2.0-BakedVAE",
+        "filename": "GhostMix_v2.0-BakedVAE.safetensors",
+        "md5": "2d8057765bcf1b979d9964fb17b8f17a",
+        "url": "https://civitai.com/api/download/models/76907",
+        "title": "GhostMix",
+        "source_page_url": "https://civitai.com/models/36520",
+        "description": "GhostMix",
+        "post_process": "convert_sd_to_tdict",
+        "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/f122edf7-e530-4d9d-86d0-2ed559946847/width=450/862136.jpeg"
+    }, 
+    {
+        "id": "DreamShaper_6.31_baked_vae",
+        "filename": "DreamShaper_6.31_baked_vae.safetensors",
+        "md5": "360acdaf87c2588cb35f89c1d4b343de",
+        "url": "https://civitai.com/api/download/models/94081",
+        "title": "DreamShaper",
+        "source_page_url": "https://civitai.com/models/4384",
+        "description": "DreamShaper",
+        "post_process": "convert_sd_to_tdict",
+        "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/4dd86783-a2c3-4b3c-8b84-ea42419645c0/width=450/1113613.jpeg"
+    }, 
+    {
+        "id": "CyberRealistic__v3.1",
+        "filename": "CyberRealistic__v3.1.safetensors",
+        "md5": "4bbfb851794a07f09b78b441e3ca0aba",
+        "url": "https://civitai.com/api/download/models/89680?type=Model&format=SafeTensor&size=pruned&fp=fp32",
+        "title": "CyberRealistic ",
+        "source_page_url": "https://civitai.com/models/15003",
+        "description": "CyberRealistic ",
+        "post_process": "convert_sd_to_tdict",
+        "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/3a53386e-36c3-4eee-8569-fa010d1d1c77/width=450/1037958.jpeg"
+    }, 
+    {
+        "id": "Game_Icon_Institute_mode_v3.0",
+        "filename": "Game_Icon_Institute_mode_v3.0.safetensors",
+        "md5": "89d12d3ea5ef50c89b92214b9f3fc699",
+        "url": "https://civitai.com/api/download/models/76533",
+        "title": "Game Icon Institute_mode",
+        "source_page_url": "https://civitai.com/models/47800",
+        "description": "Game Icon Institute_mode",
+        "post_process": "convert_sd_to_tdict",
+        "model_meta_data": {
+            "trigger_word": "game icon"
+        },
+        "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/d4cdf0f4-daf1-4309-b851-12b82b623c83/width=450/1097516.jpeg"
     }
 
 ]
