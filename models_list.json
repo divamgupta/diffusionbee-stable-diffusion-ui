@@ -83,17 +83,7 @@
         "post_process": "convert_sd_to_tdict",
         "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/f122edf7-e530-4d9d-86d0-2ed559946847/width=450/862136.jpeg"
     }, 
-    {
-        "id": "DreamShaper_6.31_baked_vae",
-        "filename": "DreamShaper_6.31_baked_vae.safetensors",
-        "md5": "360acdaf87c2588cb35f89c1d4b343de",
-        "url": "https://civitai.com/api/download/models/94081",
-        "title": "DreamShaper",
-        "source_page_url": "https://civitai.com/models/4384",
-        "description": "DreamShaper",
-        "post_process": "convert_sd_to_tdict",
-        "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/4dd86783-a2c3-4b3c-8b84-ea42419645c0/width=450/1113613.jpeg"
-    }, 
+
     {
         "id": "CyberRealistic__v3.1",
         "filename": "CyberRealistic__v3.1.safetensors",
