@@ -1,4 +1,4 @@
-tensorflow==2.10.0
+tensorflow==2.11.0
 h5py==3.7.0
 Pillow==9.2.0
 tqdm==4.64.1
