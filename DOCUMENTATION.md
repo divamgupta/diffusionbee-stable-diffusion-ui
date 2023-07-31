@@ -120,6 +120,18 @@ This will remove all traces of the DiffusionBee application (cache, generated im
 Open your Home folder, and press the cmd + shift + . (command + shift + period) keys. This will show the hidden files and directories. You can safely drag and drop the .diffusionbee folder in the Trash.
 
 
+## Options
+
+### Proxy Support
+Some environments may need proxy support to obtain and download models. Custom proxies can be set in DiffusionBee's config file. Just create or add the following content in:
+`~/.diffusionbee/config.ini`:
+```
+[proxy]
+host: http://localhost:8000
+```
+Afterwards, DiffusionBee will use this host as `http` and `https` proxy for downloading new models.
+
+
 ## Extra tips
 
 * For prompt ideas and help, check out:

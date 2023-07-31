@@ -10,6 +10,7 @@ projects_root_path = os.path.join(home_path, ".diffusionbee")
 if not os.path.isdir(projects_root_path):
     os.mkdir(projects_root_path)
 
+import configparser
 import requests
 import os
 import hashlib
@@ -72,6 +73,33 @@ class ProgressBarDownloader(object):
             return False
         return True
 
+    def get_proxy_from_config(config_path):
+        """ Parse diffusionbee's dotfile and evaluate for optional
+        proxy settings to use for downloading further objects
+        Args:
+            config_path (str): The path to the dotfile.
+        Returns:
+            proxies (dict): Containing the http/https proxies to use.
+        """
+        # Read proxy host from dotfile if key is present
+        proxy_host = False
+
+        try:
+            config = configparser.ConfigParser()
+            config.read(config_path)
+            proxy_host = config['proxy']['host']
+        except configparser.ParsingError:
+            print("Error parsing config file: Impossible to parse file.")
+        except KeyError:
+            pass
+
+        if proxy_host:
+            print("Setting proxy")
+            proxies = {}
+            proxies['http'] = proxy_host
+            proxies['https'] = proxy_host
+            return proxies
+
     def download(self, url, out_fname=None, md5_checksum=None,
                  verify_ssl=True, extract_zip=False, dont_use_cache=False):
         """Download the file
@@ -98,6 +126,13 @@ class ProgressBarDownloader(object):
         print("sdbk mlpr %d"%int(-1) )
         print("sdbk mltl Checking Model")
         
+        # Proxy support
+        home = os.path.expanduser("~")
+        diffusionbee_config = f"{home}/.diffusionbee/config.ini"
+        if os.path.exists(diffusionbee_config):
+            proxies = self.get_proxy_from_config(diffusionbee_config)
+
+
         if (not dont_use_cache) and self.is_already_downloaded(
                 out_fname=out_fname, md5_checksum=md5_checksum):
             if extract_zip:
@@ -112,7 +147,10 @@ class ProgressBarDownloader(object):
 
         with open(out_abs_path, "wb") as f:
             print("sdbk mltl " + self.title)
-            response = requests.get(url, stream=True, verify=verify_ssl)
+            if proxies is not None:
+                response = requests.get(url, stream=True, verify=verify_ssl, proxies=proxies)
+            else:
+                response = requests.get(url, stream=True, verify=verify_ssl)
             total_length = response.headers.get('content-length')
 
 
