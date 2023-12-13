@@ -1,7 +1,6 @@
 # Diffusion Bee - Stable Diffusion GUI App for MacOS
 [![Twitter](https://img.shields.io/twitter/url.svg?label=Follow%20%40divamgupta&style=social&url=https%3A%2F%2Ftwitter.com%2Fdivamgupta)](https://twitter.com/divamgupta)
 
-a
 
 
 ### Diffusion Bee is the easiest way to run Stable Diffusion locally on your Intel / M1 Mac. Comes with a one-click installer. No dependencies or technical knowledge needed.
@@ -16,7 +15,6 @@ a
 Download at https://diffusionbee.com/
 
 
-
 <br>
 
 For prompt ideas visit https://arthub.ai
@@ -28,6 +26,8 @@ Join discord server : https://discord.gg/t6rC5RaJQn
 * Full data privacy - nothing is sent to the cloud ( unless you chose to upload an image )
 * Clean and easy to use UI with one-click installer
 * Image to image
+* Supported models : - SD 1.x, SD 2.x, SD XL, Inpainting, ControlNet, LoRA
+* Download models from the app
 * In-painting
 * Out-painting
 * Generation history
@@ -51,14 +51,17 @@ Join discord server : https://discord.gg/t6rC5RaJQn
 
 Text to image:
 
-![image](https://user-images.githubusercontent.com/1890549/198916929-fc3c2570-b8d6-4d24-847a-1906b8e57797.png)
+![Screenshot 2023-12-13 at 1 19 38 PM](https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/assets/1890549/3ee8e70b-ea17-4b26-8069-6d8c65aaa729)
+
 
 
 Image to image:
 
-![image](https://user-images.githubusercontent.com/1890549/198915127-6ff3fcd5-5226-40fc-a431-df2ef279cce7.png)
+![Screenshot 2023-12-13 at 1 14 35 PM](https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/assets/1890549/ceb4b799-5003-47c6-a689-1a5dcd110935)
 
-![image](https://user-images.githubusercontent.com/1890549/198915243-4af83111-2dd5-4624-bfc9-f11b9863c32a.png)
+Multiple Apps:
+
+![Screenshot 2023-12-13 at 1 11 14 PM](https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/assets/1890549/5deb2129-b1c7-4f25-9718-754aa9a96008)
 
 
 Image to image with mask:
@@ -71,12 +74,24 @@ Inpainting:
 
 ![image](https://user-images.githubusercontent.com/1890549/198915395-71d4d278-2434-4e21-aea6-42988593941a.png)
 
-Outpainting:
-![image](https://user-images.githubusercontent.com/1890549/198915476-c58d0284-e390-4f3b-9416-faff3d4d8207.png)
+Advanced AI Canvas:
 
-![image](https://user-images.githubusercontent.com/1890549/198915524-6403fe95-6b97-4cfb-ae4b-6d018228bad6.png)
+![Screenshot 2023-12-13 at 1 13 59 PM](https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/assets/1890549/f01273d3-6a01-4498-8d11-5f46b9946213)
+
 
 ![image](https://user-images.githubusercontent.com/1890549/198916091-62872915-af1d-4553-b657-934c1c8c7aca.png)
+
+ControlNet:
+
+![Screenshot 2023-12-13 at 1 12 43 PM](https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/assets/1890549/55f8d6b0-2f18-4706-9771-999f379a8e4d)
+
+![Screenshot 2023-12-13 at 1 12 22 PM](https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/assets/1890549/53f5e3ef-6398-4c43-aeb6-0f1ded052a9a)
+
+
+Download Models:
+
+![Screenshot 2023-12-13 at 1 13 08 PM](https://github.com/divamgupta/diffusionbee-stable-diffusion-ui/assets/1890549/4202ba4e-f33f-47e7-bd27-26b1b93142db)
+
 
 History:
 
