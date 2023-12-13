@@ -60,7 +60,11 @@ function on_msg_from_py(msg) {
 
 function add_log(msg) {
     if (app_component_object) {
-        Vue.set(app_component_object.app_state, 'logs' , app_component_object.app_state.logs + "\n" + msg );
+        let out = app_component_object.app_state.logs + "\n" + msg
+        if( out.length > 10000000){
+            out = out.slice(-1 * 5000000 )
+        }
+        Vue.set(app_component_object.app_state, 'logs' , out );
     }
     
 }

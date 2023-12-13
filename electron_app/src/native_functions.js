@@ -1,6 +1,8 @@
-import { ipcMain, dialog } from 'electron'
+import { ipcMain, dialog, clipboard } from 'electron'
 import { app , screen } from 'electron'
 import settings from 'electron-settings';
+
+const path = require('path');
 
 var win;
 
@@ -21,21 +23,16 @@ console.log(require('os').totalmem()/(1000000000) + " Is the total memory")
 
 ipcMain.on('save_dialog', (event, ...args) => {
 
-    const seed = args[1] ? args[1] : "0"
-    const prompt = args[0] ? args[0] : "Untitled"
-    let filename = ''
-    if (seed === '0') {
-        filename = prompt
-    } else {
-        filename = seed + '-' + prompt
-    }
+    const filename = args[0] ? args[0] : "Untitled"
+    const ext = args[1] ? args[1] : "png"
+   
     let trimmedFilename = filename.substring(0, 254) // filename size limit
      let save_path = dialog.showSaveDialogSync({
             title: 'Save Image',
             defaultPath: trimmedFilename,
             filters: [{
               name: 'Image',
-              extensions: ['png']
+              extensions: [ext]
             }]
           })
 
@@ -143,7 +140,15 @@ ipcMain.on('save_file', (event, arg) => {
 })
 
 
+ipcMain.on('copy_to_clipboard', (event, arg) => {
+    clipboard.writeText(arg)
+    event.returnValue = '';
+})
 
+
+ipcMain.on('get_from_clipboard', (event, arg) => {
+    event.returnValue = clipboard.readText();
+})
 
 
 ipcMain.on('show_dialog_on_quit', (event, msg) => {
@@ -193,17 +198,19 @@ ipcMain.on('unfreeze_win', (event, arg) => {
                 win.setSize(850, 650, false);
             } else {
                win.setPosition( windowState.x  ,  windowState.y  , false);
+               win.setMinimumSize(1070, 700);
                 win.setSize(windowState.width, windowState.height , false); 
             }
 
             
         }
         else{
+            win.setMinimumSize(1070, 700);
             win.setSize(850, 650, false);
         }
 
-
-        win.setResizable(true);
+        win.setMinimumSize(1070, 700);
+        // win.setResizable(true);
         win.setMaximizable(true);
 
 
@@ -222,8 +229,9 @@ ipcMain.on('freeze_win', (event, arg) => {
     if (win) {
 	win.savable=false;
 	win.restore()
+        win.setMinimumSize(770, 550)
         win.setSize(770, 550, false); 
-        win.setResizable(false);
+        // win.setResizable(false);
         win.setMaximizable(false);
 
         const primaryDisplay = screen.getPrimaryDisplay()
@@ -367,7 +375,8 @@ ipcMain.on('save_b64_image', (event, b64_str, save_to_tmp ) => {
 })
 
 
-ipcMain.on('save_data', (event, arg) => {
+
+function save_json(data , fname ){
     const path = require('path');
     const fs = require('fs');
     const homedir = require('os').homedir();
@@ -378,31 +387,45 @@ ipcMain.on('save_data', (event, arg) => {
         fs.mkdirSync(save_dir, { recursive: true });
     }
 
-    let data_path = path.join(homedir , ".diffusionbee" , "data.json")
-    fs.writeFileSync( data_path, JSON.stringify(arg) );
-    event.returnValue = true ;
-
-})
+    let data_path = path.join(homedir , ".diffusionbee" , fname )
+    fs.writeFileSync( data_path, JSON.stringify(data) );
+}
 
 
-ipcMain.on('load_data', (event, arg) => {
+
+function load_data(fname){
     const path = require('path');
     const fs = require('fs');
     const homedir = require('os').homedir();
-    let data_path = path.join(homedir , ".diffusionbee" , "data.json");
+    let data_path = path.join(homedir , ".diffusionbee" , fname );
 
     if (fs.existsSync(data_path)){
         let json_str = fs.readFileSync( data_path );
         try {
-            event.returnValue = JSON.parse(json_str);
+            return JSON.parse(json_str);
           } catch (error) {
-            event.returnValue = {} ;
+            return {} ;
           }
     }
     else{
-        event.returnValue = {} ;
+        return {} ;
     }       
+}
 
+ipcMain.on('save_data', (event, arg , fname ) => {
+    if(fname)
+        save_json(arg, fname)
+    else
+        save_json(arg, "data.json")
+    event.returnValue = true ;
+})
+
+
+ipcMain.on('load_data', (event, fname) => {
+    if(fname)
+        event.returnValue = load_data(fname)
+    else
+        event.returnValue = load_data("data.json")
 })
 
 
@@ -451,12 +474,12 @@ function run_realesrgan(input_path , cb ){
 
 
 
-function add_custom_pytorch_models(pytorch_model_path, model_name, cb ){
+function add_custom_pytorch_models(pytorch_model_path, model_name, convert_params , cb ){
     
     const path = require('path');
     const fs = require('fs');
     const homedir = require('os').homedir();
-    let models_path = path.join(homedir , ".diffusionbee" , "custom_models");
+    let models_path = path.join(homedir , ".diffusionbee" , "imported_models");
 
     if (!fs.existsSync(models_path)){
         fs.mkdirSync(models_path, { recursive: true });
@@ -465,7 +488,7 @@ function add_custom_pytorch_models(pytorch_model_path, model_name, cb ){
 
     let script_path = process.env.PY_SCRIPT || "../backends/stable_diffusion/diffusionbee_backend.py"; 
     
-    let out_path =  path.join(homedir , ".diffusionbee" , "custom_models" , model_name+".tdict" );
+    let out_path =  path.join(homedir , ".diffusionbee" , "imported_models" , model_name+".tdict" );
     let proc;
     if (fs.existsSync(script_path)) {
         proc = require('child_process').spawn( "python3"  , [ script_path ,  "convert_model" ,  pytorch_model_path , out_path ]);
@@ -477,6 +500,7 @@ function add_custom_pytorch_models(pytorch_model_path, model_name, cb ){
 
     
     let errors = ""
+    let std_out_all = ""
 
     proc.stderr.on('data', (data) => {
         console.error(`sr stderr: ${data}`);
@@ -485,9 +509,17 @@ function add_custom_pytorch_models(pytorch_model_path, model_name, cb ){
 
     proc.stdout.on('data', (data) => {
         console.error(`sr sdtout: ${data}`);
+        std_out_all += data
     });
 
     proc.on('close', (code) => {
+
+        if(convert_params.delete_origional_always){
+            try{
+                fs.unlinkSync(pytorch_model_path);
+            } catch {}
+        }
+
         if(code != 0){
             cb({success:false , error:errors  })
             try{
@@ -495,15 +527,28 @@ function add_custom_pytorch_models(pytorch_model_path, model_name, cb ){
             } catch {}
         }
         else{
-            cb({success:true, model_path:out_path })
+            if(convert_params.delete_origional_on_success){
+                try{
+                    fs.unlinkSync(pytorch_model_path);
+                } catch {}
+            }
+
+            let converted_model_data = {}
+            for(let l of std_out_all.split("\n")){
+                if(l.includes("__converted_model_data__")){
+                    converted_model_data = JSON.parse(l.replace( "__converted_model_data__", "") )
+                }
+            }
+
+            cb({success:true, model_path:out_path , metadata : converted_model_data })
         }
        
     });
 }
 
 
-ipcMain.handle('add_custom_pytorch_models', async (event, pytorch_model_path, model_name ) => {
-    const result = await new Promise(resolve => add_custom_pytorch_models( pytorch_model_path, model_name  , resolve));
+ipcMain.handle('add_custom_pytorch_models', async (event, pytorch_model_path, model_name, convert_params ) => {
+    const result = await new Promise(resolve => add_custom_pytorch_models( pytorch_model_path, model_name , convert_params , resolve));
     return result
 })
 
@@ -520,11 +565,11 @@ ipcMain.handle('run_realesrgan', async (event, arg) => {
 
 
 
-ipcMain.on('list_custom_models', (event, arg) => {
+ipcMain.on('list_imported_models', (event, arg) => {
     const path = require('path');
     const fs = require('fs');
     const homedir = require('os').homedir();
-    let models_path = path.join(homedir , ".diffusionbee" , "custom_models");
+    let models_path = path.join(homedir , ".diffusionbee" , "imported_models");
 
     if (!fs.existsSync(models_path)){
         fs.mkdirSync(models_path, { recursive: true });
@@ -534,6 +579,85 @@ ipcMain.on('list_custom_models', (event, arg) => {
 
 })
 
+
+
+
+
+ipcMain.on('get_assets_dir', (event, arg) => {
+    const path = require('path');
+    const fs = require('fs');
+    const homedir = require('os').homedir();
+    let assets_path = path.join(homedir , ".diffusionbee" , "downloaded_assets");
+
+    if (!fs.existsSync(assets_path)) {
+        fs.mkdirSync(assets_path, { recursive: true });
+    }
+
+    event.returnValue = assets_path;
+});
+
+
+
+ipcMain.on('download-file', (event, url, dest, downloadId) => {
+  
+  const fs = require('fs');
+  const path = require('path');
+
+  const file = fs.createWriteStream(dest);
+  const request = require('request');
+
+  const crypto = require('crypto');
+
+  let hash = crypto.createHash('md5');
+
+  request.get({
+      url,
+      followRedirect: true,
+      rejectUnauthorized: false, // ignore SSL certificate errors,
+      timeout: 20000 , //20s
+    })
+    .on('response', response => {
+      const totalBytes = parseInt(response.headers['content-length'], 10);
+      let downloadedBytes = 0;
+
+      response.on('data', chunk => {
+        downloadedBytes += chunk.length;
+        hash.update(chunk);
+        const progress = Math.round((downloadedBytes / totalBytes) * 100);
+        try { 
+           event.sender.send(`to_download`, {fn:'progress' , download_id: downloadId , msg:progress });
+        } catch (err) {
+            console.log(err)
+        }
+        
+      });
+
+      response.pipe(file);
+
+    })
+    .on('error', err => {
+      fs.unlink(dest, () => {});
+
+        try {
+           event.sender.send(`to_download`, {fn:'error' , download_id: downloadId , msg:err.message  });
+        } catch (err) {
+           console.log(err)
+        }
+        
+      
+    })
+    .on('end', () => {
+
+        const hashValue = hash.digest('hex');
+        
+        try {
+           event.sender.send(`to_download`, {fn:'success' , download_id: downloadId , msg: hashValue  });
+        } catch (err) {
+           console.log(err)
+        }
+        
+    });
+});
 
 
 console.log("native functions imported")

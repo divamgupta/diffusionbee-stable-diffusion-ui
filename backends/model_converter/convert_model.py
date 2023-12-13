@@ -42,6 +42,12 @@ def convert_model(checkpoint_filename=None, out_filename=None,  torch_weights=No
 
 
     for k in (list(state_dict.keys())):
+
+        if ".encoder." in k or ".decoder." in k:
+            for v , s  in [('q' , 'to_q') , ('v' , 'to_v' ) , ('k' , 'to_k') , ('proj_out' , 'to_out.0')]:
+                if f'.{s}.' in k:
+                    state_dict[ k.replace(f'.{s}.' , f'.{v}.') ] = state_dict[k]
+
         if '.norm' in k and '.bias' in k:
             k2 = k.replace(".bias" , ".weight")
             k3 = k.replace(".bias" , ".bias_by_weight")
@@ -106,6 +112,15 @@ def convert_model(checkpoint_filename=None, out_filename=None,  torch_weights=No
         outfile.write_key(key=k , tensor=np_arr)
 
     outfile.finish_write()
+    sd_version = model_type.replace("_float16" , "").replace("_float32" , "") 
+    if sd_version in ["SD_1x" , "SD_2x"]:
+        sd_type = "sd_model"
+    elif sd_version in ["SD_1x_inpaint" , "SD_2x_inpaint"]:
+        sd_type = "sd_model_inpaint"
+    else:
+        raise ValueError("Invalid sd_version "+ sd_version)
+    model_metadata = {"float_type" : cur_dtype , "sd_type" :sd_version, "type" : sd_type }
+    print("__converted_model_data__" , json.dumps(model_metadata))
 
 
 def usage():

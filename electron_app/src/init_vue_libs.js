@@ -2,12 +2,14 @@ import Vue from 'vue'
 
 
 
+
 // add the fond awesome stuff
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faChevronRight, faStopCircle, faPlayCircle , faPlus , faChevronLeft , 
 	faFileImage  , faFileAudio , faFile , faBars , faAngleDown , faTrash, faChevronDown ,
 	faGlobe, faFolder, faCamera, faKeyboard,
-	faMusic , faMicrophone , faTimes , faCheck } from '@fortawesome/free-solid-svg-icons'
+	faMusic , faMicrophone , faTimes , faCheck , faHandPaper , faExpandArrowsAlt, faEraser , faUndo , faRedo, faImage, faMicrochip , faCube , 
+	faMagic, faSave, faHistory, faCubes, faImages, faHome , faPaintBrush, faCircle , faMask, faTools, faThList, faEllipsisV, faInbox} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 library.add(faBars)
@@ -24,6 +26,16 @@ library.add(faKeyboard)
 library.add(faMicrophone)
 library.add(faPlus)
 library.add(faFile)
+library.add(faExpandArrowsAlt)
+library.add(faEraser)
+library.add(faHandPaper)
+library.add(faImage)
+library.add(faMicrochip)
+library.add(faCube)
+library.add(faMagic)
+library.add(faSave)
+library.add(faUndo)
+library.add(faRedo)
 
 library.add(faAngleDown)
 library.add(faTrash)
@@ -32,8 +44,17 @@ library.add(faMusic)
 library.add(faCamera)
 library.add(faTimes)
 library.add(faCheck)
-
-
+library.add(faHistory)
+library.add(faCubes)
+library.add(faImages)
+library.add(faHome)
+library.add(faPaintBrush)
+library.add(faCircle)
+library.add(faMask)
+library.add(faTools)
+library.add(faThList)
+library.add(faEllipsisV)
+library.add(faInbox)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.config.productionTip = false

@@ -4,6 +4,7 @@ import json
 import copy
 import random
 import os
+import cv2
 
 class Unbuffered(object):
     def __init__(self, stream):
@@ -26,11 +27,18 @@ sys.stdout = Unbuffered(sys.stdout)
 time.sleep(1)
 
 
+if len(sys.argv) > 1 and  sys.argv[1] == "convert_model":
+    time.sleep(4)
+    exit()
+
+
+
 sample_path = os.path.join(  os.path.dirname(os.path.abspath(__file__)),  "assets",  "sample.png"  )
 
 print("sdbk mltl downloading model")
 for i in range(100):
-    time.sleep(0.06)
+    time.sleep(0.02)
+
     print("sdbk mlpr %d"%i ) # model loading percentage
     print("sdbk mlms done %s of 100.0"%i)
 
@@ -41,23 +49,38 @@ print("sdbk mdld") # model loaded
 
 
 def process_opt(opts):
-    if random.randint(0,10) > 7:
-        print("sdbk errr just a random error lol")
-        return
+    
 
     if 'num_imgs' not in opts:
         opts['num_imgs'] = 1
 
-    for _ in range(opts['num_imgs']):
+    for nn in range(opts['num_imgs']):
+
+        
+        if  opts['seed'] < 20:
+            print("sdbk errr just a random error lol")
+            return
+
+        print("sdbk dnpr "+str(-1) ) 
+        time.sleep(0.8)
         for i in range(0,100,5):
             print("sdbk dnpr "+str(i) ) # done percentage
             time.sleep(0.1)
-        impath = sample_path + "?%d"%random.randint(0,10000)
+            # if opts['seed'] > 2:
+            #     time.sleep(100.1)
+        print("sdbk dnpr "+str(-1) ) 
+        time.sleep(0.8)
+        impath = sample_path 
+        im = cv2.imread(impath)
+        im = cv2.resize(im , ( opts['img_width'] , opts['img_height'] ) )
+        new_p =  "/tmp/%d_%d.png"%( opts['img_width'] , opts['img_height'])
+        cv2.imwrite( new_p ,  im )
 
         # if 'input_image' in opts:
         #     impath = opts['input_image']
+        ret_dict = {"generated_img_path" : (new_p) }
 
-        print("sdbk nwim %s"%(impath) ) # new image generated
+        print("sdbk nwim %s"%(json.dumps(ret_dict)) ) # new image generated
     
 while True:
         print("sdbk inrd") # input ready

@@ -1,6 +1,6 @@
 <template>
     <div style="height:100% ; width:100%; position:  relative;">
-        <img id="myImg" :src="'file://'+image_source" style="display:none">
+        <img  @load="on_img_load2" :id="canvas_d_id+'img'" :src="'file://'+image_source" style="display:none">
         <canvas :id="canvas_d_id" style="width:100% ; height:100%; position: absolute ; top:0 , left:0  " ></canvas>
         <canvas :id="canvas_id" style="width:100% ; height:100%; position: absolute ; top:0 , left:0 ; opacity:0.7" ></canvas>
        
@@ -27,6 +27,7 @@ export default {
         canvas_d_id : String, 
         canvas_id: String,
         stroke_size_no : String,
+        on_img_load: Function, 
     },
     components: {},
     computed: {
@@ -81,6 +82,11 @@ export default {
         };
     },
     methods: {
+
+        on_img_load2(){
+            if(this.on_img_load)
+                 this.on_img_load()
+        },
 
         findxy(res, e) {
 
@@ -141,6 +147,11 @@ export default {
             this.ctx.fill();
             this.is_something_drawn = true
 
+        },
+
+        get_size(){
+            let img =  document.getElementById(this.canvas_d_id+"img")
+            return {width: img.width ,height: img.height }
         },
 
         on_resize(){
@@ -219,7 +230,7 @@ export default {
         get_img_b64(){
             return this.canvasD.toDataURL();
         } , 
-        get_mask_b46(){
+        get_mask_b64(){
             let canvas = document.createElement('canvas');
             canvas.width = this.canvas.width;
             canvas.height = this.canvas.height;
@@ -232,7 +243,7 @@ export default {
             return canvas.toDataURL();
 
         }, 
-        get_img_mask_bg4(){
+        get_img_mask_b64(){
             let canvas = document.createElement('canvas');
             canvas.width = this.canvasD.width;
             canvas.height = this.canvasD.height;
@@ -241,6 +252,21 @@ export default {
             ctx.drawImage(this.canvas, 0, 0);
             
             return canvas.toDataURL();
+        } , 
+
+        get_mask_for_cache(){
+            return this.canvas.toDataURL();
+        },
+       
+       restore_mask(mask_b64){
+            let canvas = this.canvas;
+            let ctx =  canvas.getContext("2d");
+            
+            var image = new Image();
+            image.onload = function() {
+                ctx.drawImage(image, 0, 0);
+            };
+            image.src = mask_b64
         }
     },
 

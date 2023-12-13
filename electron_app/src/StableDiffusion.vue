@@ -29,6 +29,7 @@ export default {
     },
     data() {
         return {
+            is_stopping: false,
             is_backend_loaded : false,
             is_model_downloading: false, 
             is_input_avail : false,
@@ -54,57 +55,25 @@ export default {
                 this.is_model_downloading = false;
             }
             if(msg_code == "inrd"){
-                this.is_input_avail = true;
-                this.attached_cbs = undefined;
+                console.log("cps unset inrd ")
+                this.is_stopping = false
+                this.is_input_avail = true; // note : is_input_avail can be watched so set this at last pls
             }
             if(msg_code == "inwk"){
                 this.is_input_avail = false;
             }
 
-            // removing the nsfw thing as it does not run in m1 build
-            // if(msg_code == "nwim"){
-            //     let impath = msg.substring(5).trim()
-
-            //     const img = new Image();
-            //     img.src = "file://" + impath;
-
-            //     img.attached_cbs = this.attached_cbs;
-
-            //     // check for nsfw content
-            //     img.onload = () => {
-            //         if (this.$parent.app_state.app_data.settings.nsfw_filter == true) {
-            //             if (img.attached_cbs) {
-            //                 if (img.attached_cbs.on_img)
-            //                     img.attached_cbs.on_img(impath);
-            //             }
-            //         }
-            //         else {
-            //             const nsfwjs = require('nsfwjs');
-            //             nsfwjs.load()
-            //                 .then(model => model.classify(img))
-            //                 .catch(() => {
-            //                     console.log("cant run nsfw")
-            //                 })
-            //                 .then(predictions => {
-            //                     if (predictions && (predictions[0].className ==  'Hentai' || predictions[0].className ==  'Porn')) {
-            //                             impath = "nsfw_" + Math.random();
-            //                     }
-            //                     if (img.attached_cbs) {
-            //                         if (img.attached_cbs.on_img)
-            //                             img.attached_cbs.on_img(impath);
-            //                     }
-            //                 });
-            //         }
-            //     }
-            // }
             if(msg_code == "nwim"){
                 if (this.$parent.app_state.app_data.settings.notification_sound == true) {
                     notification_sound.play();
                 }
-                let impath = msg.substring(5).trim()
+                let img = msg.substring(5).trim()
+                img = JSON.parse(img)
                 if(this.attached_cbs){
                     if(this.attached_cbs.on_img)
-                        this.attached_cbs.on_img(impath);
+                        this.attached_cbs.on_img(img);
+                } else {
+                    console.log("got new img but cbs none")
                 }
             }
 
@@ -173,6 +142,8 @@ export default {
                         this.attached_cbs.on_progress(p, iter_time);
                     }
                         
+                } else {
+                    console.log("got new msg but cbs none")
                 }
 
             }
@@ -182,6 +153,8 @@ export default {
 
         interupt(){
             send_to_py("t2im __stop__")
+            console.log("cps unset st ")
+            this.is_stopping = true
             this.attached_cbs = undefined;
         },
 
@@ -191,9 +164,27 @@ export default {
             return this.is_backend_loaded
         },
 
+        run_applet(applet_name , params , callbacks ){
+
+
+            if(!this.is_input_avail)
+                return;
+            
+            this.is_stopping = false
+
+            this.generated_by = applet_name;
+            this.attached_cbs = callbacks;
+
+            this.generation_state_msg = "Running " + applet_name
+
+            send_to_py("rapp " + applet_name + " " + JSON.stringify(params)) 
+            
+        },
+
         text_to_img(prompt_params, callbacks, generated_by){
             if(!this.is_input_avail)
                 return;
+            this.is_stopping = false
             let tokens = [49406].concat((get_tokens(prompt_params.prompt))).concat([49407])
             tokens.filter(n => n != null && n != undefined)
             prompt_params.prompt_tokens = tokens;
@@ -218,6 +209,7 @@ export default {
             this.last_iter_t = Date.now()
             this.generated_by = generated_by;
             this.attached_cbs = callbacks;
+            console.log("cps set ")
             this.generation_state_msg = ""
             this.remaining_times = ""
             this.iter_times = []

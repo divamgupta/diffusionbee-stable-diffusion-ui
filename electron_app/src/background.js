@@ -57,7 +57,7 @@ async function createWindow() {
 		titleBarStyle : (is_windows ) ? 'default' : 'hidden' , 
 		titleBarOverlay : is_windows, 
 		maximizable : false,
-		trafficLightPosition: { x: 10, y: 10 },
+		trafficLightPosition: { x: 18, y: 20 },
 		webPreferences: {
 			webSecurity: false,
 
@@ -74,8 +74,9 @@ async function createWindow() {
 
 	electronLocalshortcut.register(win, ['CommandOrControl+R','CommandOrControl+Shift+R', 'F5'], () => {}) //  make the refresh shortcuts blank
 
+	
 	win.setSize(770, 550);
-	win.setResizable(false);
+	// win.setResizable(false);
 	win.setMaximizable(false);
 
 	// save the window state on resize , move, etc 
@@ -105,8 +106,12 @@ async function createWindow() {
 
 
 
-
-	nativeTheme.themeSource = 'system';
+	if(is_windows){
+		nativeTheme.themeSource = 'light';
+	} else {
+		nativeTheme.themeSource = 'system';
+	}
+	
 
 	if (process.env.WEBPACK_DEV_SERVER_URL) {
 		// Load the url of the dev server if in development mode
@@ -159,7 +164,7 @@ app.setAboutPanelOptions({
 	applicationVersion: require('../package.json').version,
 	version: require('../package.json').build_number,
 	credits: require('../package.json').description,
-	copyright: "Copyright © 2022 " + require('../package.json').name,
+	copyright: "Copyright © 2023 " + require('../package.json').name,
 	website: require('../package.json').website
 });
 

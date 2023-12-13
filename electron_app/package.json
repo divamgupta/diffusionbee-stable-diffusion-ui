@@ -1,7 +1,7 @@
 {
   "name": "DiffusionBee",
-  "version": "1.7.4",
-  "build_number": "0024",
+  "version": "2.3.0",
+  "build_number": "0029",
   "website": "https://diffusionbee.com",
   "description": "Diffusion Bee - Stable Diffusion App.",
   "is_dev": false,
@@ -26,17 +26,21 @@
     "bootstrap": "^5.1.3",
     "bootstrap-vue": "^2.21.2",
     "chart.js": "^2.9.4",
-    "core-js": "^3.6.5",
+    "core-js": "^3.8.3",
     "electron-context-menu": "^3.5.0",
     "electron-localshortcut": "^3.2.1",
     "electron-notarize": "^1.2.1",
     "electron-settings": "^4.0.2",
     "fuse.js": "^6.6.2",
     "javascript-time-ago": "^2.3.13",
+    "js-yaml": "^4.1.0",
     "konva": "^8.3.13",
     "nsfwjs": "^2.4.2",
+    "path": "^0.12.7",
+    "stream": "^0.0.2",
     "v-click-outside": "^3.1.2",
-    "vue": "^2.6.11",
+    "verte": "^0.0.12",
+    "vue": "^2.6.14",
     "vue-apexcharts": "^1.6.2",
     "vue-chartjs": "^3.5.1",
     "vue-click-outside": "^1.1.0",
@@ -47,17 +51,19 @@
     "vue-web-cam": "^1.9.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
+    "@babel/core": "^7.12.16",
+    "@babel/eslint-parser": "^7.12.16",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
     "babel-eslint": "^10.1.0",
-    "electron": "^13.0.0",
+    "electron": "^13.6.9",
     "electron-builder": "^23.3.3",
     "electron-devtools-installer": "^3.1.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.2.2",
-    "vue-cli-plugin-electron-builder": "~2.1.1",
-    "vue-template-compiler": "^2.6.11"
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.0.3",
+    "vue-cli-plugin-electron-builder": "^2.1.1",
+    "vue-template-compiler": "^2.6.14"
   },
   "eslintConfig": {
     "root": true,
@@ -71,7 +77,10 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "vue/multi-word-component-names": "off",
+      "vue/no-mutating-props": "off"
+    }
   },
   "browserslist": [
     "> 1%",

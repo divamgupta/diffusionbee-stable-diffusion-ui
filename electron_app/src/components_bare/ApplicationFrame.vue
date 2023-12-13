@@ -1,95 +1,61 @@
 <template>
     <div class="main_frame">
+
+
+        <div class="sidebar" v-if="is_sidebar_open">
+           <div class="sidebar_drag"> 
+                 <span class="title_bar_icon" style="float:right; margin-top: 15px; margin-right:10px; padding:0; padding-left: 13px; padding-top:2px ;" @click="is_sidebar_open = !is_sidebar_open"  > 
+                   <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                       <path :d="icon_library['sidebar_collapse']"  />
+                    </svg>
+                </span>
+
+           </div>
+
+           <p class="sidebar_cat"> Tools </p>
+
+           <div v-for="sidebar_item in sidebar_items" :key="sidebar_item.id" class="sidebar_item "  :class="{ sidebar_item_selected : sidebar_item.id ===  selected_sidebar_item_id }" @click="sidebar_item_on_click(sidebar_item.id)"> 
+
+              <svg v-if="icon_library[sidebar_item.icon]" class="sidebar_icon" width="15px" height="15px"  style="height: 15px; width: 15px; margin-top:-3px; margin-right:3px;"  v-html="icon_library[sidebar_item.icon]"> </svg>
+
+              <font-awesome-icon v-else class="sidebar_icon" :icon="sidebar_item.icon" />
+
+                 {{sidebar_item.text}}
+             </div>
+
+       
+        </div>
+
         <div class="title_bar">
-            <div class="app_title" v-bind:class="{ 'fullscreen' :is_fullscreen||detect_windows_os() }">
-                <span @click="$emit('on_title_click',{})"> {{title}} </span>
-                <div style="float: right; margin-right: 10px; margin-top: -8.5px;" class="">
-                    <b-dropdown right variant="link" size="sm" toggle-class="text-decoration-none" no-caret>
-                        <template #button-content>
-                            <div style="" class="tab l_button">
-                                <font-awesome-icon icon="bars" />
-                            </div>
-                        </template>
-                        
-                        <b-dropdown-item-button @click="$emit('menu_item_click_help',{})">Help</b-dropdown-item-button>
-                        <b-dropdown-item-button @click="$emit('menu_item_click_discord',{})">Start Discord Chat</b-dropdown-item-button>
-                        <b-dropdown-item-button @click="selectTab('logs')">Show Logs</b-dropdown-item-button>
+            <div class="app_title_sidebar_collapsed" v-if="(!is_sidebar_open)"  v-bind:class="{'app_title_sidebar_collapsed_mac':is_mac}"> 
+                 <span class="title_bar_icon" style=" margin-right: -10px ; margin-left: 10px;" @click="is_sidebar_open = !is_sidebar_open" > 
+                   <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path :d="icon_library['sidebar_collapse']" />
+                   </svg>
+                 </span>
 
-                        <b-dropdown-item-button @click="$emit('menu_item_click_model_license',{})">Model License</b-dropdown-item-button>
-                        <b-dropdown-item-button @click="$emit('menu_item_click_oss_license',{})">Open-source Licences</b-dropdown-item-button>
+                 <span class="title_bar_icon" style=" margin-right: -10px ; margin-left: 10px;" @click="on_home_click" > 
+                   <font-awesome-icon   icon="home" style="zoom:1.15; margin-bottom: -2px;"  />
+                 </span>
 
-                        <b-dropdown-item-button @click="$emit('menu_item_click_about',{})">About</b-dropdown-item-button>
-
-                        <b-dropdown-item-button @click="selectTab('settings')">Settings</b-dropdown-item-button>
-
-                        <b-dropdown-item-button @click="$emit('menu_item_click_close',{})">Close</b-dropdown-item-button>
-                        <!-- #TODO set these menu items via python -->
-                        
-                    </b-dropdown>
-                </div>
-                <!-- <div style="float: right; margin-right:0" class="tab l_button"><font-awesome-icon icon="bars" /></div> -->
             </div>
+            <div class="app_title" >
+                <span @click="$emit('on_title_click',{})"> {{title}} </span>
+            </div>
+             <div class="title_bar_icons">
+                <!-- <font-awesome-icon  class="title_bar_icon" icon="file-image" />  -->
+
+                <slot name="main_toolbar"></slot>
+            </div>
+
         </div>
-        <div class="tabs_bar">
-            <div @click="selectTab('txt2img')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'txt2img'}">Text To Image</div>
-            <div @click="selectTab('img2img')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'img2img'}">Image To Image</div>
-            <div @click="selectTab('inpainting')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'inpainting'}">Inpainting</div>
-            <div @click="selectTab('outpainting')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'outpainting'}">Outpainting</div>
-            <div @click="selectTab('controlnet')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'controlnet'}">ControlNet</div>
-            <div @click="selectTab('history')" class="tab l_button" v-bind:class="{ 'button_colored' : selected_tab === 'history'}">History</div>
-        </div>
+        
         <div class="tab_content_frame">
             <div class="tab_content">
-                
-
-                <div style="display:none"  :class="{ bl_display : selected_tab === 'txt2img'  }" >
-                    <slot name="txt2img"></slot>
-                </div>
-
-                <div  style="display:none"  :class="{ bl_display : selected_tab === 'img2img'  }" >
-                    <slot name="img2img"></slot>
-                </div>
-
-                <div  style="display:none"  :class="{ bl_display : selected_tab === 'controlnet'  }" >
-                    <slot name="controlnet"></slot>
-                </div>
-
-                <div  v-if="selected_tab === 'history' " style="display:none"  :class="{ bl_display : selected_tab === 'history'  }" >
-                    <slot name="history"></slot>
-                </div>
-                
-                
-
-                <div  style="display:none"  :class="{ bl_display : selected_tab === 'upscale_img'  }" >
-                    <slot name="upscale_img"></slot>
-                </div>
-
-                <div style="display:none"  :class="{ bl_display : selected_tab === 'inpainting'  }" >
-                    <slot name="inpainting"></slot>
-                </div>
-
-
-                <div style="display:none"  :class="{ bl_display : selected_tab === 'outpainting'  }" >
-                    <slot name="outpainting"></slot>
-                </div>
-
-                <div style="display:none"  :class="{ bl_display : selected_tab === 'settings'  }" >
-                    <slot name="settings"></slot>
-                </div>
-
-
-
-
-                <div  v-if="selected_tab === 'logs' " style="display:none"  :class="{ bl_display : selected_tab === 'logs'  }" >
-                    <slot name="logs"></slot>
-                </div>
-
-                
-                
-
-
-             
+                <slot name="main_content"></slot>
             </div>
+
+            
 
 
         </div>
@@ -97,18 +63,42 @@
 </template>
 <script>
 
+import { icon_library } from "./icon_library.js"
+
 export default {
     name: 'ApplicationFrame',
     components: {},
     props: {
         title: String,
+        sidebar_items: Array,
+        selected_sidebar_item_id: String,
+        sidebar_item_on_click: Function, 
+        on_home_click : Function
+
     },
 
     data: function() {
         return {
+            icon_library : icon_library , 
+
             selected_tab: 'txt2img' ,
             is_fullscreen: false ,
+            is_sidebar_open: true,
         }
+    },
+
+     watch: {
+        'is_sidebar_open': {
+
+            handler: function(is_open) {
+                if(is_open){
+                    document.querySelector(':root').style.setProperty("--sidebar-width" , "200px")
+                } else {
+                    document.querySelector(':root').style.setProperty("--sidebar-width" , "0px")
+                }
+            },
+            deep: true
+        } , 
     },
 
     mounted() {
@@ -116,6 +106,12 @@ export default {
     },
     unmounted() {
         window.removeEventListener('resize', this.detect_fullscreen);
+    },
+
+    computed: {
+        is_mac(){
+            return !(this.detect_windows_os())
+        }
     },
 
     methods: {
@@ -150,7 +146,11 @@ export default {
     --main-font-text: -apple-system, BlinkMacSystemFont, sans-serif;
     /*SF Pro Text;*/
 
+     --sidebar-width: 200px;
+     --titlebar-height: 55px;
+    
 }
+
 
 html {
     user-select: none;
@@ -163,10 +163,19 @@ body {
     font-family: var(--main-font);
 }
 
+
 .bl_display{
     display:block !important;
 }
 
+
+.sidebar_icon > path{
+    fill:#0A84FF;
+}
+
+.sidebar_icon > svg > path{
+    fill:#0A84FF;
+}
 
 .l_button {
     display: inline-block;
@@ -247,6 +256,7 @@ body {
     ;
 }
 
+
 p {
     font-family: var(--main-font);
     font-style: normal;
@@ -317,29 +327,6 @@ img {
 }
 
 
-.animatable_content_box {
-    height: calc(100vh - 40px - 35px - 2px);
-    position: fixed;
-    width: 100%;
-    padding: 20px;
-    overflow: auto;
-}
-
-
-/*the slide transitions */
-
-.slide_show-enter-active,
-.slide_show-leave-enter {
-    transform: translateX(0);
-    transition: all .25s linear;
-
-}
-
-.slide_show-enter,
-.slide_show-leave-to {
-    transform: translateX(100%);
-    transition: all .25s linear;
-}
 
 /*overriding some styles of bootstrap dropdown*/
 .dropdown-item {
@@ -377,23 +364,97 @@ img {
 }
 
 
+.title_bar_icon{
+    color : var(--title-icon_color);
+    padding : 8px;
+    padding-right: 8px;
+    padding-left: 8px;
+
+    margin-right: 2px;
+    margin-left: 2px;
+    
+    height: calc(100% - 24px);
+    width:50px;
+    border-radius: 5px;
+
+/*    background: rgba(0, 0, 0, 0.05);*/
+    -webkit-app-region: none;
+    
+}
+
+.title_bar_icon svg{
+    fill : var(--title-icon_color);
+}
+
+.title_bar_icon:hover{
+    background-color: var(--button-highlight-one);
+}
+
+
+
+::-webkit-scrollbar {
+    appearance: none;
+    width: 7px;
+    padding-right: 7px;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: var(--border-color-invert);
+}
+
+
+
 </style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+
 .title_bar {
-    height: 35px;
-    width: 100%;
+    height: var(--titlebar-height);
+    width: calc( 100vw - var(--sidebar-width) );
     /*background: red;*/
+    margin-left : var(--sidebar-width);
     -webkit-user-select: none;
     -webkit-app-region: drag;
     border-width: 0px;
     border-bottom-width: 1px;
     border-style: solid;
+    border-color: var( --thin-border-color);
+}
+
+
+.title_bar_icons{
+    float: right;
+    margin-right: 20px; 
+    height: var(--titlebar-height);
+    margin-top: 16px;
+}
+
+
+
+
+
+.sidebar_drag{
+    -webkit-user-select: none;
+    -webkit-app-region: drag;
+    height: var(--titlebar-height);
+}
+
+.app_title_sidebar_collapsed{
+    float:left;
+    height: var(--titlebar-height);
+    margin-top: 16px;
+
+}
+
+.app_title_sidebar_collapsed_mac{
+    margin-left: 72px;
 }
 
 .app_title {
-    padding-left: 80px;
-    padding-top: 10px;
+    float: left;
+    padding-left: 22px;
+    padding-top: 20px;
 
     font-family: var(--main-font-text);
     font-style: normal;
@@ -406,53 +467,135 @@ img {
     color: #000000;
 }
 
-.app_title.fullscreen{
-    padding-left: 22px;
+
+
+
+
+
+.sidebar{
+    position: fixed;
+    top:0 ;
+    left: 0 ;
+    bottom: 0 ;
+    background-color: var(--sidebar-color);
+ 
+    width: var(--sidebar-width) ;
 }
 
-@media (display-mode: fullscreen) {
-    .app_title {
-        /*works in chrome but not electron*/
-        display: none;
-        background-color: red;
+
+.sidebar_cat{
+   
+    color: rgba(0, 0, 0, 0.27);
+    font-family: var(--main-font-text);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 13px;
+    /* identical to box height, or 130% */
+
+    letter-spacing: 0.12px;
+    margin-left: 15px ;
+    margin-top: 15px ;
+    margin-bottom: 7px;
+}
+
+
+.sidebar_item{
+
+    font-family: var(--main-font-text);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 14px;
+    /* identical to box height, or 127% */
+
+    letter-spacing: 0.06px;
+
+    /* Dark/Text */
+
+    color: var(--text-color-solid);;
+    margin-left: 15px ;
+    margin-right: 15px ;
+    margin-bottom: 4px ;
+
+    padding-right: 15px;
+    padding-left: 15px;
+    padding-bottom: 7px;
+    padding-top: 7px;
+
+    border-radius: 5px;
+
+    
+}
+
+.sidebar_icon{
+    margin-right: 5px;
+    color: #0A84FF;
+}
+
+.sidebar_item_selected{
+     background: rgba(0, 0, 0, 0.1);
+}
+
+.sidebar_item:hover{
+    background-color: var(--button-highlight-one);
+}
+
+
+.tab_content_frame{
+    position: absolute;
+    margin-left: var(--sidebar-width);
+    height: calc( 100vh - var(--titlebar-height) );
+    width: calc(100% - var(--sidebar-width) );
+}
+
+.tab_content{
+    height:100%; 
+    width:100%; 
+}
+
+@media (prefers-color-scheme: dark) {
+    .sidebar_item_selected{
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar_cat{
+         color: rgba(255, 255, 255, 0.40);
     }
 }
 
-.tabs_bar {
-    height: 40px;
-    width: 100%;
-    border-width: 0px;
-    border-bottom-width: 1px;
-    border-style: solid;
 
-    padding-top: 8px;
-    padding-left: 20px;
-    padding-right: 20px;
+
+
+/*DROPDOWN buggle */
+
+.dropdown-bubble {
+  margin-top: 10em;
 }
 
-.tab_content_frame {
-    width: 100%;
-    height: calc(100vh - 40px  - 35px - 2px);
-    overflow: auto;
+.dropdown-bubble:before,
+.dropdown-bubble:after{
+  content: ' ';
+  display: block;
+  border-style: solid;
+  border-width: 0 7px 7px 7px;
+  border-color: transparent;
+  position: absolute;
+  left: 193px;
 }
 
-.tab_content {
-    /*padding: 20px;*/
-
+.dropdown-bubble:before {
+  top: -2px;
+  border-bottom-color: rgba(255,255,255,0.5);
 }
 
-.vertical-center {
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
+.dropdown-bubble:after {
+  top: -2px;
+    border-bottom-color: rgb(34, 34, 34) ;
 }
 
-.tab {
 
-    margin-right: 10px;
-    cursor: pointer;
 
-}
+
+
 </style>

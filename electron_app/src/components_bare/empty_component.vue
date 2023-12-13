@@ -3,7 +3,7 @@
 <script>
 export default {
     name: 'EmptyComponent',
-    props: {},
+    props: { app:Object , asset_details:Object },
     components: {},
     mounted() {
 
@@ -14,6 +14,10 @@ export default {
     methods: {
 
     },
+
+    computed: {
+        
+    }
 }
 </script>
 <style>

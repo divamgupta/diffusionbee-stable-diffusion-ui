@@ -22,7 +22,7 @@ class TDict:
         self.out_file.write(b'\x00' * nb )
         self.filep += nb
 
-    def write_block(self, block_array):
+    def write_block(self, block_array ):
 
         if self.filep  %64 != 0:
             npad = 64 - self.filep  % 64
@@ -73,7 +73,11 @@ class TDict:
         block  = self.in_file.read(l)
 
         if np_dtype is not None:
-            block = np.frombuffer(block, dtype=np_dtype)
+            if "cus_" in np_dtype: #custom dtype, which is not supported by numpy 
+                block = np.frombuffer(block, dtype='uint8')
+                block = decode_custom_dtype(block , np_dtype )
+            else:
+                block = np.frombuffer(block, dtype=np_dtype)
 
         if np_shape is not None:
             block = block.reshape(np_shape)
@@ -145,12 +149,23 @@ class TDict:
         assert len(ret_arr.tobytes()) == w_idx_len
         return ret_arr.copy()
 
-    def write_key(self , key , tensor):
+    def write_key(self , key , tensor, custom_dtype=None ):
         assert key not in self.keys_info
         dtype = str(tensor.dtype)
+        if custom_dtype is not None:
+            dtype = custom_dtype
+            raise not NotImplementedError("Casting not implemented.")
+
         write_info = self.write_block(tensor)
         shape = list(tensor.shape)
         self.keys_info[key] = {"start": write_info['n_start_data'] , "end" : write_info['n_end_data'] , "shape": shape , "dtype" : dtype }
+
+    def write_key_custom_dype(self, uint8_arr , key, custom_dtype , shape ):
+        assert key not in self.keys_info
+        dtype = custom_dtype
+        write_info = self.write_block(uint8_arr)
+        self.keys_info[key] = {"start": write_info['n_start_data'] , "end" : write_info['n_end_data'] , "shape": shape , "dtype" : dtype }
+
 
     def finish_write(self):
 

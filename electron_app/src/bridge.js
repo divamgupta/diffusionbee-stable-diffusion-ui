@@ -10,6 +10,7 @@ var last_few_err = ""
 
 let RESTART_BACKEND_ON_CLOSE = false
 
+const path = require('path');
 
 function start_bridge() {
 
@@ -22,7 +23,7 @@ function start_bridge() {
         python = require('child_process').spawn( bin_path );
     }
     else if (fs.existsSync(script_path)) {
-        python = require('child_process').spawn('python3', [script_path]);
+        python = require('child_process').spawn('python', [script_path]);
     }
     else{
         const path = require('path');

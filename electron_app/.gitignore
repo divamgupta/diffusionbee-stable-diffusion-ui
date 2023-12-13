@@ -2,6 +2,9 @@
 node_modules
 /dist
 
+build_config.json
+dist_electron
+./dist_electron
 
 # local env files
 .env.local
@@ -24,5 +27,3 @@ pnpm-debug.log*
 
 #Electron-builder output
 /dist_electron
-
-build_config.json

@@ -1,6 +1,8 @@
 # Diffusion Bee - Stable Diffusion GUI App for MacOS
 [![Twitter](https://img.shields.io/twitter/url.svg?label=Follow%20%40divamgupta&style=social&url=https%3A%2F%2Ftwitter.com%2Fdivamgupta)](https://twitter.com/divamgupta)
 
+a
+
 
 ### Diffusion Bee is the easiest way to run Stable Diffusion locally on your Intel / M1 Mac. Comes with a one-click installer. No dependencies or technical knowledge needed.
 
@@ -12,6 +14,7 @@
 [![Download](https://user-images.githubusercontent.com/1890549/189538422-52d50488-c1fa-4924-bec6-186c9e0f307b.png)](https://diffusionbee.com/)
 
 Download at https://diffusionbee.com/
+
 
 
 <br>

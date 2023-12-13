@@ -1,0 +1,33 @@
+{
+	"id" : "sample" , 
+	"title" : "hiofh ",
+	"icon" : "star" ,
+	"home_category" : "misc",
+	"inputs" : [
+		{
+	        "id" : "prompt",
+	        "component": "Textarea",
+	        "placeholder" : "custom applet "
+	    },
+	    {
+	        "id": "7657836",
+	        "component": "InputWithDesc",
+	        "title": "Seed",
+	        "description": "Starting point for iterations (any random number will do; DB will pick one if left blank).",
+	        "children": [
+	            {
+	                "id": "seed",
+	                "component": "Textbox",
+	                "icon": "seed",
+	                "placeholder" : "-1",
+	                "type" : "number",
+	                "is_persistant" : true
+	            }
+	        ]
+	    }
+	] , 
+	"outputs": [
+		
+	]
+
+}

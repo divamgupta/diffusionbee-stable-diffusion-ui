@@ -1,4 +1,3 @@
-
 try {
     var build_config = require('./build_config.json');
     console.log(build_config + "\n\n\n\n\n")
@@ -18,6 +17,7 @@ module.exports = {
             builderOptions: {
                 appId: 'com.diffusionbee.diffusionbee',
                 artifactName: "DiffusionBee"+(build_config.build_name||"")+"-${version}.${ext}",
+
                 afterSign: "./afterSignHook.js",
                 "extraResources": [{
                     "from": process.env.BACKEND_BUILD_PATH , 
@@ -32,9 +32,9 @@ module.exports = {
                     "hardenedRuntime": true,
                     "entitlements": "build/entitlements.mac.plist",
                     "entitlementsInherit": "build/entitlements.mac.plist",
-                    "minimumSystemVersion": build_config.min_os_version || "11.0.0",
+                    "minimumSystemVersion": build_config.min_os_version || "12.6.0",
                     "extendInfo": {
-                        "LSMinimumSystemVersion": build_config.min_os_version || "11.0.0"
+                        "LSMinimumSystemVersion": build_config.min_os_version || "12.6.0"
                     } , 
                     
                     "target": {

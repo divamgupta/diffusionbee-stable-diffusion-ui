@@ -54,7 +54,7 @@ export default {
 <style scoped>
     .center {
       margin: 0;
-      position: absolute;
+      position: fixed;
       top: 50%;
       left: 50%;
       -ms-transform: translate(-50%, -50%);

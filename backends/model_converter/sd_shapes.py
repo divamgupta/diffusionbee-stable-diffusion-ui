@@ -77,7 +77,10 @@ ctdict_ids = {"SD_1x_float32": 12 ,
     "SD_1x_float16": 1012 , 
     "SD_1x_inpaint_float16": 1013 , 
     "SD_1x_just_controlnet_16" : 1014,
-    "SD_2x_float16": 1015 }
+    "SD_2x_float16": 1015 ,
+    "sdxl_base_unet_f8_rest_f16" : 3031,
+    }
+
 
 
 extra_keys = ['temb_coefficients_fp32' , 'temb_coefficients_fp16' , 'causal_mask' , 'aux_output_conv.weight' , 'aux_output_conv.bias', 'alphas_cumprod']

@@ -4,114 +4,33 @@
         <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
         
         <StableDiffusion ref="stable_diffusion"> </StableDiffusion>
-
-            
-
+        <SDManager :app="app" ref="sd_manager"> </SDManager>
+        <AssetsManager ref="assets_manager"> </AssetsManager>
         
         <div v-if="app_state.is_start_screen">
             <transition name="slide_show">
                 <SplashScreen v-if="app_state.show_splash_screen"></SplashScreen>
             </transition>
         </div>
-        <ApplicationFrame ref="app_frame" v-else title="DiffusionBee - Stable Diffusion App"
-
-            @menu_item_click_about="show_about"
-            @menu_item_click_help="open_url('https://diffusionbee.com/')"
-            @menu_item_click_close="close_window"
-            @menu_item_click_discord="open_url('https://discord.gg/t6rC5RaJQn')"
-            @menu_item_click_model_license="open_url('https://diffusionbee.com/MODEL_LICENSE.txt')"
-            @menu_item_click_oss_license="open_url('https://diffusionbee.com/OPEN_SOURCE_LICENSES.txt')"
-
+        <ApplicationFrame ref="app_frame" v-else :title="current_applet_title + ' - ' + 'DiffusionBee'" :sidebar_item_on_click="sidebar_item_on_click"
+        :sidebar_items="
+            (all_pages_ready ) ?  $refs.router.all_sidebar_items : []
+        " :selected_sidebar_item_id="current_selected_tab"
+        :on_home_click="on_home_click"
         > 
-            <template v-slot:txt2img>
-                <ImgGenerate v-if="is_mounted && stable_diffusion.is_ready()"  :app_state="app_state" :stable_diffusion="stable_diffusion"></ImgGenerate>
-                <div  v-else  class="animatable_content_box ">
-                    <LoaderModal :loading_percentage="stable_diffusion.loading_percentage" :loading_desc="stable_diffusion.model_loading_msg"  :loading_title="stable_diffusion.model_loading_title ||'Loading Model'"> </LoaderModal>
-                    <div class="bottom_float"> <p>Please make sure you have around 8GB of free space for the models.</p> </div>
-               
-                </div>
-
-               
-            </template>
-
-            <template v-slot:img2img>
-
-                <Img2Img  ref="img2img" v-if="is_mounted && stable_diffusion.is_ready()"  :app_state="app_state" :stable_diffusion="stable_diffusion"></Img2Img>
-                <div  v-else  class="animatable_content_box ">
-                    <LoaderModal :loading_percentage="stable_diffusion.loading_percentage" :loading_desc="stable_diffusion.model_loading_msg"  :loading_title="stable_diffusion.model_loading_title ||'Loading Model'"> </LoaderModal>
-                    <div class="bottom_float"> <p>Please make sure you have around 8GB of free space for the models.</p> </div>
-                </div>
-
-            </template>
-
-
-             <template v-slot:controlnet>
-                <KeepAlive>
-                    <ControlNet  ref="controlnet" v-if="is_mounted && stable_diffusion.is_ready()"  :app_state="app_state" :stable_diffusion="stable_diffusion"></ControlNet>
-                     <div  v-else  class="animatable_content_box ">
-                        <LoaderModal :loading_percentage="stable_diffusion.loading_percentage" :loading_desc="stable_diffusion.model_loading_msg"  :loading_title="stable_diffusion.model_loading_title ||'Loading Model'"> </LoaderModal>
-                        <div class="bottom_float"> <p>Please make sure you have around 8GB of free space for the models.</p> </div>
-                    </div>
-                </KeepAlive>
-               
-
-            </template>
-
-
-            <template v-slot:outpainting>
-                
-                <Outpainting  ref="outpaint" v-if="is_mounted && stable_diffusion.is_ready()"  :app_state="app_state" :stable_diffusion="stable_diffusion"></Outpainting>
-                <div  v-else  class="animatable_content_box ">
-                    <LoaderModal :loading_percentage="stable_diffusion.loading_percentage" :loading_desc="stable_diffusion.model_loading_msg"  :loading_title="stable_diffusion.model_loading_title ||'Loading Model'"> </LoaderModal>
-                    <div class="bottom_float"> <p>Please make sure you have around 8GB of free space for the models.</p> </div>
-                </div>
-                
-            </template>
-
-            <template v-slot:inpainting>
-                
-                <Inpainting  ref="inpaint" v-if="is_mounted && stable_diffusion.is_ready()"  :app_state="app_state" :stable_diffusion="stable_diffusion"></Inpainting>
-                <div  v-else  class="animatable_content_box ">
-                    <LoaderModal :loading_percentage="stable_diffusion.loading_percentage" :loading_desc="stable_diffusion.model_loading_msg"  :loading_title="stable_diffusion.model_loading_title ||'Loading Model'"> </LoaderModal>
-                    <div class="bottom_float"> <p>Please make sure you have around 8GB of free space for the models.</p> </div>
-                </div>
-                
-            </template>
-
-            <template v-slot:upscale_img>
-                <UpscaleImage  :app_state="app_state" ref="upscale_img"></UpscaleImage>
-            </template>
-
             
-
-            
-
-            <template v-slot:history>
-                <History :app_state="app_state"></History>
+            <template v-slot:main_content>
+                <PagesRouter  v-if="is_mounted && stable_diffusion.is_ready()"  :app="app" ref="router" > </PagesRouter>
             </template>
 
-            <template v-slot:settings>
-                <Settings :app_state="app_state"></Settings>
+            <template v-slot:main_toolbar>
+                <MainToolbar  v-if="is_mounted"  :app="app" ref="toolbar" > </MainToolbar>
             </template>
 
-            <template v-slot:logs>
-                <div class="animatable_content_box ">
-                    <p>Logs : </p>
 
-                    <p>
-                        <span style="white-space: pre-line">{{app_state.logs}}</span>
-                    </p>
-
-                </div>
-
-            </template>
         </ApplicationFrame>
 
         <LoaderModal v-if="app_state.global_loader_modal_msg" :loading_percentage="-1"  :loading_title="app_state.global_loader_modal_msg"> </LoaderModal>
-
-           
-
-       
 
     </div>
 </template>
@@ -121,17 +40,14 @@ import { bind_app_component } from "./py_vue_bridge.js"
 import { send_to_py } from "./py_vue_bridge.js"
 import {native_confirm, native_alert } from "./native_functions_vue_bridge.js"
 import StableDiffusion from "./StableDiffusion.vue"
+import SDManager from "./SDManager.vue"
+import AssetsManager from "./AssetsManager.vue"
+
 import SplashScreen from './components_bare/SplashScreen.vue'
 import ApplicationFrame from './components_bare/ApplicationFrame.vue'
-import ImgGenerate from './components/ImgGenerate.vue'
-import Img2Img from './components/Img2Img.vue'
-import ControlNet from "./components/ControlNet.vue"
-import Outpainting from './components/Outpainting.vue'
-import UpscaleImage from './components/UpscaleImage.vue'
-import Inpainting from "./components/Inpainting.vue"
-import History from './components/History.vue'
-import Settings from './components/Settings.vue'
 
+import PagesRouter from "./components/PagesRouter.vue"
+import MainToolbar from "./components/MainToolbar.vue"
 
 import LoaderModal from './components_bare/LoaderModal.vue'
 import Vue from "vue"
@@ -145,21 +61,22 @@ export default
     components: {
         SplashScreen,
         ApplicationFrame,
-        ImgGenerate, 
+        AssetsManager,
         StableDiffusion,
+        SDManager,
         LoaderModal,
-        History,
-        Img2Img,
-        Outpainting,
-        UpscaleImage, 
-        Inpainting,
-        Settings,
-        ControlNet
+        PagesRouter,
+        MainToolbar
+       
     },
 
     mounted() {
-
+        this.app = this;
+        window.app = this.app; // so that we can access from console
         this.stable_diffusion = this.$refs.stable_diffusion;
+        this.stable_diffusion_manager = this.$refs.sd_manager;
+        this.stable_diffusion_manager.stable_diffusion = this.stable_diffusion;
+        this.assets_manager = this.$refs.assets_manager;
 
         bind_app_component(this);
         send_to_py("strt");
@@ -171,15 +88,18 @@ export default
 
         let that = this;
 
-        setTimeout( function(){
-             
-            that.app_state.is_start_screen = false;
-        }  , 5000)
+        this.start_screen_interval = setInterval( function(){
+            console.log(that.stable_diffusion.is_input_avai)
+            if(that.stable_diffusion && that.stable_diffusion.is_input_avail){
+                that.app_state.is_start_screen = false;
+                clearInterval(that.start_screen_interval)
+            }
+            
+        }  , 1500)
 
         this.is_mounted = true;
 
-
-        let data = window.ipcRenderer.sendSync('load_data');
+        let data = window.ipcRenderer.sendSync('load_data', 'app_data_2.json');
         if(!data.history){
             data.history = {}
         }
@@ -195,7 +115,6 @@ export default
         if( data ){
             Vue.set(this.app_state , 'app_data' , data)
         }
-            
      
     },
 
@@ -205,6 +124,7 @@ export default
             handler: function(new_value) {
                 if (new_value == false) {
                     if(this.is_screen_frozen){
+                        console.log("Unfreeze win!")
                         window.ipcRenderer.sendSync('unfreeze_win', '');
                         this.is_screen_frozen = false;
                     }
@@ -212,6 +132,7 @@ export default
                 }
                 else{
                     if(!this.is_screen_frozen){
+                        console.log("Freeze win!")
                         window.ipcRenderer.sendSync('freeze_win', '');
                         this.is_screen_frozen = true;
                     }
@@ -223,33 +144,46 @@ export default
         'app_state.app_data': {
 
             handler: function(new_value) {
-                window.ipcRenderer.sendSync('save_data', new_value );
+                window.ipcRenderer.sendSync('save_data', new_value , "app_data_2.json");
             },
             deep: true
         } , 
-        
 
+        'is_sd_avail' : {
+            handler: function() {
+                this.set_show_dialog_on_quit()
+            },
+            deep: true
+        }
+        
     },
 
     computed : {
+        is_sd_avail(){
+            if(!this.is_mounted)
+                return false
+            return this.$refs.stable_diffusion.is_input_avail 
+        }
     },
 
     methods: {
 
         main_screen() {
 
-
         },
 
-        
-        change_startscreen_tab(tab_name){
-            let that = this;
-            setTimeout( function(){
-                that.$refs.start_screen.on_sidebar_click(tab_name);
-            } , 50 )
-            
+        show_toast(msg){
+            Vue.$toast.default(msg)
         },
 
+        sidebar_item_on_click(t){
+            this.current_selected_tab = t;
+            this.functions.switch_page(t);
+        }, 
+
+        on_home_click(){
+            this.functions.switch_page("Homepage")
+        },
        
         check_for_updates(){
             
@@ -275,20 +209,9 @@ export default
             xmlHttp.send(null);
         },
 
-        switch_frame_tab(tab_name){
-            // switch the tab of the frame 
-            this.$refs.app_frame.selected_tab = tab_name;
-        } , 
-
         set_show_dialog_on_quit(){
             // determine whether electron process should show a confirmation message while closing or not 
-            if(! this.$refs.stable_diffusion.is_ready() )
-            {
-                this.should_show_dialog_on_quit = true;
-                this.show_dialog_on_quit_msg = 'Model has not finished loading. Are you sure you want to quit?';
-                window.ipcRenderer.sendSync('show_dialog_on_quit', this.show_dialog_on_quit_msg);
-            }
-            else if( ! this.$refs.stable_diffusion.is_input_avail )
+            if( ! this.$refs.stable_diffusion.is_input_avail )
             {
                 this.should_show_dialog_on_quit = true;
                 this.show_dialog_on_quit_msg = 'Images are still being generated. Are you sure you want to quit?';
@@ -301,24 +224,7 @@ export default
             }
         } , 
 
-        show_about(){
-            window.ipcRenderer.sendSync('show_about', '');
-        },
-        show_help(){
-            window.ipcRenderer.sendSync('open_url', "https://diffusionbee.com");
-        } ,
-
-        open_url(url){
-            window.ipcRenderer.sendSync('open_url', url);
-        } ,
-
-        menu_item_click_discord(){
-            window.ipcRenderer.sendSync('open_url', "https://discord.gg/t6rC5RaJQn");
-        },
-
-        close_window(){
-            window.ipcRenderer.sendSync('close_window', '');
-        }
+        
     },
 
     data() {
@@ -329,13 +235,21 @@ export default
             show_dialog_on_quit_msg : "" ,  // the message to show while quiting 
             show_splash_screen : true , // is showing the loading splash screen
             logs : "",
+
             global_loader_modal_msg : "",
+            registered_ext_applets : {}, // {id, title, desc, icon, inputs, outputs }
             app_data: {history : {}},
         };
 
         return {
-            is_mounted : false,
+            current_build_number : Number(require('../package.json').build_number), 
+            all_pages_ready: false, // set to true by PagesRouter
+            is_mounted : false, // set when app is mounted
+            functions: {},
             app_state: app_state,
+            app: this , // will be set after mount
+            current_selected_tab : "Homepage",
+            current_applet_title: "Home",
             is_screen_frozen : true , 
             is_dev : require('../package.json').is_dev ||  require('../package.json').build_number.includes("dev") ,
         }

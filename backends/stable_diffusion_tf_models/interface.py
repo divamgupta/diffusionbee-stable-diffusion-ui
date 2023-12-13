@@ -158,11 +158,13 @@ class ModelInterface:
         self.load_from_tdict(tdict, second_tdict=second_tdict)
 
 
-    def run_unet(self, time_emb, text_emb, unet_inp, control_inp=None):
+    def run_unet(self, time_emb, text_emb, unet_inp, control_inp=None,  control_weight=1, fixed_vector=None  ):
         time_emb = np.array(time_emb).astype('float32')
         text_emb = np.array(text_emb).astype('float32')
         unet_inp = np.array(unet_inp).astype('float32')
         inps = [unet_inp, time_emb, text_emb]
+        assert fixed_vector is None, "Fixed vector not supported"
+        assert control_weight == 1 or control_weight == 1.0 , "Control weight not supported"
         if control_inp is not None:
             inps = inps + [ np.array(c).astype('float32') for c in control_inp ]
         return np.array(self.diffusion_model_f(inps ))
