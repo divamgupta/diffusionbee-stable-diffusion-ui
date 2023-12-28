@@ -111,7 +111,7 @@
     }, 
     {
         "id": "Stable Diffusion XL Base 1.0",
-        "description": "(experimental) Stable Diffusion XL 1.0 base model. Good for large image sizes.",
+        "description": "Stable Diffusion XL 1.0 base model. Good for large image sizes.",
         "filename": "sd_xl_base_1.0_f8.tdict",
         "md5": "7f096f5ed332b51ca909fa0772fa3a0b",
         "is_stock_model": false,
@@ -123,7 +123,23 @@
                 "float_type": "float8_1",
                 "sd_type": "sdxl_base"
         }
+    }, 
+    {
+        "id": "JuggernautXL_v7_f8",
+        "description": "Juggernaut XL",
+        "filename": "JuggernautXL_v7_f8.tdict",
+        "md5": "7f096f5ed332b51ca909fa0772fa3a0b",
+        "is_stock_model": false,
+        "url": "https://huggingface.co/divamgupta/stable_diffusion_mps/resolve/main/JuggernautXL_v7_f8.tdict",
+        "title": "Juggernaut XL",
+        "min_version": 36,
+        "model_meta_data": {
+                "type": "sd_model",
+                "float_type": "float8_1",
+                "sd_type": "sdxl_base"
+        }
     }
+    
 
 
 ]
