@@ -26,7 +26,7 @@
         "id": "Deliberate_v2",
         "filename": "Deliberate_v2.safetensors",
         "md5": "27d58071f1718392dd31eb5b09cc018a",
-        "url": "https://civitai.com/api/download/models/15236",
+        "url": "https://huggingface.co/XpucT/Deliberate/resolve/main/Deliberate_v2.safetensors",
         "title": "Deliberate",
         "source_page_url":"https://civitai.com/models/4823/deliberate",
         "description": "Deliberate",
@@ -128,7 +128,7 @@
         "id": "JuggernautXL_v7_f8",
         "description": "Juggernaut XL",
         "filename": "JuggernautXL_v7_f8.tdict",
-        "md5": "7f096f5ed332b51ca909fa0772fa3a0b",
+        "md5": "529f3b4de2c3305154d704f830b3e4c1",
         "is_stock_model": false,
         "url": "https://huggingface.co/divamgupta/stable_diffusion_mps/resolve/main/JuggernautXL_v7_f8.tdict",
         "title": "Juggernaut XL",
@@ -137,9 +137,41 @@
                 "type": "sd_model",
                 "float_type": "float8_1",
                 "sd_type": "sdxl_base"
-        }
-    }
-    
+        },
+        "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/bf9d496b-788c-49d0-8ed8-303d5cf37054/original=true/00243-(Digital%20Artwork_1.3)%20of%20(Sketched_1.1)%20octane%20render%20of%20a%20mysterious%20dense%20forest%20with%20a%20large%20(magical_1.2)%20gate%20(portal_1.3).jpeg"
+    } , 
+    {
+        "id": "bluePencilXL",
+        "description": "BluePencil XL, ideal for anime",
+        "filename": "bluePencilXL_v200.safetensors.tdict",
+        "md5": "6ae4b397df4a8089a01c1eeddb97d5c7",
+        "is_stock_model": false,
+        "url": "https://huggingface.co/divamgupta/stable_diffusion_mps/resolve/main/bluePencilXL_v200.safetensors.tdict",
+        "title": "BluePencil XL",
+        "min_version": 36,
+        "model_meta_data": {
+                "type": "sd_model",
+                "float_type": "float8_1",
+                "sd_type": "sdxl_base"
+        },
+        "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/85845339-387d-4f4e-99c4-b7a66b60c642/original=true/54695-20231230220519-2209652733-25-6.jpeg"
+    },
 
+    {
+        "id": "RealVisXL30",
+        "description": "RealVisXL XL, ideal for realistic images",
+        "filename": "realvisxlv30Bakedvae.safetensors.tdict",
+        "md5": "28cfdc5012d197a3edfb6f60147b597d",
+        "is_stock_model": false,
+        "url": "https://huggingface.co/divamgupta/stable_diffusion_mps/resolve/main/realvisxlv30Bakedvae.safetensors.tdict",
+        "title": "RealVis XL",
+        "min_version": 36,
+        "model_meta_data": {
+                "type": "sd_model",
+                "float_type": "float8_1",
+                "sd_type": "sdxl_base"
+        },
+        "img_url": "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/503d8616-8dd3-42a9-aaed-e30adb99a9a6/original=true/00015-2133006391.jpeg"
+    }      
 
 ]
