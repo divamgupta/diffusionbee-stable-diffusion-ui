@@ -15,12 +15,12 @@
             </div>
 
             <div v-for="model in downloaded_models_list" :key="model.id" class="model_card" v-bind:style="{ 'background-image': 'url(' + (model.img_url || default_img_url )+ ')' }">
-                 <div class="card_desc"> 
-                    <h2> {{model.title || model.id}} </h2> 
-                    <p> {{model.description}} </p> 
+                 <div class="card_desc">
+                    <h2> {{model.title || model.id}} </h2>
+                    <p> {{model.description}} </p>
                     <p style="zoom:0.7"> {{ model_metadata_to_str(model) }}</p>
                     <DownloadButton :app=app  :asset_details="model"> </DownloadButton>
-                </div> 
+                </div>
             </div>
 
         </div>
@@ -32,21 +32,21 @@
         <div class="icon_container">
 
             <div v-for="model in not_downloaded_models_list" :key="model.id" class="model_card" v-bind:style="{ 'background-image': 'url(' + (model.img_url || default_img_url) + ')' }">
-                 <div class="card_desc"> 
-                    <h2> {{model.title || model.id}} </h2> 
-                    <p> {{model.description}} </p> 
+                 <div class="card_desc">
+                    <h2> {{model.title || model.id}} </h2>
+                    <p> {{model.description}} </p>
                     <p style="zoom:0.7"> {{ model_metadata_to_str(model) }}</p>
                     <DownloadButton v-if="!(model.min_version) || model.min_version <= app.current_build_number" :app=app  :asset_details="model"> </DownloadButton>
                     <p  style="color:red" v-if="model.min_version && model.min_version > app.current_build_number"> You need to update DiffusionBee to use this model</p>
-                </div> 
+                </div>
             </div>
 
         </div>
 
-        <br> <hr> 
+        <br> <hr>
         <div @click="load_models_list_from_web" class="l_button"> Refresh </div>
 
-        
+
 
     </div>
 </template>
@@ -67,9 +67,9 @@ const ModelStore ={
     },
     data() {
         return {
-            is_local_model_importing : false, 
+            is_local_model_importing : false,
             default_img_url : require("../assets/imgs/page_icon_imgs/default.png"),
-            models_list : [], 
+            models_list : [],
         };
     },
     computed: {
@@ -82,7 +82,7 @@ const ModelStore ={
                 ret.unshift(this.app.assets_manager.all_avail_assets[k])
             }
             return ret;
-        } , 
+        } ,
         not_downloaded_models_list(){
             let that = this
             return this.models_list.filter(model  => !(that.app.is_mounted && that.app.assets_manager.downloaded_assets[model.id]))
@@ -94,15 +94,15 @@ const ModelStore ={
 
             let user_id = window.ipcRenderer.sendSync('get_instance_id' , '');
             let models_url = "https://models.diffusionbee.com/list_models?user_id="+user_id;
-            
+
             fetch(models_url, {cache: "no-store"})
                 .then(response => response.json())
                 .then(data =>  that.models_list = (data || that.models_list) )
                 .then(() => console.log(that.models_list))
                 .then(() =>  that.save_models_list_local_storage() )
 
-            
-        } ,     
+
+        } ,
 
         load_models_list_local_storage(){
             let models = window.localStorage.getItem("models_store")
@@ -110,11 +110,11 @@ const ModelStore ={
                 models = JSON.parse(models)
             }
             Vue.set(this , 'models_list' , models)
-        } , 
+        } ,
 
         save_models_list_local_storage(){
              window.localStorage.setItem('models_store' , JSON.stringify(this.models_list));
-        } , 
+        } ,
 
         model_metadata_to_str(asset_details){
             if(!asset_details.model_meta_data)
@@ -127,7 +127,7 @@ const ModelStore ={
 
             if(asset_details.model_meta_data.float_type)
                 r += " " + asset_details.model_meta_data.float_type
-            
+
             return r
         },
 
@@ -164,10 +164,10 @@ const ModelStore ={
 
             let asset_details = {
                 id : model_name ,
-                filename: model_name , 
-                asset_path_raw: pytorch_model_path, 
-                post_process : "convert_sd_to_tdict", 
-                is_locally_imported : true, 
+                filename: model_name ,
+                asset_path_raw: pytorch_model_path,
+                post_process : "convert_sd_to_tdict",
+                is_locally_imported : true,
                 model_meta_data : {"type" : "sd_model" }
             }
 
@@ -189,7 +189,7 @@ const ModelStore ={
 export default ModelStore;
 ModelStore.title = "Models"
 ModelStore.icon = "cubes"
-ModelStore.description = "Download, imoport and manage models"
+ModelStore.description = "Download, import and manage models"
 ModelStore.img_icon = require("../assets/imgs/page_icon_imgs/models.png")
 ModelStore.home_category = "pages"
 ModelStore.sidebar_show = "always"
