@@ -189,7 +189,7 @@ const ModelStore ={
 export default ModelStore;
 ModelStore.title = "Models"
 ModelStore.icon = "cubes"
-ModelStore.description = "Download, imoport and manage models"
+ModelStore.description = "Download, import and manage models"
 ModelStore.img_icon = require("../assets/imgs/page_icon_imgs/models.png")
 ModelStore.home_category = "pages"
 ModelStore.sidebar_show = "always"
