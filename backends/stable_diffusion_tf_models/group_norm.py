@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Orginal implementation from keras_contrib/layer/normalization
+# Original implementation from keras_contrib/layer/normalization
 # =============================================================================
 
 import tensorflow as tf
