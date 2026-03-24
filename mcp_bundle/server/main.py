@@ -13,7 +13,10 @@ except ImportError as exc:  # pragma: no cover - import guard for local setup
 else:
     FASTMCP_IMPORT_ERROR = None
 
-from service import BundleStatus, convert_model, generate_image
+try:
+    from .service import BundleStatus, convert_model, generate_image
+except ImportError:
+    from service import BundleStatus, convert_model, generate_image
 
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
@@ -38,7 +41,7 @@ def _build_server() -> "FastMCP":
             backend_root=str(ROOT_DIR.parent / "backends" / "stable_diffusion"),
             notes=[
                 "FastMCP server scaffold is in place.",
-                "Backend extraction is still required before generation works.",
+                "The MCP layer delegates to extracted backend services.",
                 "Use this server as a thin wrapper over shared backend services.",
             ],
         )

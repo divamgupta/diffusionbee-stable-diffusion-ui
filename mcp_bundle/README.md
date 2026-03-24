@@ -10,19 +10,20 @@ generation logic without depending on Electron process management or the
 
 ## Current Status
 
-This now contains a FastMCP-based server scaffold.
+This now contains a FastMCP-based server backed by a shared Python service
+module in [`backends/stable_diffusion/service.py`](../backends/stable_diffusion/service.py).
 
 Included here:
 
 - `manifest.json`: provisional MCPB manifest for a Python-based local server
 - `requirements.txt`: pins the Python MCP SDK to the stable v1 line
 - `server/main.py`: FastMCP entry point and tool registration
-- `server/service.py`: thin service boundary for future backend extraction
+- `server/service.py`: thin MCP-to-backend adapter
+- `tests/`: unit tests for both the MCP adapter and backend service seam
 
 Not included yet:
 
 - packaged Python dependencies
-- extracted reusable backend service layer
 - bundle build/validation automation
 
 ## FastMCP
@@ -45,6 +46,12 @@ Run the server directly with:
 python mcp_bundle/server/main.py
 ```
 
+Run the current tests with:
+
+```bash
+python -m unittest discover -s mcp_bundle/tests -p 'test_*.py'
+```
+
 ## V0 Tool Surface
 
 The initial tool shape follows an Easy Diffusion-style approach: a small number
@@ -53,8 +60,8 @@ of high-level, opinionated tools rather than a graph API.
 Current tools:
 
 - `bundle_status`: working introspection tool for checking scaffold status
-- `generate_image_tool`: declared, but intentionally not implemented yet
-- `convert_model_tool`: declared, but intentionally not implemented yet
+- `generate_image_tool`: forwards requests into the extracted backend service
+- `convert_model_tool`: forwards model conversion requests into the extracted backend service
 
 The `generate_image_tool` parameters are intentionally close to the existing
 frontend request shape:
@@ -84,18 +91,15 @@ Instead, the extraction path should look like:
 2. Keep CLI / stdio / MCP request handling inside `mcp_bundle/`.
 3. Have the MCP server call shared backend functions directly.
 
-## Suggested First Extraction
+## Extracted Service
 
-Create a shared Python module under `backends/stable_diffusion/` with a small,
-explicit API such as:
+The shared backend service now lives under `backends/stable_diffusion/` with a
+small, explicit API centered on:
 
 - `generate_images(request) -> list[GeneratedImage]`
-- `list_models() -> list[ModelInfo]`
 - `convert_model(checkpoint_path, output_path) -> ConversionResult`
 
-That service layer should return structured data and raise ordinary Python
-exceptions. It should not print transport messages to stdout.
-
-That extraction should become the implementation behind
-`mcp_bundle/server/service.py`. `mcp_bundle/server/main.py` should stay thin and
-only handle FastMCP tool registration and transport startup.
+The Electron stdin backend and the FastMCP server both call into that shared
+service. `mcp_bundle/server/main.py` stays transport-only, while
+`mcp_bundle/server/service.py` is a narrow adapter that translates MCP tool
+arguments into backend service requests.

@@ -121,6 +121,7 @@ def convert_model(checkpoint_filename=None, out_filename=None,  torch_weights=No
         raise ValueError("Invalid sd_version "+ sd_version)
     model_metadata = {"float_type" : cur_dtype , "sd_type" :sd_version, "type" : sd_type }
     print("__converted_model_data__" , json.dumps(model_metadata))
+    return {"output_path": out_filename, "model_metadata": model_metadata}
 
 
 def usage():
@@ -154,5 +155,4 @@ if __name__ == "__main__":
     out_filename = args[1]
 
     convert_model(checkpoint_filename , out_filename )
-
 
