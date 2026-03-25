@@ -36,11 +36,11 @@ def _build_server() -> "FastMCP":
     def bundle_status() -> BundleStatus:
         """Describe the current state of the Diffusion Bee MCP bundle."""
         return BundleStatus(
-            implementation_status="scaffold",
+            implementation_status="experimental",
             bundle_root=str(ROOT_DIR),
             backend_root=str(ROOT_DIR.parent / "backends" / "stable_diffusion"),
             notes=[
-                "FastMCP server scaffold is in place.",
+                "FastMCP server and backend extraction are in place.",
                 "The MCP layer delegates to extracted backend services.",
                 "Use this server as a thin wrapper over shared backend services.",
             ],

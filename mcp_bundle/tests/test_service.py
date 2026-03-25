@@ -5,7 +5,6 @@ from unittest import mock
 
 from mcp_bundle.server.service import (
     BundleStatus,
-    _get_backend_service,
     bundle_status_payload,
     convert_model,
     generate_image,
@@ -15,7 +14,7 @@ from mcp_bundle.server.service import (
 class BundleStatusPayloadTests(unittest.TestCase):
     def test_bundle_status_payload_serializes_dataclass(self) -> None:
         status = BundleStatus(
-            implementation_status="scaffold",
+            implementation_status="experimental",
             bundle_root="/tmp/bundle",
             backend_root="/tmp/backend",
             notes=["note-1", "note-2"],
@@ -26,7 +25,7 @@ class BundleStatusPayloadTests(unittest.TestCase):
         self.assertEqual(
             payload,
             {
-                "implementation_status": "scaffold",
+                "implementation_status": "experimental",
                 "bundle_root": "/tmp/bundle",
                 "backend_root": "/tmp/backend",
                 "notes": ["note-1", "note-2"],

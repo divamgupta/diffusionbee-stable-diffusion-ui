@@ -46,7 +46,7 @@ sys.stdout = Unbuffered(sys.stdout)
 def diffusion_bee_main():
 
     time.sleep(2)
-    register_applet(service._get_generator().model_container , FrameInterpolator)
+    register_applet(service.get_model_container(), FrameInterpolator)
 
     print("sdbk mltl Loading Model")
 

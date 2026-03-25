@@ -10,7 +10,7 @@ generation logic without depending on Electron process management or the
 
 ## Current Status
 
-This now contains a FastMCP-based server backed by a shared Python service
+This now contains an experimental FastMCP-based server backed by a shared Python service
 module in [`backends/stable_diffusion/service.py`](../backends/stable_diffusion/service.py).
 
 Included here:

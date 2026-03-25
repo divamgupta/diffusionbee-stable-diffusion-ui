@@ -146,6 +146,16 @@ class DiffusionBeeService:
         )
         return self._generator
 
+    def get_model_container(self):
+        if self._model_container is not None:
+            return self._model_container
+
+        generator = self._get_generator()
+        model_container = getattr(generator, "model_container", None)
+        if model_container is None:
+            raise RuntimeError("Generator does not expose a model_container")
+        return model_container
+
     def _build_sd_run(self, request: dict):
         if self._sd_run_factory is not None:
             return self._sd_run_factory(request)
