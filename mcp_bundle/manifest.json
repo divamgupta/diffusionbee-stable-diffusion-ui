@@ -1,0 +1,30 @@
+{
+  "manifest_version": "0.1",
+  "dxt_version": "0.1",
+  "name": "diffusionbee-local",
+  "display_name": "Diffusion Bee Local",
+  "version": "0.1.0",
+  "description": "Standalone MCP bundle scaffold for Diffusion Bee local image generation.",
+  "author": {
+    "name": "Diffusion Bee"
+  },
+  "homepage": "https://github.com/divamgupta/diffusionbee-stable-diffusion-ui",
+  "server": {
+    "type": "python",
+    "entry_point": "server/main.py",
+    "mcp_config": {
+      "command": "python",
+      "args": [
+        "${__dirname}/server/main.py"
+      ]
+    }
+  },
+  "compatibility": {
+    "platforms": [
+      "darwin"
+    ],
+    "runtimes": {
+      "python": ">=3.9"
+    }
+  }
+}
